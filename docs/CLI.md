@@ -6,7 +6,7 @@
 uv run jev-games plugins
 ```
 
-This prints registered model, task, evidence, and strategy names.
+This prints registered model, task, evidence, collector, and strategy names.
 
 ## Run an experiment
 
@@ -14,8 +14,8 @@ This prints registered model, task, evidence, and strategy names.
 uv run jev-games run configs/sokoban_smoke.toml
 ```
 
-The command blocks until RLCD training, post-training calibration fitting,
-checkpoint export, held-out evaluation, and report generation complete. The
+The command blocks until RLCD training, configured collection/update cycles,
+post-training calibration fitting, checkpoint export, and evaluation complete. The
 final line is a compact JSON summary; the full result is `report.json`.
 
 ## Generate Sokoban evidence

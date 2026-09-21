@@ -7,6 +7,7 @@
 - Put model-specific behavior in a model adapter.
 - Put environment and transition behavior in a task adapter.
 - Put dataset parsing and target provenance in an evidence provider.
+- Put environment sampling and online labeling in an evidence collector.
 - Put optimization algorithms in a training strategy.
 - Add optional dependencies to an appropriate project extra.
 
@@ -21,7 +22,7 @@ uv sync --extra laya --extra train --python 3.12
 ```bash
 uv run --extra laya --extra train python -m unittest discover -s tests -v
 uv run --extra laya --extra train python -m py_compile \
-  jevgames/*.py jevgames/evidence/*.py jevgames/models/*.py \
+  jevgames/*.py jevgames/collectors/*.py jevgames/evidence/*.py jevgames/models/*.py \
   jevgames/strategies/*.py jevgames/tasks/*.py \
   sokoban_laya/*.py scripts/*.py
 uv lock --check

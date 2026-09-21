@@ -28,6 +28,20 @@ Built-in `laya` fields:
 When `data.calibration` is present, the Laya adapter fits and persists scalar
 temperatures per decision type and option-count bucket.
 
+Built-in `qwen_decision` fields:
+
+| Field | Default | Meaning |
+|---|---|---|
+| `source` | `Qwen/Qwen3-0.6B-Base` | Hub ID or native Jev Games Qwen checkpoint |
+| `device` | `auto` | `auto`, `mps`, `cuda`, or `cpu` |
+| `max_length` | `512` | Tokens retained per candidate-scoring sequence |
+| `freeze_backbone` | `true` | Train only the decision head |
+| `gradient_checkpointing` | `true` | Enable when the backbone is trainable |
+
+The Qwen adapter scores each candidate from the final token of a sequence that
+contains the complete state, question, and option set. This preserves causal
+visibility but repeats backbone work for every candidate.
+
 ## `[task]`
 
 `type` is required and selects a registered task. The built-in value is
@@ -41,6 +55,7 @@ ablation tools; the main RLCD strategy does not read them.
 | Field | Default | Meaning |
 |---|---:|---|
 | `epochs` | `4` | Complete passes over calibration evidence |
+| `update_epochs` | `1` | Replay passes after each environment collection |
 | `batch_size` | `8` | Physical evidence rows per device batch |
 | `gradient_accumulation` | `2` | Microbatches per optimizer synchronization |
 | `group_size` | `4` | Perturbed distributions sampled per evidence row |
@@ -57,6 +72,24 @@ Apple MPS should start with `mixed_precision = "no"`. CUDA may use `fp16`
 after a smoke comparison confirms stable scores.
 
 The removed `[warmup]` and `[online]` sections raise a configuration error.
+
+## `[collection]`
+
+This section is optional. `type = "episodic_outcomes"` enables online state
+discovery and terminal-outcome evidence.
+
+| Field | Default | Meaning |
+|---|---:|---|
+| `iterations` | `2` | collect/replay-update cycles |
+| `episodes_per_instance` | `4` | stochastic episodes from each initial state |
+| `max_instances` | all | cap on training initial states |
+| `max_decisions` | `32` | episode decision horizon |
+| `inference_batch_size` | `64` | per-action outcome questions per forward batch |
+| `sampling_temperature` | `1.0` | temperature over predicted action success values |
+| `epsilon` | `0.10` | uniform exploration mass over legal actions |
+
+`epsilon` changes state exploration. RLCD `group_size` and `sigma` explore
+probability reports for already observed questions; they do not discover states.
 
 ## `[data]`
 

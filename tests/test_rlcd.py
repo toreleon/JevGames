@@ -70,6 +70,10 @@ class RLCDTests(unittest.TestCase):
         self.assertAlmostEqual(ece, 0.3)
         self.assertEqual(rows[0]["count"], 2)
 
+    def test_soft_target_probability_is_calibrated_to_its_mass(self) -> None:
+        ece, _rows = _reliability_bins([0.75], [0.75], 10)
+        self.assertEqual(ece, 0.0)
+
     def test_selective_accuracy_ranks_entropy_confidence(self) -> None:
         rows = _selective_accuracy([0.1, 0.9, 0.8, 0.2], [0.0, 1.0, 1.0, 0.0])
         self.assertEqual(rows[-1]["coverage"], 0.5)
@@ -84,6 +88,20 @@ class RLCDTests(unittest.TestCase):
         mask = torch.ones_like(probabilities, dtype=torch.bool)
         scores = composite_proper_score(probabilities, targets, mask, torch.tensor([True, True]))
         self.assertGreater(float(scores[0]), float(scores[1]))
+
+    @unittest.skipUnless(importlib.util.find_spec("torch"), "PyTorch is an optional test dependency")
+    def test_log_score_remains_proper_for_rare_events(self) -> None:
+        import torch
+
+        target = torch.tensor([[1e-5, 1.0 - 1e-5]], dtype=torch.float64)
+        truthful = composite_proper_score(target, target, torch.ones_like(target, dtype=torch.bool), torch.tensor([False]))
+        rounded = composite_proper_score(
+            torch.tensor([[0.0, 1.0]], dtype=torch.float64),
+            target,
+            torch.ones_like(target, dtype=torch.bool),
+            torch.tensor([False]),
+        )
+        self.assertGreater(float(truthful), float(rounded))
 
 
 if __name__ == "__main__":

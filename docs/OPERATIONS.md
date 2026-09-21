@@ -40,6 +40,10 @@ episodes, but proper-score and sampling memory do grow with it.
 Measure a 100-level run on the target hardware before projecting the 2,000-level
 pilot. Old SFT/GRPO timings are not valid estimates for the new architecture.
 
+For causal adapters such as Qwen, one question with `K` options requires `K`
+candidate sequences. Collection asks one binary question per legal action, so
+its backbone work grows with legal-action count and episode length.
+
 ## Tuning order
 
 1. validate scores and gradients with the smoke config;
@@ -54,7 +58,7 @@ Group size and sigma change the estimator, not just throughput.
 ## Monitoring
 
 Monitor RLCD proper score, loss, sigma, epoch time, held-out NLL/Brier/ECE,
-fitted temperatures, selective accuracy, environment solve rate, GPU
+collector solve/outcome mix, fitted temperatures, selective accuracy, environment solve rate, GPU
 utilization, memory, temperature, and disk. A training proper-score increase is
 insufficient without held-out calibration.
 

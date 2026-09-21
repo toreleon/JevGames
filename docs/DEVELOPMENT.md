@@ -16,7 +16,7 @@ Run before handing off changes:
 ```bash
 uv run --extra laya --extra train python -m unittest discover -s tests -v
 uv run --extra laya --extra train python -m py_compile \
-  jevgames/*.py jevgames/evidence/*.py jevgames/models/*.py \
+  jevgames/*.py jevgames/collectors/*.py jevgames/evidence/*.py jevgames/models/*.py \
   jevgames/tasks/*.py jevgames/strategies/*.py \
   sokoban_laya/*.py scripts/*.py
 uv lock --check
@@ -37,6 +37,7 @@ Compilation and unit tests do not exercise MPS model forward/backward behavior.
 - optimization algorithms belong in `jevgames/strategies` or an external adapter;
 - environment semantics belong in `jevgames/tasks` or an external adapter;
 - dataset formats and labeling provenance belong in `jevgames/evidence`;
+- environment sampling and online labeling belong in `jevgames/collectors`;
 - Sokoban engine and generation code belong in `sokoban_laya`;
 - reproducible experiment parameters belong in `configs`;
 - one-off analysis should become a script only when it is reproducible and
@@ -60,7 +61,7 @@ the plugin factory.
 
 ## Adding report fields
 
-Additive fields may remain under schema version 3. Breaking changes require:
+Additive fields may remain under schema version 4. Breaking changes require:
 
 - incrementing `schema_version`;
 - documenting old and new meanings;

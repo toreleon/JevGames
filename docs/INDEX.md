@@ -6,7 +6,7 @@ Sokoban are built-in integrations rather than core assumptions.
 ## Start here
 
 1. [Getting started](GETTING_STARTED.md) — install, generate data, and run RLCD.
-2. [Architecture](ARCHITECTURE.md) — model, task, evidence, and strategy boundaries.
+2. [Architecture](ARCHITECTURE.md) — model, task, evidence, collector, and strategy boundaries.
 3. [RLCD training](TRAINING.md) — evidence, exploration, scoring, and updates.
 4. [Configuration](CONFIGURATION.md) — supported TOML fields.
 5. [Benchmarking](BENCHMARKING.md) — calibration and environment protocols.

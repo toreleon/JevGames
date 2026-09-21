@@ -1,7 +1,7 @@
 # Plugin API
 
-Jev Games has independent model, task, evidence, and training-strategy
-registries. A TOML experiment selects one of each.
+Jev Games has independent model, task, evidence, collector, and
+training-strategy registries.
 
 ## Model adapters
 
@@ -81,8 +81,17 @@ def create_my_strategy(config):
 ```
 
 A strategy operates through the model contract and must not import a particular
-task. Task-specific data collection should happen before the evidence reaches
-the strategy.
+task.
+
+## Evidence collectors
+
+Implement `EvidenceCollector.collect` to interact with a task and return
+`CollectedEvidence`. A collector owns state exploration and labeling policy;
+the training strategy continues to own probability-distribution optimization.
+
+The built-in `episodic_outcomes` collector requires per-action `noul` questions
+from `DecisionTask.outcome_queries`. It labels selected actions with terminal
+episode outcomes and records its sampling temperature and epsilon.
 
 ## Registration and discovery
 
@@ -105,4 +114,4 @@ lookup.
 - forced decisions are excluded from training;
 - a proper score rewards honest probability distributions in expectation;
 - validation and test evidence never enters `TrainingStrategy.train`;
-- checkpoint metadata names the selected model, task, evidence, and strategy.
+- checkpoint metadata names the selected model, task, evidence, collector, and strategy.

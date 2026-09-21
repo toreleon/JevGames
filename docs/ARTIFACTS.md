@@ -5,7 +5,7 @@
 ```text
 runs/<experiment>/
 ├── checkpoint/             # model-native files
-└── report.json             # framework report, schema version 3
+└── report.json             # framework report, schema version 4
 ```
 
 The Laya checkpoint contains `model.safetensors`, `rl_agent_config.json`, an
@@ -17,11 +17,11 @@ Top-level fields:
 
 | Field | Meaning |
 |---|---|
-| `schema_version` | currently `3` |
+| `schema_version` | currently `4` |
 | `name` | experiment identity |
 | `config` | fully parsed experiment config |
-| `plugins` | selected model, task, evidence, and strategy plugins |
-| `stats` | setup, RLCD epoch, and post-training calibration records |
+| `plugins` | selected model, task, evidence, collector, and strategy plugins |
+| `stats` | setup, RLCD, collection, and post-training calibration records |
 | `benchmarks` | validation/test calibration and environment results |
 | `checkpoint` | exported model path |
 | `elapsed_seconds` | complete experiment duration |
@@ -43,6 +43,11 @@ Each split has this shape:
       "solved": 4,
       "solve_rate": 0.2,
       "outcomes": {"solved": 4, "static_deadlock": 16}
+    },
+    "outcome_calibration": {
+      "instances": 80,
+      "brier_score": 0.21,
+      "expected_calibration_error": 0.06
     }
   }
 }
@@ -68,4 +73,6 @@ filename alone.
 
 Schema version 1 reports contain `supervised_warmup` and `online_grpo` stats.
 Schema version 2 introduced RLCD but had choice-only contracts and no dedicated
-post-training calibration stage. Consumers must branch on `schema_version`.
+post-training calibration stage. Schema version 3 added typed questions and
+temperature fitting but no online collector. Consumers must branch on
+`schema_version`.

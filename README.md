@@ -18,12 +18,12 @@ Neither is embedded in the framework core.
 ```text
                          TOML experiment
                                 │
-             ┌─────────────┬────┴────────┬──────────────┐
-             │             │             │              │
-        model.type     task.type     data.type    training.type
-        Laya adapter  Sokoban env   solver data       RLCD
-             │             │             │              │
-             └─────────────┴──────┬──────┴──────────────┘
+          ┌──────────┬─────────┬──┴───────┬──────────┬───────────┐
+          │          │         │          │          │           │
+      model.type task.type data.type collection.type training.type
+      Laya/Qwen  Sokoban   solver    episodic         RLCD
+          │          │         │      outcomes        │
+          └──────────┴─────────┴──────┬───────────────┘
                                 │
                   typed probability distributions
                                 │
@@ -34,13 +34,15 @@ Neither is embedded in the framework core.
              calibration benchmark + environment benchmark
 ```
 
-The four plugin contracts are independent:
+The five plugin contracts are independent:
 
 - a model adapter encodes typed questions, produces logits and masks, fits its
   native calibration parameters, and preserves its checkpoint format;
 - a task adapter exposes typed environment state and transitions;
 - an evidence provider converts a dataset into one-hot or soft calibration
   targets for a compatible task;
+- an environment collector samples legal actions, discovers new states, and
+  turns terminal outcomes into additional calibration evidence;
 - a training strategy owns sampling, optimization, device orchestration, and
   training statistics.
 
@@ -49,9 +51,9 @@ The core represents three decision primitives independently of any model:
 calibrated false/true probability. The composite proper-scoring reward also
 lives in the framework core rather than the Laya adapter.
 
-Environment rewards do not enter the built-in RLCD objective. An evidence
-provider may use a solver or repeated environment outcomes to construct
-one-hot or soft target distributions before training.
+Environment rewards do not replace the RLCD objective. Episodic collection
+labels selected per-action `noul` questions with terminal outcomes, adds those
+rows to replay evidence, and runs another RLCD update.
 
 ## Quick start
 
@@ -75,8 +77,9 @@ uv run jev-games plugins
 
 ```json
 {
+  "collectors": ["episodic_outcomes"],
   "evidence": ["sokoban_solver"],
-  "models": ["laya"],
+  "models": ["laya", "qwen_decision"],
   "strategies": ["rlcd"],
   "tasks": ["sokoban_push"]
 }
@@ -130,6 +133,7 @@ type = "sokoban_push"
 [training]
 type = "rlcd"
 epochs = 4
+update_epochs = 1
 batch_size = 16
 gradient_accumulation = 2
 group_size = 4
@@ -137,6 +141,15 @@ sigma_start = 0.5
 sigma_end = 0.2
 learning_rate = 0.0003
 mixed_precision = "no"
+
+[collection]
+type = "episodic_outcomes"
+iterations = 2
+episodes_per_instance = 4
+max_instances = 2000
+max_decisions = 32
+sampling_temperature = 1.0
+epsilon = 0.1
 
 [data]
 type = "sokoban_solver"
@@ -156,6 +169,17 @@ The old `[warmup]` and `[online]` sections are rejected. This prevents a stale
 SFT-plus-environment-GRPO experiment from silently running under the RLCD
 architecture.
 
+Use Qwen3-0.6B through the causal decision adapter:
+
+```bash
+uv sync --extra qwen --extra train --python 3.12
+uv run jev-games run configs/sokoban_qwen_smoke.toml
+```
+
+The adapter scores every candidate from the final token of a sequence that has
+already seen the complete state and option set. It does not interpret ordinary
+next-token generation probabilities as action probabilities.
+
 ## What is measured
 
 Every held-out split reports two independent views:
@@ -163,12 +187,19 @@ Every held-out split reports two independent views:
 - calibration: accuracy, soft accuracy, negative log-likelihood, Brier score,
   ECE, top probability, normalized-entropy confidence, ordinal MAE, selective
   accuracy, proper score, and reliability bins;
+- outcome calibration: the same probability metrics on fresh terminal-outcome
+  episodes for per-action `noul` questions;
 - environment: solve rate, terminal outcomes, push decisions, and primitive
   movement cost.
 
 A higher solve rate does not prove calibrated probabilities, and low expected
 calibration error does not prove long-horizon planning. Both contracts must be
 reported.
+
+Legal-action masks enforce environment rules. Sokoban keeps reachable pushes
+that lead to deadlocks or poor positions, so the mask does not choose for the
+model. Temperature and epsilon in the episodic collector control state-space
+exploration; RLCD sigma controls distribution exploration on observed states.
 
 ## RLCD implementation scope
 
@@ -199,8 +230,10 @@ jevgames/
   experiment.py            End-to-end orchestration
   engine.py                Evidence encoding and evaluation
   scoring.py               Model-independent proper scoring rules
+  collectors/              Environment evidence collection plugins
   evidence/                Dataset/evidence provider plugins
   models/laya.py           Laya adapter
+  models/qwen.py           Causal Qwen decision adapter
   tasks/sokoban.py         Sokoban environment adapter
   strategies/rlcd.py       RLCD optimization strategy
 sokoban_laya/              Sokoban and legacy experiment implementation

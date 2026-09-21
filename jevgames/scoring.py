@@ -11,7 +11,6 @@ class CompositeScoreConfig:
     log_weight: float = 1.0
     spherical_weight: float = 0.5
     ranked_probability_weight: float = 1.0
-    log_floor: float = -9.21
 
 
 def composite_proper_score(
@@ -28,8 +27,11 @@ def composite_proper_score(
     an optional leading group dimension.
     """
 
-    masked = probabilities * option_mask
-    log_probabilities = masked.clamp_min(1e-12).log().clamp_min(config.log_floor)
+    import torch
+
+    masked = (probabilities * option_mask).float()
+    targets = targets.float()
+    log_probabilities = masked.clamp_min(torch.finfo(masked.dtype).tiny).log()
     log_score = (targets * log_probabilities).sum(-1)
     spherical = (targets * masked).sum(-1) / masked.norm(dim=-1).clamp_min(1e-9)
     score = config.log_weight * log_score + config.spherical_weight * spherical

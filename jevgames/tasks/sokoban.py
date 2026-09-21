@@ -5,7 +5,14 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Hashable, Mapping
 
-from jevgames.contracts import DecisionKind, DecisionOption, DecisionQuestion, DecisionTask, TaskTransition
+from jevgames.contracts import (
+    ActionOutcomeQuery,
+    DecisionKind,
+    DecisionOption,
+    DecisionQuestion,
+    DecisionTask,
+    TaskTransition,
+)
 from jevgames.registry import register_task
 from sokoban_laya.core import Board
 from sokoban_laya.laya_policy import BOARD_LEGEND
@@ -46,6 +53,28 @@ class SokobanPushTask(DecisionTask):
     def question(self, state: Board) -> DecisionQuestion:
         options = tuple(DecisionOption(macro.label, macro.description) for macro in legal_push_macros(state))
         return DecisionQuestion("push", DecisionKind.CHOICE, self.instruction, options)
+
+    def outcome_queries(self, state: Board) -> tuple[ActionOutcomeQuery, ...]:
+        outcomes = (
+            DecisionOption("false", "the episode does not solve the level before its decision limit"),
+            DecisionOption("true", "the episode solves the level before its decision limit"),
+        )
+        return tuple(
+            ActionOutcomeQuery(
+                macro.label,
+                DecisionQuestion(
+                    f"push_outcome:{macro.label}",
+                    DecisionKind.NOUL,
+                    (
+                        f"If the controller now performs this action: {macro.description}. "
+                        "Under the stated continuation policy, will the episode solve the level "
+                        "before its decision limit?"
+                    ),
+                    outcomes,
+                ),
+            )
+            for macro in legal_push_macros(state)
+        )
 
     def transition(self, state: Board, option_key: str) -> TaskTransition:
         macros = {macro.label: macro for macro in legal_push_macros(state)}

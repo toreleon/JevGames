@@ -40,6 +40,18 @@ class DecisionQuestion:
 
 
 @dataclass(frozen=True, slots=True)
+class ActionOutcomeQuery:
+    """A binary outcome question associated with one executable action."""
+
+    action_key: str
+    question: DecisionQuestion
+
+    def __post_init__(self) -> None:
+        if self.question.kind is not DecisionKind.NOUL:
+            raise ValueError("action outcome queries must use noul questions")
+
+
+@dataclass(frozen=True, slots=True)
 class CalibrationDecision:
     """One typed decision and its observed target distribution.
 
@@ -113,6 +125,11 @@ class DecisionTask(ABC):
 
     @abstractmethod
     def question(self, state: Any) -> DecisionQuestion: ...
+
+    def outcome_queries(self, state: Any) -> tuple[ActionOutcomeQuery, ...]:
+        """Return per-action terminal-outcome questions when the task supports them."""
+
+        return ()
 
     @abstractmethod
     def transition(self, state: Any, option_key: str) -> TaskTransition: ...
@@ -208,4 +225,29 @@ class TrainingStrategy(ABC):
         items: Sequence[dict[str, Any]],
         output_dir: str | Path,
         seed: int,
+        stage: str = "initial",
     ) -> list[dict[str, Any]]: ...
+
+
+@dataclass(frozen=True, slots=True)
+class CollectedEvidence:
+    decisions: tuple[CalibrationDecision, ...]
+    stats: Mapping[str, Any]
+
+
+class EvidenceCollector(ABC):
+    """Collect labeled decision evidence by interacting with an environment."""
+
+    name: str
+    iterations: int
+    max_instances: int | None
+
+    @abstractmethod
+    def collect(
+        self,
+        adapter: DecisionModelAdapter,
+        task: DecisionTask,
+        initial_states: Sequence[Any],
+        seed: int,
+        iteration: int,
+    ) -> CollectedEvidence: ...

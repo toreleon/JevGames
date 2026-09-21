@@ -90,6 +90,10 @@ distribution equals the true outcome distribution. This is the defining
 objective; no cross-entropy imitation term or game solve reward is mixed into
 the built-in strategy.
 
+The logarithmic term is not clipped at an arbitrary reward floor. It clamps
+only to the smallest positive float required to evaluate `log(0)` safely;
+clipping the score itself can break strict propriety for rare outcomes.
+
 ## Group-relative baseline
 
 For each evidence item, sampled rewards are normalized within its own group:
@@ -114,6 +118,32 @@ L_RLCD = -mean(A × log π_z(z_sample))
 
 Accelerate owns device placement, mixed precision, accumulation, synchronized
 backward, and gradient clipping. AdamW performs the update.
+
+## State exploration and online evidence
+
+RLCD logit noise explores probability reports for a known decision. It does
+not visit a new environment state. When `[collection]` is enabled, Jev Games
+adds a separate loop:
+
+```text
+current calibrated policy
+  → enumerate executable actions
+  → ask one noul outcome question per action
+  → sample with temperature + epsilon
+  → execute the selected action
+  → label selected decisions with terminal episode success
+  → replay offline and collected evidence through RLCD
+```
+
+The outcome event is explicitly conditional on the collector's current
+continuation policy and decision horizon. A failed episode is evidence about
+that policy, not proof that the first action can never participate in a
+solution. Each update replays offline evidence plus the latest collection;
+older on-policy outcomes are not mixed across policy versions.
+
+Legal-action masking removes impossible transitions. It does not remove legal
+deadlocks, cycles, or strategically weak pushes. Epsilon controls how often the
+collector tries low-scored legal actions.
 
 ## Post-training calibration
 

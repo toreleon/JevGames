@@ -35,6 +35,8 @@ class ExperimentConfig:
     training: dict[str, Any]
     evidence_type: str
     evidence: dict[str, Any]
+    collector_type: str | None
+    collector: dict[str, Any]
     train_dataset: str
     calibration_dataset: str | None = None
     validation_dataset: str | None = None
@@ -59,6 +61,7 @@ def load_experiment_config(path: str | Path) -> ExperimentConfig:
     model = raw.get("model", {})
     task = raw.get("task", {})
     training = raw.get("training", {})
+    collection = raw.get("collection", {})
     data = raw.get("data", {})
     if "type" not in model or "type" not in task or "type" not in training or "type" not in data:
         raise ValueError("config requires model.type, task.type, training.type, and data.type")
@@ -80,6 +83,8 @@ def load_experiment_config(path: str | Path) -> ExperimentConfig:
             for key, value in data.items()
             if key not in {"type", "train", "calibration", "validation", "test", "manifest"}
         },
+        collector_type=str(collection["type"]) if "type" in collection else None,
+        collector={key: value for key, value in collection.items() if key != "type"},
         train_dataset=str(data["train"]),
         calibration_dataset=data.get("calibration"),
         validation_dataset=data.get("validation"),

@@ -80,8 +80,12 @@ def _selective_accuracy(
 ) -> list[dict[str, Any]]:
     ranked = sorted(range(len(confidences)), key=confidences.__getitem__, reverse=True)
     rows = []
+    seen_counts = set()
     for coverage in coverages:
         selected_count = max(1, math.ceil(len(ranked) * coverage))
+        if selected_count in seen_counts:
+            continue
+        seen_counts.add(selected_count)
         selected = ranked[:selected_count]
         rows.append({
             "coverage": round(selected_count / max(1, len(ranked)), 6),
@@ -144,7 +148,7 @@ def evaluate_calibration(
             if bool(ordinal[row].item()):
                 levels = torch.arange(valid, device=probability.device, dtype=probability.dtype)
                 ordinal_errors.append(float(abs((probability * levels).sum() - (target * levels).sum()).item()))
-    ece, reliability = _reliability_bins(top_probabilities, correctness, config.calibration_bins)
+    ece, reliability = _reliability_bins(top_probabilities, soft_correctness, config.calibration_bins)
     return {
         "instances": len(selected),
         "accuracy": round(fmean(correctness), 6),
@@ -156,7 +160,7 @@ def evaluate_calibration(
         "mean_entropy_confidence": round(fmean(entropy_confidences), 6),
         "mean_proper_score": round(fmean(proper_scores), 6),
         "score_mean_absolute_error": round(fmean(ordinal_errors), 6) if ordinal_errors else None,
-        "selective_accuracy": _selective_accuracy(entropy_confidences, correctness),
+        "selective_accuracy": _selective_accuracy(entropy_confidences, soft_correctness),
         "reliability_bins": reliability,
     }
 
@@ -187,7 +191,8 @@ def evaluate_environment(
     adapter.model.eval()
     for _round in range(config.max_decisions):
         selections: dict[int, DecisionOption] = {}
-        requests = []
+        choice_requests = []
+        outcome_requests = []
         for index, episode in enumerate(live):
             if episode.reason is not None:
                 continue
@@ -199,6 +204,21 @@ def evaluate_environment(
                 episode.reason = "repeat"
                 continue
             episode.seen.add(key)
+            outcome_queries = task.outcome_queries(episode.state)
+            if outcome_queries:
+                if len(outcome_queries) == 1:
+                    selected = outcome_queries[0]
+                    selections[index] = DecisionOption(selected.action_key, selected.question.instruction)
+                else:
+                    observation = task.observation(episode.state)
+                    for query in outcome_queries:
+                        outcome_requests.append((
+                            index,
+                            query.action_key,
+                            query.question,
+                            adapter.encode(observation, query.question),
+                        ))
+                continue
             question = task.question(episode.state)
             options = question.options
             if not options:
@@ -206,13 +226,13 @@ def evaluate_environment(
             elif len(options) == 1:
                 selections[index] = options[0]
             else:
-                requests.append((
+                choice_requests.append((
                     index,
                     options,
                     adapter.encode(task.observation(episode.state), question),
                 ))
-        for offset in range(0, len(requests), config.batch_size):
-            chunk = requests[offset : offset + config.batch_size]
+        for offset in range(0, len(choice_requests), config.batch_size):
+            chunk = choice_requests[offset : offset + config.batch_size]
             batch = _to_device(adapter.collate([request[2] for request in chunk]), adapter.device)
             with torch.no_grad():
                 logits = adapter.logits(adapter.model, batch)
@@ -220,6 +240,19 @@ def evaluate_environment(
                 actions = logits.masked_fill(~mask, -1e4).argmax(dim=-1)
             for row, (index, options, _item) in enumerate(chunk):
                 selections[index] = options[int(actions[row].cpu())]
+        outcome_scores: dict[int, list[tuple[str, Any, float]]] = {}
+        for offset in range(0, len(outcome_requests), config.batch_size):
+            chunk = outcome_requests[offset : offset + config.batch_size]
+            batch = _to_device(adapter.collate([request[3] for request in chunk]), adapter.device)
+            with torch.no_grad():
+                logits = adapter.logits(adapter.model, batch)
+                mask = adapter.action_mask(batch).bool()
+                probabilities = torch.softmax(logits.masked_fill(~mask, -1e4), dim=-1)
+            for row, (index, action_key, question, _item) in enumerate(chunk):
+                outcome_scores.setdefault(index, []).append((action_key, question, float(probabilities[row, 1].cpu())))
+        for index, candidates in outcome_scores.items():
+            action_key, question, _score = max(candidates, key=lambda item: item[2])
+            selections[index] = DecisionOption(action_key, question.instruction)
         if not selections:
             break
         for index, option in selections.items():

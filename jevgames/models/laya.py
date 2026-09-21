@@ -6,9 +6,9 @@ from pathlib import Path
 from typing import Any, Mapping, Sequence
 
 from jevgames.contracts import DecisionKind, DecisionModelAdapter, DecisionQuestion
+from jevgames.device import resolve_torch_device
 from jevgames.registry import register_model
 from sokoban_laya.checkpoint import load_checkpoint, save_checkpoint
-from sokoban_laya.device import resolve_device
 from sokoban_laya.training import _collate
 
 
@@ -31,7 +31,7 @@ class LayaAdapter(DecisionModelAdapter):
 
     def __init__(self, config: dict[str, Any]) -> None:
         self.source = str(config.get("source", "convaiinnovations/laya"))
-        self.device = resolve_device(str(config.get("device", "auto")))
+        self.device = resolve_torch_device(str(config.get("device", "auto")))
         self.model, self.tokenizer, self.model_cfg = load_checkpoint(self.source, self.device)
         self.model.eval()
         self._freeze_backbone = bool(config.get("freeze_backbone", True))

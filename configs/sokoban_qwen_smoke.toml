@@ -1,12 +1,13 @@
 [experiment]
-name = "laya-sokoban-smoke"
-output_dir = "runs/laya-sokoban-smoke"
+name = "qwen-sokoban-rlcd-smoke"
+output_dir = "runs/qwen-sokoban-rlcd-smoke"
 seed = 11
 
 [model]
-type = "laya"
-source = "convaiinnovations/laya"
+type = "qwen_decision"
+source = "Qwen/Qwen3-0.6B-Base"
 device = "auto"
+max_length = 256
 freeze_backbone = true
 
 [task]
@@ -24,11 +25,11 @@ manifest = "data/pilot100/manifest.json"
 type = "rlcd"
 epochs = 1
 update_epochs = 1
-batch_size = 4
+batch_size = 2
 gradient_accumulation = 2
 group_size = 4
 sigma_start = 0.5
-sigma_end = 0.5
+sigma_end = 0.3
 learning_rate = 0.0003
 mixed_precision = "no"
 
@@ -38,12 +39,12 @@ iterations = 1
 episodes_per_instance = 2
 max_instances = 4
 max_decisions = 12
-inference_batch_size = 32
+inference_batch_size = 16
 sampling_temperature = 1.0
 epsilon = 0.2
 
 [benchmark]
 max_decisions = 32
-batch_size = 32
+batch_size = 8
 max_instances = 20
 calibration_bins = 10

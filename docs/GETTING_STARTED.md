@@ -14,6 +14,7 @@ Extras:
 |---|---|
 | `laya` | Laya, PyTorch, Transformers, Safetensors, Hub client |
 | `train` | Accelerate and TorchRL compatibility dependencies |
+| `qwen` | Qwen decision adapter, PyTorch, Transformers, Safetensors |
 
 Do not install training packages into the system Python.
 
@@ -53,9 +54,16 @@ uv run jev-games run configs/sokoban_smoke.toml
 ```
 
 The config downloads the public Laya checkpoint if needed. Its evidence plugin
-converts solver trajectories into push decisions, trains one RLCD epoch, fits
-Laya temperature parameters, saves a native checkpoint, and runs held-out
-calibration plus environment benchmarks.
+converts solver trajectories into push decisions, trains one RLCD epoch,
+collects stochastic environment outcomes, performs a replay RLCD update, fits
+Laya temperature parameters, and runs held-out benchmarks.
+
+Run the bounded Qwen3-0.6B version with:
+
+```bash
+uv sync --extra qwen --extra train --python 3.12
+uv run jev-games run configs/sokoban_qwen_smoke.toml
+```
 
 The smoke run verifies mechanics. Its tiny training file cannot establish
 generalization.
@@ -74,6 +82,6 @@ starting the longer run.
 
 ## Read the report
 
-`report.json` records schema version 3, full parsed config, plugin identities,
+`report.json` records schema version 4, full parsed config, plugin identities,
 RLCD epoch statistics, checkpoint path, and separate calibration/environment
 metrics for validation and test.

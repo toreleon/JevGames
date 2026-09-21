@@ -8,6 +8,7 @@ keeping RLCD's decision-specific sampling explicit.
 | Tensor/model runtime | PyTorch |
 | Device placement, mixed precision, accumulation, distributed preparation | Hugging Face Accelerate |
 | Laya tokenizer and encoder implementation | Hugging Face Transformers through Laya |
+| Qwen causal backbone | Hugging Face Transformers `AutoModel` |
 | Typed decisions and composite proper scores | Jev Games core |
 | RLCD sampling and score-function objective | Jev Games strategy plugin |
 | Task state and transition semantics | Task plugin |
@@ -24,6 +25,11 @@ without assuming token generation or a supervised scalar loss.
 The generic contract carries `choice`, `score`, and `noul` semantics. The core
 applies ranked probability score to ordered questions, while model adapters
 remain responsible for native encoding and temperature persistence.
+
+Qwen cannot reuse Laya's marker-before-state layout because causal tokens
+cannot attend to later state tokens. The Qwen adapter repeats a complete
+state/question/option-set sequence for every candidate and scores its final
+token. This is correct for causal visibility but slower as option count grows.
 
 ## Why not Transformers Trainer
 

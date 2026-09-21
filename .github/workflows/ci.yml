@@ -35,7 +35,7 @@ jobs:
       - name: Compile source
         run: >-
           uv run --python ${{ matrix.python-version }} python -m py_compile
-          jevgames/*.py jevgames/evidence/*.py jevgames/models/*.py
+          jevgames/*.py jevgames/collectors/*.py jevgames/evidence/*.py jevgames/models/*.py
           jevgames/strategies/*.py jevgames/tasks/*.py
           sokoban_laya/*.py scripts/*.py
 

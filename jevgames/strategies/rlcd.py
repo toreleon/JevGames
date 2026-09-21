@@ -17,6 +17,7 @@ from jevgames.scoring import composite_proper_score
 @dataclass(frozen=True, slots=True)
 class RLCDConfig:
     epochs: int = 4
+    update_epochs: int = 1
     batch_size: int = 8
     gradient_accumulation: int = 2
     group_size: int = 4
@@ -29,8 +30,8 @@ class RLCDConfig:
     logging_steps: int = 25
 
     def __post_init__(self) -> None:
-        if self.epochs < 0:
-            raise ValueError("rlcd.epochs must be non-negative")
+        if self.epochs < 0 or self.update_epochs < 0:
+            raise ValueError("RLCD epoch counts must be non-negative")
         if self.batch_size < 1 or self.gradient_accumulation < 1:
             raise ValueError("RLCD batch sizes must be positive")
         if self.group_size < 2:
@@ -94,10 +95,12 @@ class RLCDStrategy(TrainingStrategy):
         items: Sequence[dict[str, Any]],
         output_dir: str | Path,
         seed: int,
+        stage: str = "initial",
     ) -> list[dict[str, Any]]:
         if not items:
             raise ValueError("RLCD requires calibration evidence with at least two options")
-        if self.config.epochs == 0:
+        epoch_count = self.config.epochs if stage == "initial" else self.config.update_epochs
+        if epoch_count == 0:
             return []
 
         import torch
@@ -136,10 +139,14 @@ class RLCDStrategy(TrainingStrategy):
         stats: list[dict[str, Any]] = []
         global_step = 0
 
-        for epoch in range(self.config.epochs):
+        for epoch in range(epoch_count):
             epoch_started = time.perf_counter()
-            fraction = epoch / max(1, self.config.epochs - 1)
-            sigma = self.config.sigma_start + fraction * (self.config.sigma_end - self.config.sigma_start)
+            fraction = epoch / max(1, epoch_count - 1)
+            sigma = (
+                self.config.sigma_start + fraction * (self.config.sigma_end - self.config.sigma_start)
+                if stage == "initial"
+                else self.config.sigma_end
+            )
             loss_total = 0.0
             reward_total = 0.0
             advantage_total = 0.0
@@ -201,6 +208,7 @@ class RLCDStrategy(TrainingStrategy):
                 ):
                     print(json.dumps({
                         "phase": "rlcd",
+                        "stage": stage,
                         "epoch": epoch + 1,
                         "step": global_step,
                         "sigma": round(sigma, 6),
@@ -210,6 +218,7 @@ class RLCDStrategy(TrainingStrategy):
 
             stat = {
                 "phase": "rlcd",
+                "stage": stage,
                 "framework": "accelerate",
                 "epoch": epoch + 1,
                 "examples": example_total,
@@ -226,9 +235,11 @@ class RLCDStrategy(TrainingStrategy):
 
         adapter.model = accelerator.unwrap_model(adapter.model)
         adapter.device = accelerator.device
+        adapter.model.eval()
         stats.append({
             "phase": "rlcd_summary",
-            "epochs": self.config.epochs,
+            "stage": stage,
+            "epochs": epoch_count,
             "examples": len(items),
             "sampled_distributions_per_example": self.config.group_size,
             "seconds": round(time.perf_counter() - started, 3),

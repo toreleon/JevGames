@@ -283,13 +283,19 @@ wheels = [
 
 [[package]]
 name = "jev-games"
-version = "0.3.0"
+version = "0.4.0"
 source = { editable = "." }
 
 [package.optional-dependencies]
 laya = [
     { name = "huggingface-hub" },
     { name = "laya" },
+    { name = "safetensors" },
+    { name = "torch" },
+    { name = "transformers" },
+]
+qwen = [
+    { name = "huggingface-hub" },
     { name = "safetensors" },
     { name = "torch" },
     { name = "transformers" },
@@ -303,13 +309,17 @@ train = [
 requires-dist = [
     { name = "accelerate", marker = "extra == 'train'", specifier = ">=1.14.0" },
     { name = "huggingface-hub", marker = "extra == 'laya'" },
+    { name = "huggingface-hub", marker = "extra == 'qwen'" },
     { name = "laya", marker = "extra == 'laya'", specifier = ">=0.3.4" },
     { name = "safetensors", marker = "extra == 'laya'", specifier = ">=0.4.0" },
+    { name = "safetensors", marker = "extra == 'qwen'", specifier = ">=0.4.0" },
     { name = "torch", marker = "extra == 'laya'", specifier = ">=2.14.0" },
+    { name = "torch", marker = "extra == 'qwen'", specifier = ">=2.14.0" },
     { name = "torchrl", marker = "extra == 'train'", specifier = ">=0.12.0" },
     { name = "transformers", marker = "extra == 'laya'", specifier = ">=4.48.0" },
+    { name = "transformers", marker = "extra == 'qwen'", specifier = ">=4.51.0" },
 ]
-provides-extras = ["laya", "train"]
+provides-extras = ["laya", "train", "qwen"]
 
 [[package]]
 name = "jinja2"

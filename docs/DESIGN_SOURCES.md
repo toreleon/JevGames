@@ -22,6 +22,8 @@ reproducible training algorithm.
 - zero-mean Gaussian logit exploration with group-relative REINFORCE;
 - normalized-entropy confidence and selective-accuracy reporting;
 - post-training temperature fitting on a dedicated held-out split;
+- invalid-action masking as a feasibility constraint, separated from episodic
+  exploration policy;
 - model-native checkpoint persistence.
 
 These concepts live outside the Laya adapter so another encoder, graph model,
@@ -39,6 +41,10 @@ trajectories. Jev Games currently reports confidence/coverage curves and
 preserves evidence IDs and steps, but it does not yet train a generic gate or
 TD targets. Those require explicit policy-cost and trajectory contracts rather
 than assumptions inside the Laya adapter.
+
+The `qwen_decision` adapter demonstrates that RLCD is not tied to Laya. It uses
+a causal-safe candidate scorer; it does not claim Qwen's ordinary next-token
+probabilities are calibrated action probabilities.
 
 Sokoban currently supplies one-hot successful-solver actions. That evidence
 does not equal empirical action success probability. An outcome evidence

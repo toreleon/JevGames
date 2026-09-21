@@ -58,7 +58,18 @@ Outcome-calibrated Sokoban evidence should:
 6. prevent states or layouts from crossing data splits.
 
 This evidence can enter the same RLCD strategy as soft targets. The framework
-does not need an episode-reward GRPO phase to consume it.
+also collects policy-conditional `noul` outcome evidence online, then replays
+both sources through RLCD.
+
+## Legal actions and exploration
+
+`legal_push_macros` includes every box push the player can reach and execute.
+It does not filter static deadlocks, cycles, or strategically bad pushes. The
+mask therefore enforces game rules rather than supplying an oracle policy.
+
+The episodic collector controls exploration within that feasible set using a
+temperature over predicted success plus uniform epsilon mass. Logit noise in
+RLCD explores probability reports; episodic sampling explores new states.
 
 ## Environment evaluation
 

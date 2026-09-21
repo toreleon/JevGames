@@ -23,6 +23,7 @@ manifest = "data/pilot/manifest.json"
 [training]
 type = "rlcd"
 epochs = 4
+update_epochs = 1
 batch_size = 16
 gradient_accumulation = 2
 group_size = 4
@@ -30,6 +31,16 @@ sigma_start = 0.5
 sigma_end = 0.2
 learning_rate = 0.0003
 mixed_precision = "no"
+
+[collection]
+type = "episodic_outcomes"
+iterations = 2
+episodes_per_instance = 4
+max_instances = 2000
+max_decisions = 32
+inference_batch_size = 64
+sampling_temperature = 1.0
+epsilon = 0.1
 
 [benchmark]
 max_decisions = 32

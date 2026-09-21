@@ -10,8 +10,9 @@ from sokoban_laya.core import Board
 class JevGamesFrameworkTests(unittest.TestCase):
     def test_builtin_plugins_are_discoverable(self) -> None:
         self.assertEqual(available_plugins(), {
+            "collectors": ["episodic_outcomes"],
             "evidence": ["sokoban_solver"],
-            "models": ["laya"],
+            "models": ["laya", "qwen_decision"],
             "strategies": ["rlcd"],
             "tasks": ["sokoban_push"],
         })
@@ -24,6 +25,7 @@ class JevGamesFrameworkTests(unittest.TestCase):
         self.assertEqual(config.evidence_type, "sokoban_solver")
         self.assertEqual(config.train_dataset, "data/smoke_train.jsonl")
         self.assertEqual(config.calibration_dataset, "data/pilot100/calibration.jsonl")
+        self.assertEqual(config.collector_type, "episodic_outcomes")
         self.assertEqual(config.training["learning_rate"], 3e-4)
         self.assertEqual(config.training["gradient_accumulation"], 2)
         self.assertEqual(config.training["group_size"], 4)
@@ -33,6 +35,9 @@ class JevGamesFrameworkTests(unittest.TestCase):
         board = Board.from_ascii("#######\n#  .  #\n#  $  #\n# @   #\n#######")
         options = task.question(board).options
         self.assertGreaterEqual(len(options), 1)
+        outcome_queries = task.outcome_queries(board)
+        self.assertEqual({query.action_key for query in outcome_queries}, {option.key for option in options})
+        self.assertTrue(all(query.question.kind.value == "noul" for query in outcome_queries))
         outcome = task.transition(board, options[0].key)
         self.assertGreaterEqual(outcome.primitive_steps, 1)
 

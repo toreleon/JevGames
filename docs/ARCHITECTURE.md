@@ -16,10 +16,12 @@ ExperimentConfig
 │                     dataset to calibration targets
 ├── training.type ───> TrainingStrategy
 │                     sampling, optimization, metrics
+├── collection.type ─> EvidenceCollector
+│                     environment episodes to outcome evidence
 └── benchmark ───────> lifecycle and held-out evaluation
 ```
 
-The four registries are peers. A new model, task, evidence format, or training
+The five registries are peers. A new model, task, evidence format, collector, or training
 algorithm can be selected independently in TOML.
 
 ### Model adapter
@@ -60,6 +62,17 @@ The strategy never calls the Sokoban environment and does not consume shaped
 game reward. That boundary prevents solve reward from silently replacing the
 calibration objective.
 
+### Environment collector
+
+The episodic collector asks one binary outcome question per executable action,
+samples among legal actions with temperature and epsilon exploration, and
+labels every selected action with the episode's terminal success. Collected
+rows are replayed with offline evidence through the same RLCD strategy.
+
+The legal-action set defines feasibility. It does not remove legal deadlocks or
+other poor choices. The collector policy determines how broadly those choices
+and their descendant states are explored.
+
 ## Experiment lifecycle
 
 ```text
@@ -68,6 +81,8 @@ load TOML
   → load calibration evidence through the data plugin
   → encode decisions with the model adapter
   → optimize with RLCD
+  → collect stochastic environment outcomes
+  → replay offline + collected evidence through RLCD
   → fit native calibration parameters on data.calibration
   → save a native model checkpoint
   → evaluate held-out calibration evidence
