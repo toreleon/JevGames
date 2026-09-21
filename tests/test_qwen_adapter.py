@@ -36,6 +36,34 @@ class QwenAdapterTests(unittest.TestCase):
         self.assertGreater(float(model.scorer[-1].weight.grad.norm()), 0.0)
         self.assertGreater(float(model.backbone.embed_tokens.weight.grad.norm()), 0.0)
 
+    def test_noul_head_scores_both_outcomes_from_one_sequence(self) -> None:
+        import torch
+        from transformers import Qwen3Config, Qwen3Model
+
+        from jevgames.models.qwen import QwenDecisionModel
+
+        backbone = Qwen3Model(Qwen3Config(
+            vocab_size=128,
+            hidden_size=32,
+            intermediate_size=64,
+            num_hidden_layers=2,
+            num_attention_heads=4,
+            num_key_value_heads=2,
+            head_dim=8,
+            max_position_embeddings=64,
+        ))
+        model = QwenDecisionModel.build(backbone)
+        input_ids = torch.tensor([[1, 2, 3, 4], [1, 2, 8, 9]])
+        candidate_scores, noul_scores = model(
+            input_ids,
+            torch.ones_like(input_ids),
+            return_noul=True,
+        )
+        self.assertEqual(tuple(candidate_scores.shape), (2,))
+        self.assertEqual(tuple(noul_scores.shape), (2, 2))
+        noul_scores.sum().backward()
+        self.assertGreater(float(model.noul_scorer[-1].weight.grad.norm()), 0.0)
+
 
 if __name__ == "__main__":
     unittest.main()

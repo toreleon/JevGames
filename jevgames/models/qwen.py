@@ -30,8 +30,14 @@ class QwenDecisionModel:
                     torch.nn.GELU(),
                     torch.nn.Linear(head_size, 1),
                 )
+                self.noul_scorer = torch.nn.Sequential(
+                    torch.nn.LayerNorm(hidden_size),
+                    torch.nn.Linear(hidden_size, head_size),
+                    torch.nn.GELU(),
+                    torch.nn.Linear(head_size, 2),
+                )
 
-            def forward(self, input_ids: Any, attention_mask: Any):
+            def forward(self, input_ids: Any, attention_mask: Any, return_noul: bool = False):
                 hidden = self.backbone(
                     input_ids=input_ids,
                     attention_mask=attention_mask,
@@ -41,7 +47,10 @@ class QwenDecisionModel:
                 row = torch.arange(hidden.shape[0], device=hidden.device)
                 pooled = hidden[row, final_position]
                 pooled = pooled.to(self.scorer[0].weight.dtype)
-                return self.scorer(pooled).squeeze(-1).float()
+                candidate_scores = self.scorer(pooled).squeeze(-1).float()
+                if return_noul:
+                    return candidate_scores, self.noul_scorer(pooled).float()
+                return candidate_scores
 
         return _Model(backbone)
 
@@ -102,6 +111,9 @@ class QwenDecisionAdapter(DecisionModelAdapter):
             self.model = QwenDecisionModel.build(backbone)
             head_state = load_file(source_path / "decision_head.safetensors")
             self.model.scorer.load_state_dict(head_state, strict=True)
+            noul_head = source_path / "noul_head.safetensors"
+            if noul_head.exists():
+                self.model.noul_scorer.load_state_dict(load_file(noul_head), strict=True)
         else:
             self.temperatures = list(config.get("temperatures", [float(config.get("temperature", 1.0))] * 3))
             self.tokenizer = AutoTokenizer.from_pretrained(self.source)
@@ -159,8 +171,17 @@ class QwenDecisionAdapter(DecisionModelAdapter):
         original_side = self.tokenizer.truncation_side
         self.tokenizer.truncation_side = "left"
         try:
-            for option in question.options:
-                text = prefix + f"Candidate to score: {option.key}\nDecision score:"
+            if question.kind is DecisionKind.NOUL:
+                encoded_options = ((
+                    None,
+                    prefix + "Return calibrated false/true logits:\nBinary decision:",
+                ),)
+            else:
+                encoded_options = tuple(
+                    (option, prefix + f"Candidate to score: {option.key}\nDecision score:")
+                    for option in question.options
+                )
+            for _option, text in encoded_options:
                 candidate_ids.append(self.tokenizer(
                     text,
                     add_special_tokens=True,
@@ -180,6 +201,7 @@ class QwenDecisionAdapter(DecisionModelAdapter):
             "target": target,
             "ordinal": question.kind is DecisionKind.SCORE,
             "kind": tuple(DecisionKind).index(question.kind),
+            "noul": question.kind is DecisionKind.NOUL,
         }
 
     def collate(self, items: Sequence[dict[str, Any]]) -> dict[str, Any]:
@@ -188,12 +210,14 @@ class QwenDecisionAdapter(DecisionModelAdapter):
         flat_ids = []
         rows = []
         columns = []
-        option_count = max(len(item["candidate_ids"]) for item in items)
+        option_count = max(len(item["target"]) for item in items)
+        sequence_noul = []
         for row, item in enumerate(items):
             for column, ids in enumerate(item["candidate_ids"]):
                 rows.append(row)
                 columns.append(column)
                 flat_ids.append(ids)
+                sequence_noul.append(bool(item["noul"]))
         sequence_length = max(len(ids) for ids in flat_ids)
         input_ids = torch.full(
             (len(flat_ids), sequence_length),
@@ -207,7 +231,7 @@ class QwenDecisionAdapter(DecisionModelAdapter):
         option_mask = torch.zeros((len(items), option_count), dtype=torch.bool)
         target = torch.zeros((len(items), option_count), dtype=torch.float32)
         for row, item in enumerate(items):
-            count = len(item["candidate_ids"])
+            count = len(item["target"])
             option_mask[row, :count] = True
             target[row, :count] = torch.tensor(item["target"], dtype=torch.float32)
         return {
@@ -215,6 +239,7 @@ class QwenDecisionAdapter(DecisionModelAdapter):
             "attention_mask": attention_mask,
             "candidate_rows": torch.tensor(rows, dtype=torch.long),
             "candidate_columns": torch.tensor(columns, dtype=torch.long),
+            "sequence_noul": torch.tensor(sequence_noul, dtype=torch.bool),
             "option_mask": option_mask,
             "target": target,
             "ordinal": torch.tensor([bool(item["ordinal"]) for item in items]),
@@ -223,12 +248,30 @@ class QwenDecisionAdapter(DecisionModelAdapter):
         }
 
     def training_logits(self, active_model: Any, batch: Mapping[str, Any]):
-        scores = active_model(batch["input_ids"], batch["attention_mask"])
-        logits = scores.new_full((int(batch["batch_size"]), int(batch["option_mask"].shape[1])), -1e4)
-        return logits.index_put(
-            (batch["candidate_rows"], batch["candidate_columns"]),
-            scores,
+        import torch
+
+        scores, noul_scores = active_model(
+            batch["input_ids"],
+            batch["attention_mask"],
+            return_noul=True,
         )
+        logits = scores.new_full((int(batch["batch_size"]), int(batch["option_mask"].shape[1])), -1e4)
+        sequence_noul = batch["sequence_noul"]
+        candidate_indices = torch.where(~sequence_noul)[0]
+        if candidate_indices.numel():
+            logits = logits.index_put(
+                (
+                    batch["candidate_rows"][candidate_indices],
+                    batch["candidate_columns"][candidate_indices],
+                ),
+                scores[candidate_indices],
+            )
+        noul_indices = torch.where(sequence_noul)[0]
+        if noul_indices.numel():
+            rows = batch["candidate_rows"][noul_indices].repeat_interleave(2)
+            columns = torch.arange(2, device=rows.device).repeat(noul_indices.numel())
+            logits = logits.index_put((rows, columns), noul_scores[noul_indices].reshape(-1))
+        return logits
 
     def logits(self, active_model: Any, batch: Mapping[str, Any]):
         import torch
@@ -257,6 +300,9 @@ class QwenDecisionAdapter(DecisionModelAdapter):
         head_parameters = [
             parameter for parameter in self.model.scorer.parameters() if parameter.requires_grad
         ]
+        head_parameters.extend(
+            parameter for parameter in self.model.noul_scorer.parameters() if parameter.requires_grad
+        )
         groups = []
         if backbone_parameters:
             groups.append({"params": backbone_parameters, "lr": self.backbone_learning_rate})
@@ -323,6 +369,13 @@ class QwenDecisionAdapter(DecisionModelAdapter):
         save_file(
             {name: value.detach().half().contiguous().cpu() for name, value in model.scorer.state_dict().items()},
             output / "decision_head.safetensors",
+        )
+        save_file(
+            {
+                name: value.detach().half().contiguous().cpu()
+                for name, value in model.noul_scorer.state_dict().items()
+            },
+            output / "noul_head.safetensors",
         )
         (output / "qwen_decision_config.json").write_text(json.dumps({
             "base_model": self.base_model_source,
