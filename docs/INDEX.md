@@ -28,6 +28,7 @@ Sokoban are built-in integrations rather than core assumptions.
 - [Objective comparison results](OBJECTIVE_ABLATION_RESULTS.md) — all six runs.
 - [Advantage normalization diagnostic](ADVANTAGE_NORMALIZATION_DIAGNOSTIC.md).
 - [Pretrained Laya CHOICE experiment](LAYA_CHOICE_INFERENCE.md).
+- [Pretrained Laya CHOICE results](LAYA_CHOICE_INFERENCE_RESULTS.md) — native model vs random.
 
 The public contracts in `jevgames/contracts.py`, `config.py`, `registry.py`,
 and `engine.py` are the source of truth.

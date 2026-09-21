@@ -1,0 +1,5522 @@
+{
+  "summary": {
+    "config": {
+      "study": {
+        "output_dir": "runs/laya-choice-inference-20260922",
+        "presentations": [
+          "ascii",
+          "structured"
+        ],
+        "ordering_seeds": [
+          17,
+          29,
+          43
+        ],
+        "max_pushes": 16
+      },
+      "dataset": {
+        "seed": 2026092201,
+        "levels_per_stratum": 8,
+        "exclude_manifests": [
+          "data/pilot100/manifest.json",
+          "data/pilot/manifest.json",
+          "runs/sokoban-objective-ablation-20260921/data/manifest.json"
+        ]
+      },
+      "model": {
+        "source": "convaiinnovations/laya",
+        "revision": "1c5edc17a7acd8701df6fc341c0d179f1c62c982",
+        "device": "cuda"
+      }
+    },
+    "manifest": {
+      "levels": 32,
+      "strata": {
+        "tiny_1box": 8,
+        "tiny_2box": 8,
+        "easy_2box": 8,
+        "medium_3box": 8
+      },
+      "levels_sha256": "b1f16294006faf112d2f2c1336dc52caa841447687d6d9585774d306317adc6f",
+      "exclusion_manifest_hashes": {
+        "data/pilot100/manifest.json": "92dbefd0d641f3206a60cbf2a5e9f78bd13c6c85d564cad4a52fb5cad9fd30b2",
+        "data/pilot/manifest.json": "cc3e803c1d348b398ac498181d773dfc2f5b59225fcbbdb246b4c4ac8283e0e0",
+        "runs/sokoban-objective-ablation-20260921/data/manifest.json": "71d8ebcb1cfb1abb3e978d02c751505d72360978bfc8bd3ae27870fda06d7809"
+      },
+      "layout_ids": [
+        "33417f2d7bb4ec704dcd",
+        "023b2ceb4687052f815d",
+        "3c73223ce2384730b41f",
+        "bd69716474635bc84f78",
+        "10a8da24d67ab0063657",
+        "a25b14a16458f82e799f",
+        "ccdeacfa98fa7ff25594",
+        "5c7e519594ce70ecef48",
+        "d286c0a032e87454815b",
+        "5b490114f50fad0b726a",
+        "4848ede8d899263db46d",
+        "8890427cc0f424b6d791",
+        "1bdba0d3032486720be4",
+        "f591c5e0c2c1cdaab439",
+        "6966a368741a0d13ff1c",
+        "c81e3ddea37ce3c1ee4d",
+        "4cc3080fcd0d8c30a9ee",
+        "d3a51c8d0286949d63ff",
+        "7fe3d1434c8259185e2d",
+        "cea25616a1aad129bb3d",
+        "227ea6b05124c1e651b0",
+        "437f5dacd8337efe0e18",
+        "9bb652e16bb5baf82782",
+        "d1806ad7d8d5f4260077",
+        "97213449a9451ccf0da5",
+        "d55c1faaa2a014badf8f",
+        "27a346192b760ca9aade",
+        "2d740d65556e122dd331",
+        "9e77c4fce1e7d5c4f6e6",
+        "7f8b2b67bfd6eccdc1b5",
+        "5ae6db36edbfc9cf4a66",
+        "b4b2b2c870f73702b9d8"
+      ]
+    },
+    "trials": [
+      {
+        "method": "random",
+        "presentation": "ascii",
+        "ordering_seed": 17,
+        "solved": 2,
+        "solve_rate": 0.0625,
+        "outcomes": {
+          "static_deadlock": 28,
+          "solved": 2,
+          "no_action": 2
+        },
+        "seconds": 0.008227669000007154,
+        "model_calls": 0,
+        "median_model_ms": null,
+        "max_tokens": 0,
+        "by_difficulty": {
+          "easy_2box": {
+            "levels": 8,
+            "solved": 0
+          },
+          "medium_3box": {
+            "levels": 8,
+            "solved": 1
+          },
+          "tiny_1box": {
+            "levels": 8,
+            "solved": 1
+          },
+          "tiny_2box": {
+            "levels": 8,
+            "solved": 0
+          }
+        },
+        "peak_cuda_allocated_gib": 2.29140043258667
+      },
+      {
+        "method": "laya_pretrained",
+        "presentation": "ascii",
+        "ordering_seed": 17,
+        "solved": 3,
+        "solve_rate": 0.09375,
+        "outcomes": {
+          "solved": 3,
+          "static_deadlock": 26,
+          "no_action": 3
+        },
+        "seconds": 2.0161710180000227,
+        "model_calls": 97,
+        "median_model_ms": 17.212581999956456,
+        "max_tokens": 275,
+        "by_difficulty": {
+          "easy_2box": {
+            "levels": 8,
+            "solved": 0
+          },
+          "medium_3box": {
+            "levels": 8,
+            "solved": 0
+          },
+          "tiny_1box": {
+            "levels": 8,
+            "solved": 3
+          },
+          "tiny_2box": {
+            "levels": 8,
+            "solved": 0
+          }
+        },
+        "peak_cuda_allocated_gib": 2.29976749420166
+      },
+      {
+        "method": "random",
+        "presentation": "ascii",
+        "ordering_seed": 29,
+        "solved": 4,
+        "solve_rate": 0.125,
+        "outcomes": {
+          "static_deadlock": 26,
+          "solved": 4,
+          "no_action": 2
+        },
+        "seconds": 0.010142636999944443,
+        "model_calls": 0,
+        "median_model_ms": null,
+        "max_tokens": 0,
+        "by_difficulty": {
+          "easy_2box": {
+            "levels": 8,
+            "solved": 1
+          },
+          "medium_3box": {
+            "levels": 8,
+            "solved": 1
+          },
+          "tiny_1box": {
+            "levels": 8,
+            "solved": 1
+          },
+          "tiny_2box": {
+            "levels": 8,
+            "solved": 1
+          }
+        },
+        "peak_cuda_allocated_gib": 2.29976749420166
+      },
+      {
+        "method": "laya_pretrained",
+        "presentation": "ascii",
+        "ordering_seed": 29,
+        "solved": 2,
+        "solve_rate": 0.0625,
+        "outcomes": {
+          "static_deadlock": 24,
+          "solved": 2,
+          "no_action": 6
+        },
+        "seconds": 2.0754434570000058,
+        "model_calls": 110,
+        "median_model_ms": 17.042359500010207,
+        "max_tokens": 276,
+        "by_difficulty": {
+          "easy_2box": {
+            "levels": 8,
+            "solved": 0
+          },
+          "medium_3box": {
+            "levels": 8,
+            "solved": 0
+          },
+          "tiny_1box": {
+            "levels": 8,
+            "solved": 1
+          },
+          "tiny_2box": {
+            "levels": 8,
+            "solved": 1
+          }
+        },
+        "peak_cuda_allocated_gib": 2.299777030944824
+      },
+      {
+        "method": "random",
+        "presentation": "ascii",
+        "ordering_seed": 43,
+        "solved": 4,
+        "solve_rate": 0.125,
+        "outcomes": {
+          "static_deadlock": 25,
+          "solved": 4,
+          "no_action": 1,
+          "push_budget": 2
+        },
+        "seconds": 0.009843895999892993,
+        "model_calls": 0,
+        "median_model_ms": null,
+        "max_tokens": 0,
+        "by_difficulty": {
+          "easy_2box": {
+            "levels": 8,
+            "solved": 0
+          },
+          "medium_3box": {
+            "levels": 8,
+            "solved": 0
+          },
+          "tiny_1box": {
+            "levels": 8,
+            "solved": 3
+          },
+          "tiny_2box": {
+            "levels": 8,
+            "solved": 1
+          }
+        },
+        "peak_cuda_allocated_gib": 2.299777030944824
+      },
+      {
+        "method": "laya_pretrained",
+        "presentation": "ascii",
+        "ordering_seed": 43,
+        "solved": 5,
+        "solve_rate": 0.15625,
+        "outcomes": {
+          "static_deadlock": 22,
+          "solved": 5,
+          "no_action": 4,
+          "push_budget": 1
+        },
+        "seconds": 2.598421261999988,
+        "model_calls": 134,
+        "median_model_ms": 17.13233550003679,
+        "max_tokens": 262,
+        "by_difficulty": {
+          "easy_2box": {
+            "levels": 8,
+            "solved": 1
+          },
+          "medium_3box": {
+            "levels": 8,
+            "solved": 0
+          },
+          "tiny_1box": {
+            "levels": 8,
+            "solved": 2
+          },
+          "tiny_2box": {
+            "levels": 8,
+            "solved": 2
+          }
+        },
+        "peak_cuda_allocated_gib": 2.299777030944824
+      },
+      {
+        "method": "random",
+        "presentation": "structured",
+        "ordering_seed": 17,
+        "solved": 2,
+        "solve_rate": 0.0625,
+        "outcomes": {
+          "static_deadlock": 28,
+          "solved": 2,
+          "no_action": 2
+        },
+        "seconds": 0.008351865999998154,
+        "model_calls": 0,
+        "median_model_ms": null,
+        "max_tokens": 0,
+        "by_difficulty": {
+          "easy_2box": {
+            "levels": 8,
+            "solved": 0
+          },
+          "medium_3box": {
+            "levels": 8,
+            "solved": 1
+          },
+          "tiny_1box": {
+            "levels": 8,
+            "solved": 1
+          },
+          "tiny_2box": {
+            "levels": 8,
+            "solved": 0
+          }
+        },
+        "peak_cuda_allocated_gib": 2.299777030944824
+      },
+      {
+        "method": "laya_pretrained",
+        "presentation": "structured",
+        "ordering_seed": 17,
+        "solved": 2,
+        "solve_rate": 0.0625,
+        "outcomes": {
+          "static_deadlock": 27,
+          "solved": 2,
+          "no_action": 3
+        },
+        "seconds": 2.0969081770000457,
+        "model_calls": 103,
+        "median_model_ms": 18.659946000070704,
+        "max_tokens": 326,
+        "by_difficulty": {
+          "easy_2box": {
+            "levels": 8,
+            "solved": 0
+          },
+          "medium_3box": {
+            "levels": 8,
+            "solved": 0
+          },
+          "tiny_1box": {
+            "levels": 8,
+            "solved": 2
+          },
+          "tiny_2box": {
+            "levels": 8,
+            "solved": 0
+          }
+        },
+        "peak_cuda_allocated_gib": 2.3000922203063965
+      },
+      {
+        "method": "random",
+        "presentation": "structured",
+        "ordering_seed": 29,
+        "solved": 4,
+        "solve_rate": 0.125,
+        "outcomes": {
+          "static_deadlock": 26,
+          "solved": 4,
+          "no_action": 2
+        },
+        "seconds": 0.010462129999950776,
+        "model_calls": 0,
+        "median_model_ms": null,
+        "max_tokens": 0,
+        "by_difficulty": {
+          "easy_2box": {
+            "levels": 8,
+            "solved": 1
+          },
+          "medium_3box": {
+            "levels": 8,
+            "solved": 1
+          },
+          "tiny_1box": {
+            "levels": 8,
+            "solved": 1
+          },
+          "tiny_2box": {
+            "levels": 8,
+            "solved": 1
+          }
+        },
+        "peak_cuda_allocated_gib": 2.3000922203063965
+      },
+      {
+        "method": "laya_pretrained",
+        "presentation": "structured",
+        "ordering_seed": 29,
+        "solved": 2,
+        "solve_rate": 0.0625,
+        "outcomes": {
+          "static_deadlock": 28,
+          "solved": 2,
+          "no_action": 2
+        },
+        "seconds": 2.698444507999966,
+        "model_calls": 128,
+        "median_model_ms": 18.459784499953003,
+        "max_tokens": 326,
+        "by_difficulty": {
+          "easy_2box": {
+            "levels": 8,
+            "solved": 0
+          },
+          "medium_3box": {
+            "levels": 8,
+            "solved": 0
+          },
+          "tiny_1box": {
+            "levels": 8,
+            "solved": 1
+          },
+          "tiny_2box": {
+            "levels": 8,
+            "solved": 1
+          }
+        },
+        "peak_cuda_allocated_gib": 2.3000922203063965
+      },
+      {
+        "method": "random",
+        "presentation": "structured",
+        "ordering_seed": 43,
+        "solved": 4,
+        "solve_rate": 0.125,
+        "outcomes": {
+          "static_deadlock": 25,
+          "solved": 4,
+          "no_action": 1,
+          "push_budget": 2
+        },
+        "seconds": 0.010145698999963315,
+        "model_calls": 0,
+        "median_model_ms": null,
+        "max_tokens": 0,
+        "by_difficulty": {
+          "easy_2box": {
+            "levels": 8,
+            "solved": 0
+          },
+          "medium_3box": {
+            "levels": 8,
+            "solved": 0
+          },
+          "tiny_1box": {
+            "levels": 8,
+            "solved": 3
+          },
+          "tiny_2box": {
+            "levels": 8,
+            "solved": 1
+          }
+        },
+        "peak_cuda_allocated_gib": 2.3000922203063965
+      },
+      {
+        "method": "laya_pretrained",
+        "presentation": "structured",
+        "ordering_seed": 43,
+        "solved": 2,
+        "solve_rate": 0.0625,
+        "outcomes": {
+          "static_deadlock": 25,
+          "solved": 2,
+          "no_action": 4,
+          "push_budget": 1
+        },
+        "seconds": 2.2844662880000897,
+        "model_calls": 107,
+        "median_model_ms": 17.698099999961414,
+        "max_tokens": 312,
+        "by_difficulty": {
+          "easy_2box": {
+            "levels": 8,
+            "solved": 1
+          },
+          "medium_3box": {
+            "levels": 8,
+            "solved": 0
+          },
+          "tiny_1box": {
+            "levels": 8,
+            "solved": 1
+          },
+          "tiny_2box": {
+            "levels": 8,
+            "solved": 0
+          }
+        },
+        "peak_cuda_allocated_gib": 2.3000922203063965
+      }
+    ],
+    "jev_status": "not_run_user_selected_laya_first"
+  },
+  "runtime": {
+    "git_commit": "b14148b99aecf6b749fd9e943dda82d118d1ab1e",
+    "model": {
+      "source": "convaiinnovations/laya",
+      "revision": "1c5edc17a7acd8701df6fc341c0d179f1c62c982",
+      "api": "laya.load(...).predict",
+      "model_config": {
+        "encoder": "answerdotai/ModernBERT-large",
+        "head_layers": 2,
+        "max_len": 512,
+        "head_max_len": 192,
+        "max_prefixes": 6,
+        "act_costs": {
+          "escalate": 0.5
+        },
+        "cost_wrong_act": 3.0,
+        "amp_dtype": "bf16",
+        "model_name": "rl-agent",
+        "temperature": [
+          1.6369030475616455,
+          1.2514300346374512,
+          1.983399510383606
+        ],
+        "temperature_by_options": {
+          "choice:3-5": 1.7601518630981445,
+          "choice:6-10": 1.0000158548355103,
+          "score:3-5": 1.2514300346374512,
+          "noul:2": 1.983399510383606,
+          "choice:11+": 0.10058280825614929,
+          "choice:2": 1.9063563346862793
+        },
+        "training": {
+          "updates": 7313,
+          "epochs_completed": 1,
+          "hours": 1.96,
+          "world_size": 1,
+          "fine_tuned_from_checkpoint": true
+        }
+      },
+      "laya_version": "0.3.4"
+    },
+    "sanity": {
+      "model": "laya-rl-agent",
+      "answers": {
+        "department": {
+          "type": "choice",
+          "choice": "billing",
+          "probabilities": {
+            "billing": 0.9786,
+            "technical": 0.0102,
+            "shipping": 0.0112
+          },
+          "confidence": 0.8925,
+          "action": {
+            "act_probability": 1.0
+          }
+        }
+      },
+      "usage": {
+        "input_tokens": 56,
+        "output_tokens": 0
+      }
+    },
+    "torch": "2.14.0+cu130",
+    "gpu": "NVIDIA GeForce RTX 5060 Ti"
+  },
+  "groups": {
+    "random/ascii": {
+      "solved_by_order": [
+        2,
+        4,
+        4
+      ],
+      "episodes": 96,
+      "solve_rate": 0.10416666666666667,
+      "outcomes": {
+        "static_deadlock": 79,
+        "solved": 10,
+        "no_action": 5,
+        "push_budget": 2
+      },
+      "episodes_with_revisits": 20,
+      "first_optimal": {
+        "correct": 21,
+        "labelled": 48
+      },
+      "first_action_order_stability": {
+        "identical_across_all_orders": 2,
+        "layouts_with_initial_choice": 31
+      },
+      "nonforced_decisions": 320,
+      "first_option_selected": 68,
+      "uniform_expected_first_option": 69.20833333333333,
+      "model_calls": 0,
+      "median_model_ms": null,
+      "max_tokens": 0,
+      "evaluation_seconds": 0.02821420199984459,
+      "by_difficulty": {
+        "easy_2box": [
+          0,
+          1,
+          0
+        ],
+        "medium_3box": [
+          1,
+          1,
+          0
+        ],
+        "tiny_1box": [
+          1,
+          1,
+          3
+        ],
+        "tiny_2box": [
+          0,
+          1,
+          1
+        ]
+      }
+    },
+    "laya_pretrained/ascii": {
+      "solved_by_order": [
+        3,
+        2,
+        5
+      ],
+      "episodes": 96,
+      "solve_rate": 0.10416666666666667,
+      "outcomes": {
+        "solved": 10,
+        "static_deadlock": 72,
+        "no_action": 13,
+        "push_budget": 1
+      },
+      "episodes_with_revisits": 22,
+      "first_optimal": {
+        "correct": 28,
+        "labelled": 48
+      },
+      "first_action_order_stability": {
+        "identical_across_all_orders": 10,
+        "layouts_with_initial_choice": 31
+      },
+      "nonforced_decisions": 341,
+      "first_option_selected": 149,
+      "uniform_expected_first_option": 79.55,
+      "model_calls": 341,
+      "median_model_ms": 17.09038999990753,
+      "max_tokens": 276,
+      "evaluation_seconds": 6.6900357370000165,
+      "by_difficulty": {
+        "easy_2box": [
+          0,
+          0,
+          1
+        ],
+        "medium_3box": [
+          0,
+          0,
+          0
+        ],
+        "tiny_1box": [
+          3,
+          1,
+          2
+        ],
+        "tiny_2box": [
+          0,
+          1,
+          2
+        ]
+      }
+    },
+    "random/structured": {
+      "solved_by_order": [
+        2,
+        4,
+        4
+      ],
+      "episodes": 96,
+      "solve_rate": 0.10416666666666667,
+      "outcomes": {
+        "static_deadlock": 79,
+        "solved": 10,
+        "no_action": 5,
+        "push_budget": 2
+      },
+      "episodes_with_revisits": 20,
+      "first_optimal": {
+        "correct": 21,
+        "labelled": 48
+      },
+      "first_action_order_stability": {
+        "identical_across_all_orders": 2,
+        "layouts_with_initial_choice": 31
+      },
+      "nonforced_decisions": 320,
+      "first_option_selected": 68,
+      "uniform_expected_first_option": 69.20833333333333,
+      "model_calls": 0,
+      "median_model_ms": null,
+      "max_tokens": 0,
+      "evaluation_seconds": 0.028959694999912244,
+      "by_difficulty": {
+        "easy_2box": [
+          0,
+          1,
+          0
+        ],
+        "medium_3box": [
+          1,
+          1,
+          0
+        ],
+        "tiny_1box": [
+          1,
+          1,
+          3
+        ],
+        "tiny_2box": [
+          0,
+          1,
+          1
+        ]
+      }
+    },
+    "laya_pretrained/structured": {
+      "solved_by_order": [
+        2,
+        2,
+        2
+      ],
+      "episodes": 96,
+      "solve_rate": 0.0625,
+      "outcomes": {
+        "static_deadlock": 80,
+        "solved": 6,
+        "no_action": 9,
+        "push_budget": 1
+      },
+      "episodes_with_revisits": 22,
+      "first_optimal": {
+        "correct": 28,
+        "labelled": 48
+      },
+      "first_action_order_stability": {
+        "identical_across_all_orders": 11,
+        "layouts_with_initial_choice": 31
+      },
+      "nonforced_decisions": 338,
+      "first_option_selected": 131,
+      "uniform_expected_first_option": 78.53333333333333,
+      "model_calls": 338,
+      "median_model_ms": 18.395472000008795,
+      "max_tokens": 326,
+      "evaluation_seconds": 7.079818973000101,
+      "by_difficulty": {
+        "easy_2box": [
+          0,
+          0,
+          1
+        ],
+        "medium_3box": [
+          0,
+          0,
+          0
+        ],
+        "tiny_1box": [
+          2,
+          1,
+          1
+        ],
+        "tiny_2box": [
+          0,
+          1,
+          0
+        ]
+      }
+    }
+  },
+  "primitive_replayed_episodes": 384,
+  "levels": [
+    {
+      "layout_id": "33417f2d7bb4ec704dcd",
+      "difficulty": "tiny_1box",
+      "board": "######\n#  . #\n#    #\n# $  #\n##@# #\n######",
+      "seed": 2026092204,
+      "witness": [
+        "push_up",
+        "move_left",
+        "move_up",
+        "push_right",
+        "move_down",
+        "move_right",
+        "push_up",
+        "move_right",
+        "move_up",
+        "push_left",
+        "move_down",
+        "move_left",
+        "move_left",
+        "move_up",
+        "push_right",
+        "move_left"
+      ],
+      "witness_pushes": 5,
+      "optimal_pushes": 3,
+      "initial_action_costs": {
+        "box_r3_c2_push_up": 3
+      }
+    },
+    {
+      "layout_id": "023b2ceb4687052f815d",
+      "difficulty": "tiny_1box",
+      "board": "######\n#    #\n#  # #\n#  $@#\n#   .#\n######",
+      "seed": 2026092205,
+      "witness": [
+        "push_left",
+        "move_down",
+        "move_left",
+        "move_left",
+        "move_up",
+        "push_right",
+        "push_right",
+        "move_left",
+        "move_up",
+        "move_up",
+        "move_right",
+        "move_right",
+        "move_down",
+        "push_down",
+        "move_up",
+        "move_up"
+      ],
+      "witness_pushes": 4,
+      "optimal_pushes": 2,
+      "initial_action_costs": {
+        "box_r3_c3_push_left": 4,
+        "box_r3_c3_push_right": 2
+      }
+    },
+    {
+      "layout_id": "3c73223ce2384730b41f",
+      "difficulty": "tiny_1box",
+      "board": "######\n#   .#\n#  $##\n#  @ #\n#    #\n######",
+      "seed": 2026092206,
+      "witness": [
+        "push_up",
+        "move_left",
+        "move_up",
+        "push_right",
+        "move_down",
+        "move_down"
+      ],
+      "witness_pushes": 2,
+      "optimal_pushes": 2,
+      "initial_action_costs": {
+        "box_r2_c3_push_up": 2,
+        "box_r2_c3_push_down": 4
+      }
+    },
+    {
+      "layout_id": "bd69716474635bc84f78",
+      "difficulty": "tiny_1box",
+      "board": "######\n##   #\n#  @ #\n#  $ #\n# .  #\n######",
+      "seed": 2026092208,
+      "witness": [
+        "push_down",
+        "move_right",
+        "move_down",
+        "push_left",
+        "move_up",
+        "move_left",
+        "move_up",
+        "move_up"
+      ],
+      "witness_pushes": 2,
+      "optimal_pushes": 2,
+      "initial_action_costs": {
+        "box_r3_c3_push_up": 4,
+        "box_r3_c3_push_down": 2,
+        "box_r3_c3_push_left": 2,
+        "box_r3_c3_push_right": null
+      }
+    },
+    {
+      "layout_id": "10a8da24d67ab0063657",
+      "difficulty": "tiny_1box",
+      "board": "######\n#  @ #\n#  $ #\n#   .#\n# #  #\n######",
+      "seed": 2026092210,
+      "witness": [
+        "push_down",
+        "move_left",
+        "move_down",
+        "push_right",
+        "move_left",
+        "move_left",
+        "move_up"
+      ],
+      "witness_pushes": 2,
+      "optimal_pushes": 2,
+      "initial_action_costs": {
+        "box_r2_c3_push_up": null,
+        "box_r2_c3_push_down": 2,
+        "box_r2_c3_push_left": 4,
+        "box_r2_c3_push_right": 2
+      }
+    },
+    {
+      "layout_id": "a25b14a16458f82e799f",
+      "difficulty": "tiny_1box",
+      "board": "######\n#    #\n#  $@#\n#.#  #\n#    #\n######",
+      "seed": 2026092213,
+      "witness": [
+        "push_left",
+        "push_left",
+        "move_up",
+        "move_left",
+        "push_down",
+        "move_right",
+        "move_right",
+        "move_down",
+        "move_down",
+        "move_left"
+      ],
+      "witness_pushes": 3,
+      "optimal_pushes": 3,
+      "initial_action_costs": {
+        "box_r2_c3_push_up": null,
+        "box_r2_c3_push_down": 5,
+        "box_r2_c3_push_left": 3,
+        "box_r2_c3_push_right": null
+      }
+    },
+    {
+      "layout_id": "ccdeacfa98fa7ff25594",
+      "difficulty": "tiny_1box",
+      "board": "######\n# .  #\n#    #\n## $ #\n#  @ #\n######",
+      "seed": 2026092214,
+      "witness": [
+        "push_up",
+        "move_left",
+        "move_up",
+        "move_up",
+        "move_right",
+        "push_down",
+        "move_right",
+        "move_down",
+        "push_left",
+        "move_down",
+        "move_left",
+        "push_up",
+        "push_up",
+        "move_right",
+        "move_down",
+        "move_down"
+      ],
+      "witness_pushes": 5,
+      "optimal_pushes": 3,
+      "initial_action_costs": {
+        "box_r3_c3_push_up": 3,
+        "box_r3_c3_push_down": null,
+        "box_r3_c3_push_left": 3,
+        "box_r3_c3_push_right": null
+      }
+    },
+    {
+      "layout_id": "5c7e519594ce70ecef48",
+      "difficulty": "tiny_1box",
+      "board": "######\n#    #\n#  . #\n# $  #\n# @  #\n######",
+      "seed": 2026092218,
+      "witness": [
+        "push_up",
+        "move_left",
+        "move_up",
+        "push_right",
+        "move_up",
+        "move_right",
+        "push_down",
+        "move_left",
+        "move_down",
+        "move_down",
+        "move_right",
+        "push_up"
+      ],
+      "witness_pushes": 4,
+      "optimal_pushes": 2,
+      "initial_action_costs": {
+        "box_r3_c2_push_up": 2,
+        "box_r3_c2_push_down": null,
+        "box_r3_c2_push_left": null,
+        "box_r3_c2_push_right": 2
+      }
+    },
+    {
+      "layout_id": "d286c0a032e87454815b",
+      "difficulty": "tiny_2box",
+      "board": "######\n# # ##\n#. $@#\n#   $#\n#   .#\n######",
+      "seed": 2026092220,
+      "witness": [
+        "push_down",
+        "move_up",
+        "push_left",
+        "push_left",
+        "move_down",
+        "move_down"
+      ],
+      "witness_pushes": 3,
+      "optimal_pushes": 3,
+      "initial_action_costs": {
+        "box_r2_c3_push_left": 3,
+        "box_r3_c4_push_down": 3
+      }
+    },
+    {
+      "layout_id": "5b490114f50fad0b726a",
+      "difficulty": "tiny_2box",
+      "board": "######\n#    #\n##$  #\n#  .*#\n#   @#\n######",
+      "seed": 2026092221,
+      "witness": [
+        "push_up",
+        "move_left",
+        "move_up",
+        "move_up",
+        "move_left",
+        "push_down",
+        "move_right",
+        "move_up",
+        "move_right",
+        "push_down",
+        "move_left",
+        "move_down",
+        "move_down",
+        "move_left",
+        "push_up",
+        "move_right",
+        "move_up",
+        "move_up",
+        "move_left",
+        "push_down",
+        "move_right",
+        "move_down",
+        "move_down",
+        "move_left",
+        "move_left",
+        "move_up",
+        "push_right",
+        "move_up",
+        "move_right"
+      ],
+      "witness_pushes": 6,
+      "optimal_pushes": 2,
+      "initial_action_costs": {
+        "box_r2_c2_push_up": null,
+        "box_r2_c2_push_down": 2,
+        "box_r3_c4_push_up": 4,
+        "box_r3_c4_push_down": null
+      }
+    },
+    {
+      "layout_id": "4848ede8d899263db46d",
+      "difficulty": "tiny_2box",
+      "board": "######\n#.   #\n# $  #\n# +$ #\n#    #\n######",
+      "seed": 2026092222,
+      "witness": [
+        "push_up",
+        "move_right",
+        "move_up",
+        "push_left",
+        "move_right",
+        "move_right",
+        "move_down",
+        "move_down",
+        "push_left",
+        "move_down",
+        "move_left",
+        "push_up",
+        "move_right",
+        "move_up",
+        "move_up",
+        "move_left",
+        "push_down",
+        "move_left",
+        "move_down"
+      ],
+      "witness_pushes": 5,
+      "optimal_pushes": 3,
+      "initial_action_costs": {
+        "box_r2_c2_push_up": 3,
+        "box_r2_c2_push_down": 5,
+        "box_r2_c2_push_left": 3,
+        "box_r2_c2_push_right": 5,
+        "box_r3_c3_push_up": 5,
+        "box_r3_c3_push_down": null,
+        "box_r3_c3_push_left": 3,
+        "box_r3_c3_push_right": null
+      }
+    },
+    {
+      "layout_id": "8890427cc0f424b6d791",
+      "difficulty": "tiny_2box",
+      "board": "######\n#  $+#\n#   *#\n## # #\n#    #\n######",
+      "seed": 2026092224,
+      "witness": [
+        "push_down",
+        "move_left",
+        "move_left",
+        "move_down",
+        "move_down",
+        "move_right",
+        "move_right",
+        "push_up",
+        "move_down",
+        "move_left",
+        "move_left",
+        "move_up",
+        "move_up",
+        "move_up",
+        "push_right"
+      ],
+      "witness_pushes": 3,
+      "optimal_pushes": 3,
+      "initial_action_costs": {
+        "box_r1_c3_push_left": 3,
+        "box_r2_c4_push_down": 3
+      }
+    },
+    {
+      "layout_id": "1bdba0d3032486720be4",
+      "difficulty": "tiny_2box",
+      "board": "######\n#    #\n# $# #\n#+*  #\n##   #\n######",
+      "seed": 2026092225,
+      "witness": [
+        "push_right",
+        "move_down",
+        "move_right",
+        "move_right",
+        "move_up",
+        "push_left",
+        "push_left",
+        "move_right",
+        "move_right",
+        "move_up",
+        "move_up",
+        "move_left",
+        "move_left",
+        "push_down",
+        "move_up",
+        "move_right",
+        "move_right"
+      ],
+      "witness_pushes": 4,
+      "optimal_pushes": 2,
+      "initial_action_costs": {
+        "box_r3_c2_push_left": 2,
+        "box_r3_c2_push_right": 4
+      }
+    },
+    {
+      "layout_id": "f591c5e0c2c1cdaab439",
+      "difficulty": "tiny_2box",
+      "board": "######\n#  . #\n#@*  #\n## $ #\n#    #\n######",
+      "seed": 2026092226,
+      "witness": [
+        "push_right",
+        "move_up",
+        "move_right",
+        "move_right",
+        "move_down",
+        "push_left",
+        "move_up",
+        "move_left",
+        "push_down",
+        "move_right",
+        "move_right",
+        "move_down",
+        "move_down",
+        "move_left",
+        "push_up",
+        "move_down",
+        "move_left",
+        "push_up",
+        "move_right",
+        "push_up",
+        "move_down",
+        "move_left",
+        "move_down"
+      ],
+      "witness_pushes": 6,
+      "optimal_pushes": 2,
+      "initial_action_costs": {
+        "box_r2_c2_push_up": 4,
+        "box_r2_c2_push_down": 4,
+        "box_r2_c2_push_left": null,
+        "box_r2_c2_push_right": 4,
+        "box_r3_c3_push_up": 2,
+        "box_r3_c3_push_down": null,
+        "box_r3_c3_push_left": 4,
+        "box_r3_c3_push_right": null
+      }
+    },
+    {
+      "layout_id": "6966a368741a0d13ff1c",
+      "difficulty": "tiny_2box",
+      "board": "######\n#  . #\n#  $@#\n#  $ #\n# . ##\n######",
+      "seed": 2026092228,
+      "witness": [
+        "push_left",
+        "move_up",
+        "move_left",
+        "move_left",
+        "move_down",
+        "move_down",
+        "move_right",
+        "move_down",
+        "move_right",
+        "push_up",
+        "move_left",
+        "move_left",
+        "move_up",
+        "move_up",
+        "move_right",
+        "push_down",
+        "move_up",
+        "move_right",
+        "move_right",
+        "move_down",
+        "push_left",
+        "move_up",
+        "move_left",
+        "move_left",
+        "move_down",
+        "push_right",
+        "move_left",
+        "move_down",
+        "move_down",
+        "move_right",
+        "move_right",
+        "move_up",
+        "push_up",
+        "move_left",
+        "push_down",
+        "move_right"
+      ],
+      "witness_pushes": 7,
+      "optimal_pushes": 3,
+      "initial_action_costs": {
+        "box_r2_c3_push_left": 5,
+        "box_r2_c3_push_right": null,
+        "box_r3_c3_push_left": 3,
+        "box_r3_c3_push_right": null
+      }
+    },
+    {
+      "layout_id": "c81e3ddea37ce3c1ee4d",
+      "difficulty": "tiny_2box",
+      "board": "######\n#   .#\n# .# #\n# $$ #\n# @  #\n######",
+      "seed": 2026092229,
+      "witness": [
+        "push_up",
+        "move_down",
+        "move_right",
+        "move_right",
+        "move_up",
+        "push_left",
+        "move_down",
+        "move_left",
+        "move_left",
+        "move_up",
+        "push_right",
+        "push_right",
+        "move_down",
+        "move_right",
+        "push_up",
+        "push_up",
+        "move_down",
+        "move_left",
+        "move_down"
+      ],
+      "witness_pushes": 6,
+      "optimal_pushes": 4,
+      "initial_action_costs": {
+        "box_r3_c2_push_up": 4,
+        "box_r3_c2_push_down": null
+      }
+    },
+    {
+      "layout_id": "4cc3080fcd0d8c30a9ee",
+      "difficulty": "easy_2box",
+      "board": "#######\n#     #\n#   * #\n#  $ .#\n#  @  #\n#   # #\n#######",
+      "seed": 2026092230,
+      "witness": [
+        "push_up",
+        "move_left",
+        "move_up",
+        "move_up",
+        "move_right",
+        "move_right",
+        "push_down",
+        "move_up",
+        "move_left",
+        "move_left",
+        "move_down",
+        "push_right",
+        "move_down",
+        "push_right",
+        "move_left",
+        "move_left",
+        "move_left",
+        "move_up"
+      ],
+      "witness_pushes": 4,
+      "optimal_pushes": null,
+      "initial_action_costs": null
+    },
+    {
+      "layout_id": "d3a51c8d0286949d63ff",
+      "difficulty": "easy_2box",
+      "board": "#######\n# .  ##\n#     #\n##    #\n# @$  #\n#*#   #\n#######",
+      "seed": 2026092231,
+      "witness": [
+        "push_right",
+        "move_up",
+        "move_right",
+        "move_right",
+        "move_down",
+        "push_left",
+        "move_down",
+        "move_left",
+        "push_up",
+        "move_right",
+        "move_up",
+        "push_left",
+        "move_down",
+        "move_left",
+        "push_up",
+        "push_up",
+        "move_right",
+        "move_down",
+        "move_down"
+      ],
+      "witness_pushes": 6,
+      "optimal_pushes": null,
+      "initial_action_costs": null
+    },
+    {
+      "layout_id": "7fe3d1434c8259185e2d",
+      "difficulty": "easy_2box",
+      "board": "#######\n#     #\n#   $@#\n#  .  #\n#*#   #\n#     #\n#######",
+      "seed": 2026092232,
+      "witness": [
+        "push_left",
+        "push_left",
+        "move_up",
+        "move_left",
+        "push_down",
+        "move_right",
+        "move_down",
+        "move_down",
+        "move_down",
+        "move_left",
+        "move_left",
+        "push_up",
+        "move_down",
+        "move_right",
+        "move_right",
+        "move_up",
+        "move_up",
+        "move_up",
+        "move_left",
+        "move_left",
+        "push_down",
+        "push_right",
+        "move_up",
+        "move_right",
+        "move_right",
+        "move_right",
+        "move_down"
+      ],
+      "witness_pushes": 6,
+      "optimal_pushes": null,
+      "initial_action_costs": null
+    },
+    {
+      "layout_id": "cea25616a1aad129bb3d",
+      "difficulty": "easy_2box",
+      "board": "#######\n#     #\n#     #\n# #   #\n#  $$ #\n# . + #\n#######",
+      "seed": 2026092233,
+      "witness": [
+        "push_up",
+        "move_down",
+        "move_left",
+        "move_left",
+        "move_up",
+        "push_right",
+        "move_down",
+        "move_right",
+        "move_right",
+        "move_up",
+        "push_left",
+        "move_right",
+        "move_up",
+        "move_up",
+        "move_left",
+        "move_left",
+        "move_down",
+        "push_down",
+        "move_right",
+        "move_down",
+        "push_left",
+        "move_up",
+        "move_up",
+        "move_up",
+        "move_right",
+        "push_down",
+        "push_down",
+        "move_left",
+        "move_down"
+      ],
+      "witness_pushes": 7,
+      "optimal_pushes": null,
+      "initial_action_costs": null
+    },
+    {
+      "layout_id": "227ea6b05124c1e651b0",
+      "difficulty": "easy_2box",
+      "board": "#######\n##    #\n# @  ##\n# $  .#\n#  .$ #\n#     #\n#######",
+      "seed": 2026092234,
+      "witness": [
+        "push_down",
+        "move_right",
+        "move_down",
+        "move_down",
+        "move_right",
+        "push_up",
+        "move_left",
+        "move_up",
+        "move_up",
+        "move_right",
+        "push_down",
+        "move_left",
+        "move_left",
+        "move_left",
+        "move_down",
+        "push_right",
+        "move_down",
+        "move_right",
+        "move_right",
+        "push_up",
+        "move_down",
+        "move_left",
+        "move_left",
+        "move_up",
+        "push_right",
+        "move_down",
+        "move_right",
+        "move_right",
+        "move_up",
+        "push_left",
+        "move_down",
+        "move_left",
+        "move_left",
+        "move_up",
+        "move_up",
+        "move_right",
+        "push_right",
+        "move_left",
+        "move_left",
+        "move_left",
+        "move_down",
+        "move_down"
+      ],
+      "witness_pushes": 8,
+      "optimal_pushes": null,
+      "initial_action_costs": null
+    },
+    {
+      "layout_id": "437f5dacd8337efe0e18",
+      "difficulty": "easy_2box",
+      "board": "#######\n#@    #\n#$  $ #\n#  . ##\n#.    #\n#     #\n#######",
+      "seed": 2026092235,
+      "witness": [
+        "push_down",
+        "move_right",
+        "move_right",
+        "move_up",
+        "move_right",
+        "move_right",
+        "move_down",
+        "push_left",
+        "move_up",
+        "move_left",
+        "move_left",
+        "move_down",
+        "push_right",
+        "move_up",
+        "move_right",
+        "push_down",
+        "move_left",
+        "move_down",
+        "move_down",
+        "move_right",
+        "push_up",
+        "move_left",
+        "move_left",
+        "move_up",
+        "move_left",
+        "push_down",
+        "move_right",
+        "move_right",
+        "move_up",
+        "move_up",
+        "move_right",
+        "move_right",
+        "move_down",
+        "push_left",
+        "move_up",
+        "move_left",
+        "push_down",
+        "move_left",
+        "move_down",
+        "move_down",
+        "move_right"
+      ],
+      "witness_pushes": 8,
+      "optimal_pushes": null,
+      "initial_action_costs": null
+    },
+    {
+      "layout_id": "9bb652e16bb5baf82782",
+      "difficulty": "easy_2box",
+      "board": "#######\n# .  ##\n#   $ #\n#    .#\n## $  #\n#  @  #\n#######",
+      "seed": 2026092236,
+      "witness": [
+        "push_up",
+        "push_up",
+        "move_left",
+        "move_up",
+        "move_up",
+        "move_right",
+        "move_right",
+        "push_down",
+        "push_left",
+        "move_down",
+        "push_right",
+        "move_left",
+        "move_left",
+        "push_up",
+        "move_right",
+        "move_up"
+      ],
+      "witness_pushes": 6,
+      "optimal_pushes": null,
+      "initial_action_costs": null
+    },
+    {
+      "layout_id": "d1806ad7d8d5f4260077",
+      "difficulty": "easy_2box",
+      "board": "#######\n#  . ##\n# $ . #\n# @$ ##\n#     #\n#     #\n#######",
+      "seed": 2026092237,
+      "witness": [
+        "push_right",
+        "move_left",
+        "move_left",
+        "move_up",
+        "push_right",
+        "move_down",
+        "move_right",
+        "push_up",
+        "move_down",
+        "move_down",
+        "move_right",
+        "push_up",
+        "move_left",
+        "move_down"
+      ],
+      "witness_pushes": 4,
+      "optimal_pushes": null,
+      "initial_action_costs": null
+    },
+    {
+      "layout_id": "97213449a9451ccf0da5",
+      "difficulty": "medium_3box",
+      "board": "########\n#.$@  .#\n#    $ #\n# $    #\n#     ##\n#.     #\n#      #\n########",
+      "seed": 2026092238,
+      "witness": [
+        "push_left",
+        "move_down",
+        "push_down",
+        "move_left",
+        "move_down",
+        "move_down",
+        "move_right",
+        "push_up",
+        "move_right",
+        "move_right",
+        "move_right",
+        "move_up",
+        "move_right",
+        "move_up",
+        "push_left",
+        "move_up",
+        "move_left",
+        "move_left",
+        "move_left",
+        "move_down",
+        "push_down",
+        "move_right",
+        "move_down",
+        "push_left",
+        "move_right",
+        "move_right",
+        "move_up",
+        "push_up",
+        "move_left",
+        "move_up",
+        "push_right",
+        "move_left",
+        "move_left",
+        "move_down",
+        "move_left",
+        "move_down",
+        "push_down",
+        "move_right",
+        "move_right",
+        "move_right",
+        "move_up",
+        "move_up",
+        "move_up",
+        "push_right",
+        "move_left",
+        "move_left",
+        "move_left",
+        "move_down",
+        "move_left"
+      ],
+      "witness_pushes": 10,
+      "optimal_pushes": null,
+      "initial_action_costs": null
+    },
+    {
+      "layout_id": "d55c1faaa2a014badf8f",
+      "difficulty": "medium_3box",
+      "board": "########\n#  #.  #\n# $.   #\n#@$    #\n#  #   #\n# # *  #\n#      #\n########",
+      "seed": 2026092239,
+      "witness": [
+        "push_right",
+        "push_right",
+        "move_up",
+        "move_right",
+        "move_right",
+        "move_down",
+        "move_down",
+        "move_left",
+        "push_up",
+        "move_left",
+        "move_left",
+        "move_left",
+        "move_up",
+        "move_up",
+        "move_right",
+        "push_down",
+        "move_right",
+        "push_right",
+        "move_left",
+        "move_left",
+        "move_left",
+        "move_down",
+        "move_down",
+        "move_right",
+        "push_up",
+        "move_left",
+        "move_up",
+        "push_right",
+        "move_down",
+        "move_right",
+        "move_right",
+        "move_right",
+        "push_up",
+        "move_right",
+        "move_up",
+        "push_left",
+        "move_right"
+      ],
+      "witness_pushes": 9,
+      "optimal_pushes": null,
+      "initial_action_costs": null
+    },
+    {
+      "layout_id": "27a346192b760ca9aade",
+      "difficulty": "medium_3box",
+      "board": "########\n# .    #\n#  # $.#\n# $    #\n#    # #\n# #  $@#\n#     .#\n########",
+      "seed": 2026092240,
+      "witness": [
+        "push_left",
+        "move_down",
+        "move_left",
+        "move_left",
+        "move_up",
+        "move_up",
+        "move_left",
+        "push_up",
+        "move_right",
+        "move_down",
+        "move_down",
+        "move_down",
+        "move_right",
+        "move_right",
+        "move_up",
+        "push_left",
+        "move_down",
+        "move_left",
+        "push_up",
+        "move_right",
+        "move_up",
+        "move_up",
+        "move_left",
+        "push_down",
+        "move_left",
+        "move_up",
+        "push_up",
+        "move_down",
+        "move_right",
+        "move_down",
+        "push_down",
+        "move_up",
+        "move_left",
+        "move_left",
+        "move_down",
+        "move_down",
+        "move_right",
+        "push_right",
+        "push_right",
+        "push_right",
+        "move_left",
+        "move_up",
+        "move_up",
+        "move_up",
+        "move_up",
+        "push_right",
+        "move_left",
+        "move_down",
+        "move_left",
+        "move_left",
+        "move_left",
+        "move_up"
+      ],
+      "witness_pushes": 11,
+      "optimal_pushes": null,
+      "initial_action_costs": null
+    },
+    {
+      "layout_id": "2d740d65556e122dd331",
+      "difficulty": "medium_3box",
+      "board": "########\n#      #\n#.    ##\n#   $. #\n# $ @  #\n#    $ #\n#    . #\n########",
+      "seed": 2026092241,
+      "witness": [
+        "push_up",
+        "move_left",
+        "move_down",
+        "move_down",
+        "move_left",
+        "push_up",
+        "move_right",
+        "move_right",
+        "move_right",
+        "move_up",
+        "move_up",
+        "push_left",
+        "move_up",
+        "move_left",
+        "push_down",
+        "move_left",
+        "move_left",
+        "move_down",
+        "move_down",
+        "move_right",
+        "push_up",
+        "push_right",
+        "push_right",
+        "move_down",
+        "move_right",
+        "push_down",
+        "move_left",
+        "move_left",
+        "move_up",
+        "move_up",
+        "move_up",
+        "push_left",
+        "move_right",
+        "move_down",
+        "move_down",
+        "move_down",
+        "move_down"
+      ],
+      "witness_pushes": 9,
+      "optimal_pushes": null,
+      "initial_action_costs": null
+    },
+    {
+      "layout_id": "9e77c4fce1e7d5c4f6e6",
+      "difficulty": "medium_3box",
+      "board": "########\n#.$    #\n#.     #\n#  $@. #\n#      #\n#  $   #\n#      #\n########",
+      "seed": 2026092242,
+      "witness": [
+        "push_left",
+        "move_down",
+        "move_left",
+        "move_down",
+        "move_down",
+        "move_right",
+        "push_up",
+        "move_left",
+        "move_up",
+        "push_right",
+        "move_left",
+        "move_left",
+        "move_up",
+        "push_right",
+        "move_down",
+        "move_right",
+        "push_up",
+        "move_down",
+        "move_down",
+        "move_right",
+        "push_up",
+        "move_right",
+        "move_up",
+        "move_up",
+        "move_left",
+        "push_left",
+        "push_left",
+        "move_right",
+        "move_up",
+        "push_left",
+        "move_right",
+        "move_down",
+        "move_down",
+        "move_down",
+        "move_right",
+        "push_up",
+        "move_left",
+        "move_up",
+        "push_right",
+        "move_up",
+        "move_right",
+        "push_down",
+        "move_left",
+        "move_down",
+        "move_down",
+        "move_right"
+      ],
+      "witness_pushes": 12,
+      "optimal_pushes": null,
+      "initial_action_costs": null
+    },
+    {
+      "layout_id": "7f8b2b67bfd6eccdc1b5",
+      "difficulty": "medium_3box",
+      "board": "########\n#   @  #\n#.  $  #\n# $    #\n# #$   #\n#   .  #\n# .    #\n########",
+      "seed": 2026092243,
+      "witness": [
+        "push_down",
+        "move_left",
+        "move_down",
+        "push_right",
+        "move_left",
+        "push_left",
+        "move_right",
+        "move_right",
+        "move_up",
+        "move_right",
+        "move_right",
+        "move_down",
+        "push_left",
+        "move_up",
+        "move_left",
+        "push_down",
+        "move_left",
+        "push_down",
+        "push_down",
+        "move_right",
+        "move_down",
+        "push_left",
+        "move_up",
+        "move_up",
+        "move_up",
+        "move_right",
+        "push_down",
+        "move_left",
+        "move_down",
+        "push_right",
+        "move_left",
+        "move_left",
+        "move_left",
+        "move_up",
+        "push_up",
+        "move_right",
+        "move_right",
+        "move_right",
+        "move_right",
+        "move_right",
+        "move_down",
+        "move_down",
+        "push_left",
+        "move_up",
+        "move_left",
+        "move_left",
+        "move_up",
+        "move_left",
+        "move_left"
+      ],
+      "witness_pushes": 12,
+      "optimal_pushes": null,
+      "initial_action_costs": null
+    },
+    {
+      "layout_id": "5ae6db36edbfc9cf4a66",
+      "difficulty": "medium_3box",
+      "board": "########\n# ##@* #\n#   $  #\n#      #\n#     .#\n#    * #\n#  #   #\n########",
+      "seed": 2026092244,
+      "witness": [
+        "push_down",
+        "move_left",
+        "move_down",
+        "push_right",
+        "move_down",
+        "move_right",
+        "move_right",
+        "move_down",
+        "push_left",
+        "move_up",
+        "move_left",
+        "move_up",
+        "move_up",
+        "move_right",
+        "push_down",
+        "move_right",
+        "move_down",
+        "move_down",
+        "move_left",
+        "move_down",
+        "move_left",
+        "push_up",
+        "move_left",
+        "move_up",
+        "move_up",
+        "move_right",
+        "move_right",
+        "push_down",
+        "move_up",
+        "move_left",
+        "move_left",
+        "move_down",
+        "push_right",
+        "push_right",
+        "move_left",
+        "move_up",
+        "move_up",
+        "move_up"
+      ],
+      "witness_pushes": 8,
+      "optimal_pushes": null,
+      "initial_action_costs": null
+    },
+    {
+      "layout_id": "b4b2b2c870f73702b9d8",
+      "difficulty": "medium_3box",
+      "board": "########\n#  #   #\n#      #\n#      #\n#    $.#\n#@*   *#\n#      #\n########",
+      "seed": 2026092245,
+      "witness": [
+        "push_right",
+        "move_up",
+        "move_right",
+        "move_right",
+        "move_up",
+        "move_right",
+        "move_right",
+        "move_down",
+        "push_left",
+        "move_up",
+        "move_left",
+        "move_left",
+        "move_left",
+        "move_down",
+        "move_down",
+        "push_right",
+        "move_up",
+        "push_right",
+        "move_up",
+        "move_right",
+        "push_down",
+        "move_left",
+        "move_left",
+        "move_down",
+        "move_down",
+        "move_right",
+        "move_right",
+        "push_up",
+        "push_left",
+        "push_left",
+        "move_right",
+        "move_up",
+        "push_right",
+        "move_left",
+        "move_left"
+      ],
+      "witness_pushes": 9,
+      "optimal_pushes": null,
+      "initial_action_costs": null
+    }
+  ],
+  "outcomes": {
+    "trial-random-ascii-17.json": [
+      {
+        "layout_id": "33417f2d7bb4ec704dcd",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 5,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#  . #\n#    #\n# @  #\n##$# #\n######"
+      },
+      {
+        "layout_id": "023b2ceb4687052f815d",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n# $  #\n# @# #\n#    #\n#   .#\n######"
+      },
+      {
+        "layout_id": "3c73223ce2384730b41f",
+        "difficulty": "tiny_1box",
+        "outcome": "solved",
+        "pushes": 4,
+        "revisits": 1,
+        "first_action_optimal": false,
+        "final_board": "######\n#  @*#\n#   ##\n#    #\n#    #\n######"
+      },
+      {
+        "layout_id": "bd69716474635bc84f78",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n##   #\n#    #\n#  @$#\n# .  #\n######"
+      },
+      {
+        "layout_id": "10a8da24d67ab0063657",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#    #\n#    #\n#$@ .#\n# #  #\n######"
+      },
+      {
+        "layout_id": "a25b14a16458f82e799f",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#    #\n#  @$#\n#.#  #\n#    #\n######"
+      },
+      {
+        "layout_id": "ccdeacfa98fa7ff25594",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n# .  #\n#    #\n## @$#\n#    #\n######"
+      },
+      {
+        "layout_id": "5c7e519594ce70ecef48",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#    #\n#  . #\n# @  #\n# $  #\n######"
+      },
+      {
+        "layout_id": "d286c0a032e87454815b",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n# #$##\n#. @ #\n#   $#\n#   .#\n######"
+      },
+      {
+        "layout_id": "5b490114f50fad0b726a",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#    #\n##$  #\n#  .+#\n#   $#\n######"
+      },
+      {
+        "layout_id": "4848ede8d899263db46d",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#.   #\n# $  #\n# .@$#\n#    #\n######"
+      },
+      {
+        "layout_id": "8890427cc0f424b6d791",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#$@ .#\n#   *#\n## # #\n#    #\n######"
+      },
+      {
+        "layout_id": "1bdba0d3032486720be4",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n# $  #\n# @# #\n#*.  #\n##   #\n######"
+      },
+      {
+        "layout_id": "f591c5e0c2c1cdaab439",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#  . #\n# .$ #\n## @$#\n#    #\n######"
+      },
+      {
+        "layout_id": "6966a368741a0d13ff1c",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#  . #\n#  @$#\n#  $ #\n# . ##\n######"
+      },
+      {
+        "layout_id": "c81e3ddea37ce3c1ee4d",
+        "difficulty": "tiny_2box",
+        "outcome": "no_action",
+        "pushes": 6,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n# @$*#\n# .# #\n#    #\n#    #\n######"
+      },
+      {
+        "layout_id": "4cc3080fcd0d8c30a9ee",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#   $ #\n#   + #\n# $  .#\n#     #\n#   # #\n#######"
+      },
+      {
+        "layout_id": "d3a51c8d0286949d63ff",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 1,
+        "first_action_optimal": null,
+        "final_board": "#######\n# .  ##\n#     #\n##    #\n#  @  #\n#*#$  #\n#######"
+      },
+      {
+        "layout_id": "7fe3d1434c8259185e2d",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#     #\n#   $ #\n#  .  #\n#+#   #\n#$    #\n#######"
+      },
+      {
+        "layout_id": "cea25616a1aad129bb3d",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#     #\n#     #\n# # @$#\n#  $  #\n# . . #\n#######"
+      },
+      {
+        "layout_id": "227ea6b05124c1e651b0",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n##    #\n#    ##\n#$@  .#\n#  .$ #\n#     #\n#######"
+      },
+      {
+        "layout_id": "437f5dacd8337efe0e18",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#$    #\n#@  $ #\n#  . ##\n#.    #\n#     #\n#######"
+      },
+      {
+        "layout_id": "9bb652e16bb5baf82782",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n# .  ##\n#   $ #\n#    .#\n## @  #\n#  $  #\n#######"
+      },
+      {
+        "layout_id": "d1806ad7d8d5f4260077",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 4,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#$@. ##\n#   * #\n#    ##\n#     #\n#     #\n#######"
+      },
+      {
+        "layout_id": "97213449a9451ccf0da5",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 5,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#.  $ .#\n# $    #\n#    @$#\n#     ##\n#.     #\n#      #\n########"
+      },
+      {
+        "layout_id": "d55c1faaa2a014badf8f",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#  #.  #\n# $.   #\n#  $   #\n#  #   #\n# # +  #\n#   $  #\n########"
+      },
+      {
+        "layout_id": "27a346192b760ca9aade",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 11,
+        "revisits": 2,
+        "first_action_optimal": null,
+        "final_board": "########\n# .   $#\n# $#  +#\n#      #\n#    # #\n# #  $ #\n#     .#\n########"
+      },
+      {
+        "layout_id": "2d740d65556e122dd331",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 6,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#      #\n#.    ##\n#    +$#\n#      #\n#  $   #\n# $  . #\n########"
+      },
+      {
+        "layout_id": "9e77c4fce1e7d5c4f6e6",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 7,
+        "revisits": 2,
+        "first_action_optimal": null,
+        "final_board": "########\n#.$    #\n#.  $  #\n#    . #\n#      #\n#  @   #\n#  $   #\n########"
+      },
+      {
+        "layout_id": "7f8b2b67bfd6eccdc1b5",
+        "difficulty": "medium_3box",
+        "outcome": "no_action",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#      #\n#.     #\n# $$@  #\n# #$   #\n#   .  #\n# .    #\n########"
+      },
+      {
+        "layout_id": "5ae6db36edbfc9cf4a66",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 4,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n# ## * #\n#      #\n#     $#\n#     .#\n#    + #\n#  # $ #\n########"
+      },
+      {
+        "layout_id": "b4b2b2c870f73702b9d8",
+        "difficulty": "medium_3box",
+        "outcome": "solved",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#  #   #\n#      #\n#      #\n#    @*#\n# *   *#\n#      #\n########"
+      }
+    ],
+    "trial-random-ascii-29.json": [
+      {
+        "layout_id": "33417f2d7bb4ec704dcd",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 4,
+        "revisits": 1,
+        "first_action_optimal": true,
+        "final_board": "######\n#  . #\n#$@  #\n#    #\n## # #\n######"
+      },
+      {
+        "layout_id": "023b2ceb4687052f815d",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 5,
+        "revisits": 1,
+        "first_action_optimal": false,
+        "final_board": "######\n#    #\n#  # #\n#    #\n#$@ .#\n######"
+      },
+      {
+        "layout_id": "3c73223ce2384730b41f",
+        "difficulty": "tiny_1box",
+        "outcome": "solved",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#  @*#\n#   ##\n#    #\n#    #\n######"
+      },
+      {
+        "layout_id": "bd69716474635bc84f78",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n##   #\n#    #\n#  @$#\n# .  #\n######"
+      },
+      {
+        "layout_id": "10a8da24d67ab0063657",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 4,
+        "revisits": 1,
+        "first_action_optimal": true,
+        "final_board": "######\n#    #\n#$@  #\n#   .#\n# #  #\n######"
+      },
+      {
+        "layout_id": "a25b14a16458f82e799f",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#    #\n#    #\n#.#@ #\n#  $ #\n######"
+      },
+      {
+        "layout_id": "ccdeacfa98fa7ff25594",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n# .  #\n#    #\n## @$#\n#    #\n######"
+      },
+      {
+        "layout_id": "5c7e519594ce70ecef48",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#    #\n#  . #\n# @  #\n# $  #\n######"
+      },
+      {
+        "layout_id": "d286c0a032e87454815b",
+        "difficulty": "tiny_2box",
+        "outcome": "solved",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n# # ##\n#*   #\n#   @#\n#   *#\n######"
+      },
+      {
+        "layout_id": "5b490114f50fad0b726a",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#   $#\n##$ @#\n#  ..#\n#    #\n######"
+      },
+      {
+        "layout_id": "4848ede8d899263db46d",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#.   #\n# $  #\n# .@ #\n#  $ #\n######"
+      },
+      {
+        "layout_id": "8890427cc0f424b6d791",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#$@ .#\n#   *#\n## # #\n#    #\n######"
+      },
+      {
+        "layout_id": "1bdba0d3032486720be4",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n# $  #\n# @# #\n#..$ #\n##   #\n######"
+      },
+      {
+        "layout_id": "f591c5e0c2c1cdaab439",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#$@. #\n# .  #\n## $ #\n#    #\n######"
+      },
+      {
+        "layout_id": "6966a368741a0d13ff1c",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#  . #\n# $  #\n#  @$#\n# . ##\n######"
+      },
+      {
+        "layout_id": "c81e3ddea37ce3c1ee4d",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 8,
+        "revisits": 3,
+        "first_action_optimal": true,
+        "final_board": "######\n# $ .#\n# .# #\n#$@  #\n#    #\n######"
+      },
+      {
+        "layout_id": "4cc3080fcd0d8c30a9ee",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 4,
+        "revisits": 1,
+        "first_action_optimal": null,
+        "final_board": "#######\n#   $ #\n#  $+ #\n#    .#\n#     #\n#   # #\n#######"
+      },
+      {
+        "layout_id": "d3a51c8d0286949d63ff",
+        "difficulty": "easy_2box",
+        "outcome": "solved",
+        "pushes": 10,
+        "revisits": 5,
+        "first_action_optimal": null,
+        "final_board": "#######\n# *  ##\n# @   #\n##    #\n#     #\n#*#   #\n#######"
+      },
+      {
+        "layout_id": "7fe3d1434c8259185e2d",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#     #\n#   $ #\n#  .  #\n#+#   #\n#$    #\n#######"
+      },
+      {
+        "layout_id": "cea25616a1aad129bb3d",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 7,
+        "revisits": 1,
+        "first_action_optimal": null,
+        "final_board": "#######\n#   $ #\n#   @ #\n# #   #\n#     #\n# . * #\n#######"
+      },
+      {
+        "layout_id": "227ea6b05124c1e651b0",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 15,
+        "revisits": 4,
+        "first_action_optimal": null,
+        "final_board": "#######\n##  $ #\n#  $@##\n#    .#\n#  .  #\n#     #\n#######"
+      },
+      {
+        "layout_id": "437f5dacd8337efe0e18",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#$    #\n#@  $ #\n#  . ##\n#.    #\n#     #\n#######"
+      },
+      {
+        "layout_id": "9bb652e16bb5baf82782",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n# .  ##\n#    $#\n#    +#\n## $  #\n#     #\n#######"
+      },
+      {
+        "layout_id": "d1806ad7d8d5f4260077",
+        "difficulty": "easy_2box",
+        "outcome": "no_action",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n# $* ##\n#  @. #\n#    ##\n#     #\n#     #\n#######"
+      },
+      {
+        "layout_id": "97213449a9451ccf0da5",
+        "difficulty": "medium_3box",
+        "outcome": "no_action",
+        "pushes": 6,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#*$$@ .#\n#      #\n#      #\n#     ##\n#.     #\n#      #\n########"
+      },
+      {
+        "layout_id": "d55c1faaa2a014badf8f",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#  #.  #\n# $.   #\n#$@    #\n#  #   #\n# # *  #\n#      #\n########"
+      },
+      {
+        "layout_id": "27a346192b760ca9aade",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 6,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n# .    #\n#  #  .#\n#$@    #\n#    #$#\n# #$   #\n#     .#\n########"
+      },
+      {
+        "layout_id": "2d740d65556e122dd331",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 14,
+        "revisits": 1,
+        "first_action_optimal": null,
+        "final_board": "########\n#      #\n#.    ##\n#    . #\n#  $   #\n#@     #\n#$ $ . #\n########"
+      },
+      {
+        "layout_id": "9e77c4fce1e7d5c4f6e6",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#.$    #\n#.     #\n#   $. #\n#      #\n#  @   #\n#  $   #\n########"
+      },
+      {
+        "layout_id": "7f8b2b67bfd6eccdc1b5",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 7,
+        "revisits": 1,
+        "first_action_optimal": null,
+        "final_board": "########\n#$     #\n#+     #\n#  $$  #\n# #    #\n#   .  #\n# .    #\n########"
+      },
+      {
+        "layout_id": "5ae6db36edbfc9cf4a66",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n# ## +$#\n#   $  #\n#      #\n#     .#\n#    * #\n#  #   #\n########"
+      },
+      {
+        "layout_id": "b4b2b2c870f73702b9d8",
+        "difficulty": "medium_3box",
+        "outcome": "solved",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#  #   #\n#      #\n#      #\n#    @*#\n# *   *#\n#      #\n########"
+      }
+    ],
+    "trial-random-ascii-43.json": [
+      {
+        "layout_id": "33417f2d7bb4ec704dcd",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#  . #\n#$@  #\n#    #\n## # #\n######"
+      },
+      {
+        "layout_id": "023b2ceb4687052f815d",
+        "difficulty": "tiny_1box",
+        "outcome": "solved",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#    #\n#  # #\n#   @#\n#   *#\n######"
+      },
+      {
+        "layout_id": "3c73223ce2384730b41f",
+        "difficulty": "tiny_1box",
+        "outcome": "solved",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#  @*#\n#   ##\n#    #\n#    #\n######"
+      },
+      {
+        "layout_id": "bd69716474635bc84f78",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n## $ #\n#  @ #\n#    #\n# .  #\n######"
+      },
+      {
+        "layout_id": "10a8da24d67ab0063657",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#    #\n#    #\n#  @.#\n# #$ #\n######"
+      },
+      {
+        "layout_id": "a25b14a16458f82e799f",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#    #\n#  @$#\n#.#  #\n#    #\n######"
+      },
+      {
+        "layout_id": "ccdeacfa98fa7ff25594",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 1,
+        "first_action_optimal": true,
+        "final_board": "######\n# .  #\n#    #\n## @$#\n#    #\n######"
+      },
+      {
+        "layout_id": "5c7e519594ce70ecef48",
+        "difficulty": "tiny_1box",
+        "outcome": "solved",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#    #\n#  * #\n#  @ #\n#    #\n######"
+      },
+      {
+        "layout_id": "d286c0a032e87454815b",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n# # ##\n#. @$#\n#    #\n#   *#\n######"
+      },
+      {
+        "layout_id": "5b490114f50fad0b726a",
+        "difficulty": "tiny_2box",
+        "outcome": "solved",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#    #\n##   #\n# @**#\n#    #\n######"
+      },
+      {
+        "layout_id": "4848ede8d899263db46d",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 5,
+        "revisits": 1,
+        "first_action_optimal": false,
+        "final_board": "######\n#.   #\n# $  #\n#@.  #\n#$   #\n######"
+      },
+      {
+        "layout_id": "8890427cc0f424b6d791",
+        "difficulty": "tiny_2box",
+        "outcome": "no_action",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n# @$*#\n#   .#\n## # #\n#    #\n######"
+      },
+      {
+        "layout_id": "1bdba0d3032486720be4",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#    #\n#  # #\n#.+$ #\n##$  #\n######"
+      },
+      {
+        "layout_id": "f591c5e0c2c1cdaab439",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#  . #\n# *  #\n## @$#\n#    #\n######"
+      },
+      {
+        "layout_id": "6966a368741a0d13ff1c",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#  . #\n# $  #\n#  @$#\n# . ##\n######"
+      },
+      {
+        "layout_id": "c81e3ddea37ce3c1ee4d",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#   .#\n# *# #\n#$@  #\n#    #\n######"
+      },
+      {
+        "layout_id": "4cc3080fcd0d8c30a9ee",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#     #\n#   * #\n#    .#\n#  @  #\n#  $# #\n#######"
+      },
+      {
+        "layout_id": "d3a51c8d0286949d63ff",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n# .  ##\n#     #\n##    #\n#$@   #\n#*#   #\n#######"
+      },
+      {
+        "layout_id": "7fe3d1434c8259185e2d",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#     #\n#     #\n#  .@$#\n#*#   #\n#     #\n#######"
+      },
+      {
+        "layout_id": "cea25616a1aad129bb3d",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 9,
+        "revisits": 3,
+        "first_action_optimal": null,
+        "final_board": "#######\n#  $  #\n#  @$ #\n# #   #\n#     #\n# . . #\n#######"
+      },
+      {
+        "layout_id": "227ea6b05124c1e651b0",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n##    #\n#    ##\n#$@  .#\n#  .$ #\n#     #\n#######"
+      },
+      {
+        "layout_id": "437f5dacd8337efe0e18",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#   $ #\n#$  @ #\n#  . ##\n#.    #\n#     #\n#######"
+      },
+      {
+        "layout_id": "9bb652e16bb5baf82782",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n# .  ##\n#   $ #\n#    .#\n## @  #\n#  $  #\n#######"
+      },
+      {
+        "layout_id": "d1806ad7d8d5f4260077",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 6,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#  +$##\n#   . #\n#   $##\n#     #\n#     #\n#######"
+      },
+      {
+        "layout_id": "97213449a9451ccf0da5",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 7,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#*    .#\n#  $   #\n#      #\n#     ##\n#.   @$#\n#      #\n########"
+      },
+      {
+        "layout_id": "d55c1faaa2a014badf8f",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#  #.  #\n#$@.   #\n# $    #\n#  #   #\n# # *  #\n#      #\n########"
+      },
+      {
+        "layout_id": "27a346192b760ca9aade",
+        "difficulty": "medium_3box",
+        "outcome": "push_budget",
+        "pushes": 16,
+        "revisits": 1,
+        "first_action_optimal": null,
+        "final_board": "########\n# .$@  #\n#  #  .#\n#    $ #\n#    #$#\n# #    #\n#     .#\n########"
+      },
+      {
+        "layout_id": "2d740d65556e122dd331",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#      #\n#.    ##\n#   $. #\n# $  @$#\n#      #\n#    . #\n########"
+      },
+      {
+        "layout_id": "9e77c4fce1e7d5c4f6e6",
+        "difficulty": "medium_3box",
+        "outcome": "push_budget",
+        "pushes": 16,
+        "revisits": 2,
+        "first_action_optimal": null,
+        "final_board": "########\n#*     #\n#.     #\n#$$@ . #\n#      #\n#      #\n#      #\n########"
+      },
+      {
+        "layout_id": "7f8b2b67bfd6eccdc1b5",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 6,
+        "revisits": 1,
+        "first_action_optimal": null,
+        "final_board": "########\n#  $   #\n#. @   #\n#$     #\n# #    #\n#  $.  #\n# .    #\n########"
+      },
+      {
+        "layout_id": "5ae6db36edbfc9cf4a66",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 4,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n# ##$+ #\n#    $ #\n#      #\n#     .#\n#    * #\n#  #   #\n########"
+      },
+      {
+        "layout_id": "b4b2b2c870f73702b9d8",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#  #   #\n#      #\n#      #\n#    $.#\n#$+   *#\n#      #\n########"
+      }
+    ],
+    "trial-laya_pretrained-ascii-17.json": [
+      {
+        "layout_id": "33417f2d7bb4ec704dcd",
+        "difficulty": "tiny_1box",
+        "outcome": "solved",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n# @* #\n#    #\n#    #\n## # #\n######"
+      },
+      {
+        "layout_id": "023b2ceb4687052f815d",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#   $#\n#  #@#\n#    #\n#   .#\n######"
+      },
+      {
+        "layout_id": "3c73223ce2384730b41f",
+        "difficulty": "tiny_1box",
+        "outcome": "solved",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#  @*#\n#   ##\n#    #\n#    #\n######"
+      },
+      {
+        "layout_id": "bd69716474635bc84f78",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n## $ #\n#  @ #\n#    #\n# .  #\n######"
+      },
+      {
+        "layout_id": "10a8da24d67ab0063657",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#  $ #\n#  @ #\n#   .#\n# #  #\n######"
+      },
+      {
+        "layout_id": "a25b14a16458f82e799f",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 4,
+        "revisits": 1,
+        "first_action_optimal": true,
+        "final_board": "######\n#    #\n#    #\n#.#@ #\n#  $ #\n######"
+      },
+      {
+        "layout_id": "ccdeacfa98fa7ff25594",
+        "difficulty": "tiny_1box",
+        "outcome": "solved",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n# *@ #\n#    #\n##   #\n#    #\n######"
+      },
+      {
+        "layout_id": "5c7e519594ce70ecef48",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n# $  #\n# @. #\n#    #\n#    #\n######"
+      },
+      {
+        "layout_id": "d286c0a032e87454815b",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n# # ##\n#. @$#\n#    #\n#   *#\n######"
+      },
+      {
+        "layout_id": "5b490114f50fad0b726a",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n# $  #\n##@  #\n#  .*#\n#    #\n######"
+      },
+      {
+        "layout_id": "4848ede8d899263db46d",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#.   #\n# $  #\n# .@ #\n#  $ #\n######"
+      },
+      {
+        "layout_id": "8890427cc0f424b6d791",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#  $.#\n#   .#\n## #@#\n#   $#\n######"
+      },
+      {
+        "layout_id": "1bdba0d3032486720be4",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 4,
+        "revisits": 2,
+        "first_action_optimal": false,
+        "final_board": "######\n# $  #\n# @# #\n#..$ #\n##   #\n######"
+      },
+      {
+        "layout_id": "f591c5e0c2c1cdaab439",
+        "difficulty": "tiny_2box",
+        "outcome": "no_action",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n# $* #\n# .@ #\n##   #\n#    #\n######"
+      },
+      {
+        "layout_id": "6966a368741a0d13ff1c",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#  . #\n#  $ #\n#  @$#\n# . ##\n######"
+      },
+      {
+        "layout_id": "c81e3ddea37ce3c1ee4d",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 5,
+        "revisits": 1,
+        "first_action_optimal": true,
+        "final_board": "######\n#$@ .#\n# .# #\n#  $ #\n#    #\n######"
+      },
+      {
+        "layout_id": "4cc3080fcd0d8c30a9ee",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#   $ #\n#   + #\n#  $ .#\n#     #\n#   # #\n#######"
+      },
+      {
+        "layout_id": "d3a51c8d0286949d63ff",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 6,
+        "revisits": 2,
+        "first_action_optimal": null,
+        "final_board": "#######\n# .@$##\n#     #\n##    #\n#     #\n#*#   #\n#######"
+      },
+      {
+        "layout_id": "7fe3d1434c8259185e2d",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 5,
+        "revisits": 2,
+        "first_action_optimal": null,
+        "final_board": "#######\n#$    #\n#@  $ #\n#  .  #\n#.#   #\n#     #\n#######"
+      },
+      {
+        "layout_id": "cea25616a1aad129bb3d",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 5,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#  $  #\n#  @$ #\n# #   #\n#     #\n# . . #\n#######"
+      },
+      {
+        "layout_id": "227ea6b05124c1e651b0",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n##    #\n#    ##\n# $  .#\n#  .@ #\n#   $ #\n#######"
+      },
+      {
+        "layout_id": "437f5dacd8337efe0e18",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#   $ #\n#$  @ #\n#  . ##\n#.    #\n#     #\n#######"
+      },
+      {
+        "layout_id": "9bb652e16bb5baf82782",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n# . $##\n#   @ #\n#    .#\n## $  #\n#     #\n#######"
+      },
+      {
+        "layout_id": "d1806ad7d8d5f4260077",
+        "difficulty": "easy_2box",
+        "outcome": "no_action",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n# $* ##\n#  @. #\n#    ##\n#     #\n#     #\n#######"
+      },
+      {
+        "layout_id": "97213449a9451ccf0da5",
+        "difficulty": "medium_3box",
+        "outcome": "no_action",
+        "pushes": 5,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#.$$  *#\n#  @   #\n#      #\n#     ##\n#.     #\n#      #\n########"
+      },
+      {
+        "layout_id": "d55c1faaa2a014badf8f",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#  #.  #\n# $.   #\n# $    #\n#  #   #\n# # .@ #\n#    $ #\n########"
+      },
+      {
+        "layout_id": "27a346192b760ca9aade",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n# .   $#\n#  #  +#\n#  $   #\n#    # #\n# #  $ #\n#     .#\n########"
+      },
+      {
+        "layout_id": "2d740d65556e122dd331",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 7,
+        "revisits": 1,
+        "first_action_optimal": null,
+        "final_board": "########\n#   $  #\n#.  @ ##\n#    * #\n#      #\n# $    #\n#    . #\n########"
+      },
+      {
+        "layout_id": "9e77c4fce1e7d5c4f6e6",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 11,
+        "revisits": 1,
+        "first_action_optimal": null,
+        "final_board": "########\n#.$$ @$#\n#.     #\n#    . #\n#      #\n#      #\n#      #\n########"
+      },
+      {
+        "layout_id": "7f8b2b67bfd6eccdc1b5",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#  $   #\n#. @$  #\n# $    #\n# #    #\n#   .  #\n# .    #\n########"
+      },
+      {
+        "layout_id": "5ae6db36edbfc9cf4a66",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n# ## +$#\n#   $  #\n#      #\n#     .#\n#    * #\n#  #   #\n########"
+      },
+      {
+        "layout_id": "b4b2b2c870f73702b9d8",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 5,
+        "revisits": 2,
+        "first_action_optimal": null,
+        "final_board": "########\n#  #   #\n#      #\n#      #\n#    $.#\n# *   +#\n#     $#\n########"
+      }
+    ],
+    "trial-laya_pretrained-ascii-29.json": [
+      {
+        "layout_id": "33417f2d7bb4ec704dcd",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#$@. #\n#    #\n#    #\n## # #\n######"
+      },
+      {
+        "layout_id": "023b2ceb4687052f815d",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#   $#\n#  #@#\n#    #\n#   .#\n######"
+      },
+      {
+        "layout_id": "3c73223ce2384730b41f",
+        "difficulty": "tiny_1box",
+        "outcome": "solved",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#  @*#\n#   ##\n#    #\n#    #\n######"
+      },
+      {
+        "layout_id": "bd69716474635bc84f78",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n## $ #\n#  @ #\n#    #\n# .  #\n######"
+      },
+      {
+        "layout_id": "10a8da24d67ab0063657",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#  $ #\n#  @ #\n#   .#\n# #  #\n######"
+      },
+      {
+        "layout_id": "a25b14a16458f82e799f",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#    #\n#  @$#\n#.#  #\n#    #\n######"
+      },
+      {
+        "layout_id": "ccdeacfa98fa7ff25594",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n# .@$#\n#    #\n##   #\n#    #\n######"
+      },
+      {
+        "layout_id": "5c7e519594ce70ecef48",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n# $  #\n# @. #\n#    #\n#    #\n######"
+      },
+      {
+        "layout_id": "d286c0a032e87454815b",
+        "difficulty": "tiny_2box",
+        "outcome": "solved",
+        "pushes": 5,
+        "revisits": 2,
+        "first_action_optimal": true,
+        "final_board": "######\n# # ##\n#*@  #\n#    #\n#   *#\n######"
+      },
+      {
+        "layout_id": "5b490114f50fad0b726a",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n# $  #\n##@ $#\n#  ..#\n#    #\n######"
+      },
+      {
+        "layout_id": "4848ede8d899263db46d",
+        "difficulty": "tiny_2box",
+        "outcome": "no_action",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#.   #\n#$   #\n#$+  #\n#    #\n######"
+      },
+      {
+        "layout_id": "8890427cc0f424b6d791",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#$@ .#\n#   *#\n## # #\n#    #\n######"
+      },
+      {
+        "layout_id": "1bdba0d3032486720be4",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 4,
+        "revisits": 1,
+        "first_action_optimal": false,
+        "final_board": "######\n# $  #\n# @# #\n#*.  #\n##   #\n######"
+      },
+      {
+        "layout_id": "f591c5e0c2c1cdaab439",
+        "difficulty": "tiny_2box",
+        "outcome": "no_action",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n# $* #\n# .@ #\n##   #\n#    #\n######"
+      },
+      {
+        "layout_id": "6966a368741a0d13ff1c",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#  . #\n#  $ #\n#$@  #\n# . ##\n######"
+      },
+      {
+        "layout_id": "c81e3ddea37ce3c1ee4d",
+        "difficulty": "tiny_2box",
+        "outcome": "no_action",
+        "pushes": 8,
+        "revisits": 2,
+        "first_action_optimal": true,
+        "final_board": "######\n#   *#\n# .#$#\n#   @#\n#    #\n######"
+      },
+      {
+        "layout_id": "4cc3080fcd0d8c30a9ee",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#  $  #\n#  @* #\n#    .#\n#     #\n#   # #\n#######"
+      },
+      {
+        "layout_id": "d3a51c8d0286949d63ff",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 4,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n# . $##\n#   @ #\n##    #\n#     #\n#*#   #\n#######"
+      },
+      {
+        "layout_id": "7fe3d1434c8259185e2d",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#   $ #\n#   @ #\n#  .  #\n#*#   #\n#     #\n#######"
+      },
+      {
+        "layout_id": "cea25616a1aad129bb3d",
+        "difficulty": "easy_2box",
+        "outcome": "no_action",
+        "pushes": 4,
+        "revisits": 1,
+        "first_action_optimal": null,
+        "final_board": "#######\n#     #\n#     #\n# #   #\n#   @ #\n# .$* #\n#######"
+      },
+      {
+        "layout_id": "227ea6b05124c1e651b0",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 4,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n##$   #\n# @  ##\n#  $ .#\n#  .  #\n#     #\n#######"
+      },
+      {
+        "layout_id": "437f5dacd8337efe0e18",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#  $  #\n#$ @  #\n#  . ##\n#.    #\n#     #\n#######"
+      },
+      {
+        "layout_id": "9bb652e16bb5baf82782",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n# . $##\n#   @ #\n#    .#\n## $  #\n#     #\n#######"
+      },
+      {
+        "layout_id": "d1806ad7d8d5f4260077",
+        "difficulty": "easy_2box",
+        "outcome": "no_action",
+        "pushes": 11,
+        "revisits": 2,
+        "first_action_optimal": null,
+        "final_board": "#######\n# $* ##\n# @ . #\n#    ##\n#     #\n#     #\n#######"
+      },
+      {
+        "layout_id": "97213449a9451ccf0da5",
+        "difficulty": "medium_3box",
+        "outcome": "no_action",
+        "pushes": 5,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#.$$  *#\n# @    #\n#      #\n#     ##\n#.     #\n#      #\n########"
+      },
+      {
+        "layout_id": "d55c1faaa2a014badf8f",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#  #.  #\n# $.   #\n# $    #\n#  #   #\n# # +  #\n#   $  #\n########"
+      },
+      {
+        "layout_id": "27a346192b760ca9aade",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 10,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n# . $$$#\n#  #  +#\n#      #\n#    # #\n# #    #\n#     .#\n########"
+      },
+      {
+        "layout_id": "2d740d65556e122dd331",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 15,
+        "revisits": 2,
+        "first_action_optimal": null,
+        "final_board": "########\n#    $ #\n#.   @##\n# $ $. #\n#      #\n#      #\n#    . #\n########"
+      },
+      {
+        "layout_id": "9e77c4fce1e7d5c4f6e6",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#.$    #\n#.     #\n#  $ . #\n#      #\n#  @   #\n#  $   #\n########"
+      },
+      {
+        "layout_id": "7f8b2b67bfd6eccdc1b5",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#   $  #\n#.  @  #\n# $$   #\n# #    #\n#   .  #\n# .    #\n########"
+      },
+      {
+        "layout_id": "5ae6db36edbfc9cf4a66",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n# ## +$#\n#   $  #\n#      #\n#     .#\n#    * #\n#  #   #\n########"
+      },
+      {
+        "layout_id": "b4b2b2c870f73702b9d8",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 4,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#  #  $#\n#     @#\n#      #\n#    $.#\n# *   .#\n#      #\n########"
+      }
+    ],
+    "trial-laya_pretrained-ascii-43.json": [
+      {
+        "layout_id": "33417f2d7bb4ec704dcd",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#$@. #\n#    #\n#    #\n## # #\n######"
+      },
+      {
+        "layout_id": "023b2ceb4687052f815d",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#    #\n#  # #\n#$@  #\n#   .#\n######"
+      },
+      {
+        "layout_id": "3c73223ce2384730b41f",
+        "difficulty": "tiny_1box",
+        "outcome": "solved",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#  @*#\n#   ##\n#    #\n#    #\n######"
+      },
+      {
+        "layout_id": "bd69716474635bc84f78",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n## $ #\n#  @ #\n#    #\n# .  #\n######"
+      },
+      {
+        "layout_id": "10a8da24d67ab0063657",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#    #\n#$@  #\n#   .#\n# #  #\n######"
+      },
+      {
+        "layout_id": "a25b14a16458f82e799f",
+        "difficulty": "tiny_1box",
+        "outcome": "solved",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#    #\n#@   #\n#*#  #\n#    #\n######"
+      },
+      {
+        "layout_id": "ccdeacfa98fa7ff25594",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n# .  #\n#$@  #\n##   #\n#    #\n######"
+      },
+      {
+        "layout_id": "5c7e519594ce70ecef48",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n# $  #\n# @. #\n#    #\n#    #\n######"
+      },
+      {
+        "layout_id": "d286c0a032e87454815b",
+        "difficulty": "tiny_2box",
+        "outcome": "solved",
+        "pushes": 7,
+        "revisits": 4,
+        "first_action_optimal": true,
+        "final_board": "######\n# # ##\n#*@  #\n#    #\n#   *#\n######"
+      },
+      {
+        "layout_id": "5b490114f50fad0b726a",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#   $#\n##$ @#\n#  ..#\n#    #\n######"
+      },
+      {
+        "layout_id": "4848ede8d899263db46d",
+        "difficulty": "tiny_2box",
+        "outcome": "no_action",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#.$$ #\n# @  #\n# .  #\n#    #\n######"
+      },
+      {
+        "layout_id": "8890427cc0f424b6d791",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#$@ .#\n#   *#\n## # #\n#    #\n######"
+      },
+      {
+        "layout_id": "1bdba0d3032486720be4",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 4,
+        "revisits": 1,
+        "first_action_optimal": false,
+        "final_board": "######\n# $  #\n# @# #\n#*.  #\n##   #\n######"
+      },
+      {
+        "layout_id": "f591c5e0c2c1cdaab439",
+        "difficulty": "tiny_2box",
+        "outcome": "solved",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#  * #\n# *@ #\n##   #\n#    #\n######"
+      },
+      {
+        "layout_id": "6966a368741a0d13ff1c",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#  . #\n#$@  #\n# $  #\n# . ##\n######"
+      },
+      {
+        "layout_id": "c81e3ddea37ce3c1ee4d",
+        "difficulty": "tiny_2box",
+        "outcome": "no_action",
+        "pushes": 6,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#   *#\n# .#$#\n#   @#\n#    #\n######"
+      },
+      {
+        "layout_id": "4cc3080fcd0d8c30a9ee",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 6,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#     #\n#   . #\n#    .#\n#  @$ #\n#  $# #\n#######"
+      },
+      {
+        "layout_id": "d3a51c8d0286949d63ff",
+        "difficulty": "easy_2box",
+        "outcome": "solved",
+        "pushes": 4,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n# *@ ##\n#     #\n##    #\n#     #\n#*#   #\n#######"
+      },
+      {
+        "layout_id": "7fe3d1434c8259185e2d",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#$    #\n#@  $ #\n#  .  #\n#.#   #\n#     #\n#######"
+      },
+      {
+        "layout_id": "cea25616a1aad129bb3d",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 6,
+        "revisits": 2,
+        "first_action_optimal": null,
+        "final_board": "#######\n#   $ #\n#   @ #\n# #$  #\n#     #\n# . . #\n#######"
+      },
+      {
+        "layout_id": "227ea6b05124c1e651b0",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n##    #\n#    ##\n# $  .#\n#  .@ #\n#   $ #\n#######"
+      },
+      {
+        "layout_id": "437f5dacd8337efe0e18",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#   $ #\n#$  @ #\n#  . ##\n#.    #\n#     #\n#######"
+      },
+      {
+        "layout_id": "9bb652e16bb5baf82782",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n# . $##\n#   @ #\n#    .#\n## $  #\n#     #\n#######"
+      },
+      {
+        "layout_id": "d1806ad7d8d5f4260077",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#  . ##\n#   . #\n#  $ ##\n# @   #\n# $   #\n#######"
+      },
+      {
+        "layout_id": "97213449a9451ccf0da5",
+        "difficulty": "medium_3box",
+        "outcome": "no_action",
+        "pushes": 11,
+        "revisits": 3,
+        "first_action_optimal": null,
+        "final_board": "########\n#. $$ *#\n#   @  #\n#      #\n#     ##\n#.     #\n#      #\n########"
+      },
+      {
+        "layout_id": "d55c1faaa2a014badf8f",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 8,
+        "revisits": 2,
+        "first_action_optimal": null,
+        "final_board": "########\n#  #.@$#\n# $.   #\n# $    #\n#  #   #\n# # .  #\n#      #\n########"
+      },
+      {
+        "layout_id": "27a346192b760ca9aade",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n# .    #\n#  #$ .#\n#$@    #\n#    # #\n# #  $ #\n#     .#\n########"
+      },
+      {
+        "layout_id": "2d740d65556e122dd331",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 4,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#    $ #\n#.   @##\n#   $. #\n# $    #\n#      #\n#    . #\n########"
+      },
+      {
+        "layout_id": "9e77c4fce1e7d5c4f6e6",
+        "difficulty": "medium_3box",
+        "outcome": "no_action",
+        "pushes": 10,
+        "revisits": 1,
+        "first_action_optimal": null,
+        "final_board": "########\n#*$$   #\n#+     #\n#    . #\n#      #\n#      #\n#      #\n########"
+      },
+      {
+        "layout_id": "7f8b2b67bfd6eccdc1b5",
+        "difficulty": "medium_3box",
+        "outcome": "push_budget",
+        "pushes": 16,
+        "revisits": 4,
+        "first_action_optimal": null,
+        "final_board": "########\n#      #\n#.     #\n#      #\n# #    #\n# $@.  #\n# .$$  #\n########"
+      },
+      {
+        "layout_id": "5ae6db36edbfc9cf4a66",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n# ## +$#\n#   $  #\n#      #\n#     .#\n#    * #\n#  #   #\n########"
+      },
+      {
+        "layout_id": "b4b2b2c870f73702b9d8",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 13,
+        "revisits": 6,
+        "first_action_optimal": null,
+        "final_board": "########\n#  #   #\n#      #\n#     $#\n#    $.#\n# +   .#\n# $    #\n########"
+      }
+    ],
+    "trial-random-structured-17.json": [
+      {
+        "layout_id": "33417f2d7bb4ec704dcd",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 5,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#  . #\n#    #\n# @  #\n##$# #\n######"
+      },
+      {
+        "layout_id": "023b2ceb4687052f815d",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n# $  #\n# @# #\n#    #\n#   .#\n######"
+      },
+      {
+        "layout_id": "3c73223ce2384730b41f",
+        "difficulty": "tiny_1box",
+        "outcome": "solved",
+        "pushes": 4,
+        "revisits": 1,
+        "first_action_optimal": false,
+        "final_board": "######\n#  @*#\n#   ##\n#    #\n#    #\n######"
+      },
+      {
+        "layout_id": "bd69716474635bc84f78",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n##   #\n#    #\n#  @$#\n# .  #\n######"
+      },
+      {
+        "layout_id": "10a8da24d67ab0063657",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#    #\n#    #\n#$@ .#\n# #  #\n######"
+      },
+      {
+        "layout_id": "a25b14a16458f82e799f",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#    #\n#  @$#\n#.#  #\n#    #\n######"
+      },
+      {
+        "layout_id": "ccdeacfa98fa7ff25594",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n# .  #\n#    #\n## @$#\n#    #\n######"
+      },
+      {
+        "layout_id": "5c7e519594ce70ecef48",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#    #\n#  . #\n# @  #\n# $  #\n######"
+      },
+      {
+        "layout_id": "d286c0a032e87454815b",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n# #$##\n#. @ #\n#   $#\n#   .#\n######"
+      },
+      {
+        "layout_id": "5b490114f50fad0b726a",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#    #\n##$  #\n#  .+#\n#   $#\n######"
+      },
+      {
+        "layout_id": "4848ede8d899263db46d",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#.   #\n# $  #\n# .@$#\n#    #\n######"
+      },
+      {
+        "layout_id": "8890427cc0f424b6d791",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#$@ .#\n#   *#\n## # #\n#    #\n######"
+      },
+      {
+        "layout_id": "1bdba0d3032486720be4",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n# $  #\n# @# #\n#*.  #\n##   #\n######"
+      },
+      {
+        "layout_id": "f591c5e0c2c1cdaab439",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#  . #\n# .$ #\n## @$#\n#    #\n######"
+      },
+      {
+        "layout_id": "6966a368741a0d13ff1c",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#  . #\n#  @$#\n#  $ #\n# . ##\n######"
+      },
+      {
+        "layout_id": "c81e3ddea37ce3c1ee4d",
+        "difficulty": "tiny_2box",
+        "outcome": "no_action",
+        "pushes": 6,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n# @$*#\n# .# #\n#    #\n#    #\n######"
+      },
+      {
+        "layout_id": "4cc3080fcd0d8c30a9ee",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#   $ #\n#   + #\n# $  .#\n#     #\n#   # #\n#######"
+      },
+      {
+        "layout_id": "d3a51c8d0286949d63ff",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 1,
+        "first_action_optimal": null,
+        "final_board": "#######\n# .  ##\n#     #\n##    #\n#  @  #\n#*#$  #\n#######"
+      },
+      {
+        "layout_id": "7fe3d1434c8259185e2d",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#     #\n#   $ #\n#  .  #\n#+#   #\n#$    #\n#######"
+      },
+      {
+        "layout_id": "cea25616a1aad129bb3d",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#     #\n#     #\n# # @$#\n#  $  #\n# . . #\n#######"
+      },
+      {
+        "layout_id": "227ea6b05124c1e651b0",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n##    #\n#    ##\n#$@  .#\n#  .$ #\n#     #\n#######"
+      },
+      {
+        "layout_id": "437f5dacd8337efe0e18",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#$    #\n#@  $ #\n#  . ##\n#.    #\n#     #\n#######"
+      },
+      {
+        "layout_id": "9bb652e16bb5baf82782",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n# .  ##\n#   $ #\n#    .#\n## @  #\n#  $  #\n#######"
+      },
+      {
+        "layout_id": "d1806ad7d8d5f4260077",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 4,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#$@. ##\n#   * #\n#    ##\n#     #\n#     #\n#######"
+      },
+      {
+        "layout_id": "97213449a9451ccf0da5",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 5,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#.  $ .#\n# $    #\n#    @$#\n#     ##\n#.     #\n#      #\n########"
+      },
+      {
+        "layout_id": "d55c1faaa2a014badf8f",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#  #.  #\n# $.   #\n#  $   #\n#  #   #\n# # +  #\n#   $  #\n########"
+      },
+      {
+        "layout_id": "27a346192b760ca9aade",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 11,
+        "revisits": 2,
+        "first_action_optimal": null,
+        "final_board": "########\n# .   $#\n# $#  +#\n#      #\n#    # #\n# #  $ #\n#     .#\n########"
+      },
+      {
+        "layout_id": "2d740d65556e122dd331",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 6,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#      #\n#.    ##\n#    +$#\n#      #\n#  $   #\n# $  . #\n########"
+      },
+      {
+        "layout_id": "9e77c4fce1e7d5c4f6e6",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 7,
+        "revisits": 2,
+        "first_action_optimal": null,
+        "final_board": "########\n#.$    #\n#.  $  #\n#    . #\n#      #\n#  @   #\n#  $   #\n########"
+      },
+      {
+        "layout_id": "7f8b2b67bfd6eccdc1b5",
+        "difficulty": "medium_3box",
+        "outcome": "no_action",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#      #\n#.     #\n# $$@  #\n# #$   #\n#   .  #\n# .    #\n########"
+      },
+      {
+        "layout_id": "5ae6db36edbfc9cf4a66",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 4,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n# ## * #\n#      #\n#     $#\n#     .#\n#    + #\n#  # $ #\n########"
+      },
+      {
+        "layout_id": "b4b2b2c870f73702b9d8",
+        "difficulty": "medium_3box",
+        "outcome": "solved",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#  #   #\n#      #\n#      #\n#    @*#\n# *   *#\n#      #\n########"
+      }
+    ],
+    "trial-random-structured-29.json": [
+      {
+        "layout_id": "33417f2d7bb4ec704dcd",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 4,
+        "revisits": 1,
+        "first_action_optimal": true,
+        "final_board": "######\n#  . #\n#$@  #\n#    #\n## # #\n######"
+      },
+      {
+        "layout_id": "023b2ceb4687052f815d",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 5,
+        "revisits": 1,
+        "first_action_optimal": false,
+        "final_board": "######\n#    #\n#  # #\n#    #\n#$@ .#\n######"
+      },
+      {
+        "layout_id": "3c73223ce2384730b41f",
+        "difficulty": "tiny_1box",
+        "outcome": "solved",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#  @*#\n#   ##\n#    #\n#    #\n######"
+      },
+      {
+        "layout_id": "bd69716474635bc84f78",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n##   #\n#    #\n#  @$#\n# .  #\n######"
+      },
+      {
+        "layout_id": "10a8da24d67ab0063657",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 4,
+        "revisits": 1,
+        "first_action_optimal": true,
+        "final_board": "######\n#    #\n#$@  #\n#   .#\n# #  #\n######"
+      },
+      {
+        "layout_id": "a25b14a16458f82e799f",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#    #\n#    #\n#.#@ #\n#  $ #\n######"
+      },
+      {
+        "layout_id": "ccdeacfa98fa7ff25594",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n# .  #\n#    #\n## @$#\n#    #\n######"
+      },
+      {
+        "layout_id": "5c7e519594ce70ecef48",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#    #\n#  . #\n# @  #\n# $  #\n######"
+      },
+      {
+        "layout_id": "d286c0a032e87454815b",
+        "difficulty": "tiny_2box",
+        "outcome": "solved",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n# # ##\n#*   #\n#   @#\n#   *#\n######"
+      },
+      {
+        "layout_id": "5b490114f50fad0b726a",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#   $#\n##$ @#\n#  ..#\n#    #\n######"
+      },
+      {
+        "layout_id": "4848ede8d899263db46d",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#.   #\n# $  #\n# .@ #\n#  $ #\n######"
+      },
+      {
+        "layout_id": "8890427cc0f424b6d791",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#$@ .#\n#   *#\n## # #\n#    #\n######"
+      },
+      {
+        "layout_id": "1bdba0d3032486720be4",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n# $  #\n# @# #\n#..$ #\n##   #\n######"
+      },
+      {
+        "layout_id": "f591c5e0c2c1cdaab439",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#$@. #\n# .  #\n## $ #\n#    #\n######"
+      },
+      {
+        "layout_id": "6966a368741a0d13ff1c",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#  . #\n# $  #\n#  @$#\n# . ##\n######"
+      },
+      {
+        "layout_id": "c81e3ddea37ce3c1ee4d",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 8,
+        "revisits": 3,
+        "first_action_optimal": true,
+        "final_board": "######\n# $ .#\n# .# #\n#$@  #\n#    #\n######"
+      },
+      {
+        "layout_id": "4cc3080fcd0d8c30a9ee",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 4,
+        "revisits": 1,
+        "first_action_optimal": null,
+        "final_board": "#######\n#   $ #\n#  $+ #\n#    .#\n#     #\n#   # #\n#######"
+      },
+      {
+        "layout_id": "d3a51c8d0286949d63ff",
+        "difficulty": "easy_2box",
+        "outcome": "solved",
+        "pushes": 10,
+        "revisits": 5,
+        "first_action_optimal": null,
+        "final_board": "#######\n# *  ##\n# @   #\n##    #\n#     #\n#*#   #\n#######"
+      },
+      {
+        "layout_id": "7fe3d1434c8259185e2d",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#     #\n#   $ #\n#  .  #\n#+#   #\n#$    #\n#######"
+      },
+      {
+        "layout_id": "cea25616a1aad129bb3d",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 7,
+        "revisits": 1,
+        "first_action_optimal": null,
+        "final_board": "#######\n#   $ #\n#   @ #\n# #   #\n#     #\n# . * #\n#######"
+      },
+      {
+        "layout_id": "227ea6b05124c1e651b0",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 15,
+        "revisits": 4,
+        "first_action_optimal": null,
+        "final_board": "#######\n##  $ #\n#  $@##\n#    .#\n#  .  #\n#     #\n#######"
+      },
+      {
+        "layout_id": "437f5dacd8337efe0e18",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#$    #\n#@  $ #\n#  . ##\n#.    #\n#     #\n#######"
+      },
+      {
+        "layout_id": "9bb652e16bb5baf82782",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n# .  ##\n#    $#\n#    +#\n## $  #\n#     #\n#######"
+      },
+      {
+        "layout_id": "d1806ad7d8d5f4260077",
+        "difficulty": "easy_2box",
+        "outcome": "no_action",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n# $* ##\n#  @. #\n#    ##\n#     #\n#     #\n#######"
+      },
+      {
+        "layout_id": "97213449a9451ccf0da5",
+        "difficulty": "medium_3box",
+        "outcome": "no_action",
+        "pushes": 6,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#*$$@ .#\n#      #\n#      #\n#     ##\n#.     #\n#      #\n########"
+      },
+      {
+        "layout_id": "d55c1faaa2a014badf8f",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#  #.  #\n# $.   #\n#$@    #\n#  #   #\n# # *  #\n#      #\n########"
+      },
+      {
+        "layout_id": "27a346192b760ca9aade",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 6,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n# .    #\n#  #  .#\n#$@    #\n#    #$#\n# #$   #\n#     .#\n########"
+      },
+      {
+        "layout_id": "2d740d65556e122dd331",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 14,
+        "revisits": 1,
+        "first_action_optimal": null,
+        "final_board": "########\n#      #\n#.    ##\n#    . #\n#  $   #\n#@     #\n#$ $ . #\n########"
+      },
+      {
+        "layout_id": "9e77c4fce1e7d5c4f6e6",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#.$    #\n#.     #\n#   $. #\n#      #\n#  @   #\n#  $   #\n########"
+      },
+      {
+        "layout_id": "7f8b2b67bfd6eccdc1b5",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 7,
+        "revisits": 1,
+        "first_action_optimal": null,
+        "final_board": "########\n#$     #\n#+     #\n#  $$  #\n# #    #\n#   .  #\n# .    #\n########"
+      },
+      {
+        "layout_id": "5ae6db36edbfc9cf4a66",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n# ## +$#\n#   $  #\n#      #\n#     .#\n#    * #\n#  #   #\n########"
+      },
+      {
+        "layout_id": "b4b2b2c870f73702b9d8",
+        "difficulty": "medium_3box",
+        "outcome": "solved",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#  #   #\n#      #\n#      #\n#    @*#\n# *   *#\n#      #\n########"
+      }
+    ],
+    "trial-random-structured-43.json": [
+      {
+        "layout_id": "33417f2d7bb4ec704dcd",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#  . #\n#$@  #\n#    #\n## # #\n######"
+      },
+      {
+        "layout_id": "023b2ceb4687052f815d",
+        "difficulty": "tiny_1box",
+        "outcome": "solved",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#    #\n#  # #\n#   @#\n#   *#\n######"
+      },
+      {
+        "layout_id": "3c73223ce2384730b41f",
+        "difficulty": "tiny_1box",
+        "outcome": "solved",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#  @*#\n#   ##\n#    #\n#    #\n######"
+      },
+      {
+        "layout_id": "bd69716474635bc84f78",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n## $ #\n#  @ #\n#    #\n# .  #\n######"
+      },
+      {
+        "layout_id": "10a8da24d67ab0063657",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#    #\n#    #\n#  @.#\n# #$ #\n######"
+      },
+      {
+        "layout_id": "a25b14a16458f82e799f",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#    #\n#  @$#\n#.#  #\n#    #\n######"
+      },
+      {
+        "layout_id": "ccdeacfa98fa7ff25594",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 1,
+        "first_action_optimal": true,
+        "final_board": "######\n# .  #\n#    #\n## @$#\n#    #\n######"
+      },
+      {
+        "layout_id": "5c7e519594ce70ecef48",
+        "difficulty": "tiny_1box",
+        "outcome": "solved",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#    #\n#  * #\n#  @ #\n#    #\n######"
+      },
+      {
+        "layout_id": "d286c0a032e87454815b",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n# # ##\n#. @$#\n#    #\n#   *#\n######"
+      },
+      {
+        "layout_id": "5b490114f50fad0b726a",
+        "difficulty": "tiny_2box",
+        "outcome": "solved",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#    #\n##   #\n# @**#\n#    #\n######"
+      },
+      {
+        "layout_id": "4848ede8d899263db46d",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 5,
+        "revisits": 1,
+        "first_action_optimal": false,
+        "final_board": "######\n#.   #\n# $  #\n#@.  #\n#$   #\n######"
+      },
+      {
+        "layout_id": "8890427cc0f424b6d791",
+        "difficulty": "tiny_2box",
+        "outcome": "no_action",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n# @$*#\n#   .#\n## # #\n#    #\n######"
+      },
+      {
+        "layout_id": "1bdba0d3032486720be4",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#    #\n#  # #\n#.+$ #\n##$  #\n######"
+      },
+      {
+        "layout_id": "f591c5e0c2c1cdaab439",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#  . #\n# *  #\n## @$#\n#    #\n######"
+      },
+      {
+        "layout_id": "6966a368741a0d13ff1c",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#  . #\n# $  #\n#  @$#\n# . ##\n######"
+      },
+      {
+        "layout_id": "c81e3ddea37ce3c1ee4d",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#   .#\n# *# #\n#$@  #\n#    #\n######"
+      },
+      {
+        "layout_id": "4cc3080fcd0d8c30a9ee",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#     #\n#   * #\n#    .#\n#  @  #\n#  $# #\n#######"
+      },
+      {
+        "layout_id": "d3a51c8d0286949d63ff",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n# .  ##\n#     #\n##    #\n#$@   #\n#*#   #\n#######"
+      },
+      {
+        "layout_id": "7fe3d1434c8259185e2d",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#     #\n#     #\n#  .@$#\n#*#   #\n#     #\n#######"
+      },
+      {
+        "layout_id": "cea25616a1aad129bb3d",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 9,
+        "revisits": 3,
+        "first_action_optimal": null,
+        "final_board": "#######\n#  $  #\n#  @$ #\n# #   #\n#     #\n# . . #\n#######"
+      },
+      {
+        "layout_id": "227ea6b05124c1e651b0",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n##    #\n#    ##\n#$@  .#\n#  .$ #\n#     #\n#######"
+      },
+      {
+        "layout_id": "437f5dacd8337efe0e18",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#   $ #\n#$  @ #\n#  . ##\n#.    #\n#     #\n#######"
+      },
+      {
+        "layout_id": "9bb652e16bb5baf82782",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n# .  ##\n#   $ #\n#    .#\n## @  #\n#  $  #\n#######"
+      },
+      {
+        "layout_id": "d1806ad7d8d5f4260077",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 6,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#  +$##\n#   . #\n#   $##\n#     #\n#     #\n#######"
+      },
+      {
+        "layout_id": "97213449a9451ccf0da5",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 7,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#*    .#\n#  $   #\n#      #\n#     ##\n#.   @$#\n#      #\n########"
+      },
+      {
+        "layout_id": "d55c1faaa2a014badf8f",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#  #.  #\n#$@.   #\n# $    #\n#  #   #\n# # *  #\n#      #\n########"
+      },
+      {
+        "layout_id": "27a346192b760ca9aade",
+        "difficulty": "medium_3box",
+        "outcome": "push_budget",
+        "pushes": 16,
+        "revisits": 1,
+        "first_action_optimal": null,
+        "final_board": "########\n# .$@  #\n#  #  .#\n#    $ #\n#    #$#\n# #    #\n#     .#\n########"
+      },
+      {
+        "layout_id": "2d740d65556e122dd331",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#      #\n#.    ##\n#   $. #\n# $  @$#\n#      #\n#    . #\n########"
+      },
+      {
+        "layout_id": "9e77c4fce1e7d5c4f6e6",
+        "difficulty": "medium_3box",
+        "outcome": "push_budget",
+        "pushes": 16,
+        "revisits": 2,
+        "first_action_optimal": null,
+        "final_board": "########\n#*     #\n#.     #\n#$$@ . #\n#      #\n#      #\n#      #\n########"
+      },
+      {
+        "layout_id": "7f8b2b67bfd6eccdc1b5",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 6,
+        "revisits": 1,
+        "first_action_optimal": null,
+        "final_board": "########\n#  $   #\n#. @   #\n#$     #\n# #    #\n#  $.  #\n# .    #\n########"
+      },
+      {
+        "layout_id": "5ae6db36edbfc9cf4a66",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 4,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n# ##$+ #\n#    $ #\n#      #\n#     .#\n#    * #\n#  #   #\n########"
+      },
+      {
+        "layout_id": "b4b2b2c870f73702b9d8",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#  #   #\n#      #\n#      #\n#    $.#\n#$+   *#\n#      #\n########"
+      }
+    ],
+    "trial-laya_pretrained-structured-17.json": [
+      {
+        "layout_id": "33417f2d7bb4ec704dcd",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#$@. #\n#    #\n#    #\n## # #\n######"
+      },
+      {
+        "layout_id": "023b2ceb4687052f815d",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#   $#\n#  #@#\n#    #\n#   .#\n######"
+      },
+      {
+        "layout_id": "3c73223ce2384730b41f",
+        "difficulty": "tiny_1box",
+        "outcome": "solved",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#  @*#\n#   ##\n#    #\n#    #\n######"
+      },
+      {
+        "layout_id": "bd69716474635bc84f78",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n## $ #\n#  @ #\n#    #\n# .  #\n######"
+      },
+      {
+        "layout_id": "10a8da24d67ab0063657",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#   $#\n#   @#\n#   .#\n# #  #\n######"
+      },
+      {
+        "layout_id": "a25b14a16458f82e799f",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#$   #\n#@   #\n#.#  #\n#    #\n######"
+      },
+      {
+        "layout_id": "ccdeacfa98fa7ff25594",
+        "difficulty": "tiny_1box",
+        "outcome": "solved",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n# *@ #\n#    #\n##   #\n#    #\n######"
+      },
+      {
+        "layout_id": "5c7e519594ce70ecef48",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#    #\n#  . #\n#  @$#\n#    #\n######"
+      },
+      {
+        "layout_id": "d286c0a032e87454815b",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 4,
+        "revisits": 1,
+        "first_action_optimal": true,
+        "final_board": "######\n# # ##\n#. @$#\n#    #\n#   *#\n######"
+      },
+      {
+        "layout_id": "5b490114f50fad0b726a",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n# $  #\n##@ $#\n#  ..#\n#    #\n######"
+      },
+      {
+        "layout_id": "4848ede8d899263db46d",
+        "difficulty": "tiny_2box",
+        "outcome": "no_action",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#.$$ #\n# @  #\n# .  #\n#    #\n######"
+      },
+      {
+        "layout_id": "8890427cc0f424b6d791",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#  $.#\n#   .#\n## #@#\n#   $#\n######"
+      },
+      {
+        "layout_id": "1bdba0d3032486720be4",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 4,
+        "revisits": 2,
+        "first_action_optimal": false,
+        "final_board": "######\n#    #\n# $# #\n#..@$#\n##   #\n######"
+      },
+      {
+        "layout_id": "f591c5e0c2c1cdaab439",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#  . #\n#$+  #\n## $ #\n#    #\n######"
+      },
+      {
+        "layout_id": "6966a368741a0d13ff1c",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#  . #\n#  $ #\n#  @$#\n# . ##\n######"
+      },
+      {
+        "layout_id": "c81e3ddea37ce3c1ee4d",
+        "difficulty": "tiny_2box",
+        "outcome": "no_action",
+        "pushes": 6,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#  $*#\n# .#@#\n#    #\n#    #\n######"
+      },
+      {
+        "layout_id": "4cc3080fcd0d8c30a9ee",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#   $ #\n#   + #\n#  $ .#\n#     #\n#   # #\n#######"
+      },
+      {
+        "layout_id": "d3a51c8d0286949d63ff",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 1,
+        "first_action_optimal": null,
+        "final_board": "#######\n# .  ##\n#     #\n##    #\n#  @  #\n#*#$  #\n#######"
+      },
+      {
+        "layout_id": "7fe3d1434c8259185e2d",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 4,
+        "revisits": 2,
+        "first_action_optimal": null,
+        "final_board": "#######\n#   $ #\n#   @ #\n#$ .  #\n#.#   #\n#     #\n#######"
+      },
+      {
+        "layout_id": "cea25616a1aad129bb3d",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 8,
+        "revisits": 3,
+        "first_action_optimal": null,
+        "final_board": "#######\n#   $ #\n#   @ #\n# #$  #\n#     #\n# . . #\n#######"
+      },
+      {
+        "layout_id": "227ea6b05124c1e651b0",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n##    #\n#    ##\n#    .#\n# @.$ #\n# $   #\n#######"
+      },
+      {
+        "layout_id": "437f5dacd8337efe0e18",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#   $ #\n#$  @ #\n#  . ##\n#.    #\n#     #\n#######"
+      },
+      {
+        "layout_id": "9bb652e16bb5baf82782",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n# . $##\n#   @ #\n#    .#\n## $  #\n#     #\n#######"
+      },
+      {
+        "layout_id": "d1806ad7d8d5f4260077",
+        "difficulty": "easy_2box",
+        "outcome": "no_action",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n# $* ##\n#  @. #\n#    ##\n#     #\n#     #\n#######"
+      },
+      {
+        "layout_id": "97213449a9451ccf0da5",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#.$   .#\n#     @#\n# $   $#\n#     ##\n#.     #\n#      #\n########"
+      },
+      {
+        "layout_id": "d55c1faaa2a014badf8f",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#  #.  #\n#$@.   #\n# $    #\n#  #   #\n# # *  #\n#      #\n########"
+      },
+      {
+        "layout_id": "27a346192b760ca9aade",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 10,
+        "revisits": 4,
+        "first_action_optimal": null,
+        "final_board": "########\n# .   $#\n#  #  +#\n# $    #\n#    #$#\n# #    #\n#     .#\n########"
+      },
+      {
+        "layout_id": "2d740d65556e122dd331",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 12,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#   $  #\n#.$ @ ##\n#    * #\n#      #\n#      #\n#    . #\n########"
+      },
+      {
+        "layout_id": "9e77c4fce1e7d5c4f6e6",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 6,
+        "revisits": 1,
+        "first_action_optimal": null,
+        "final_board": "########\n#.  $  #\n#.     #\n#  $ . #\n#      #\n#   @  #\n#   $  #\n########"
+      },
+      {
+        "layout_id": "7f8b2b67bfd6eccdc1b5",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 6,
+        "revisits": 2,
+        "first_action_optimal": null,
+        "final_board": "########\n#$     #\n#+   $ #\n#      #\n# #$   #\n#   .  #\n# .    #\n########"
+      },
+      {
+        "layout_id": "5ae6db36edbfc9cf4a66",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n# ## +$#\n#   $  #\n#      #\n#     .#\n#    * #\n#  #   #\n########"
+      },
+      {
+        "layout_id": "b4b2b2c870f73702b9d8",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#  #   #\n#      #\n#      #\n#    $.#\n# +   *#\n# $    #\n########"
+      }
+    ],
+    "trial-laya_pretrained-structured-29.json": [
+      {
+        "layout_id": "33417f2d7bb4ec704dcd",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#$@. #\n#    #\n#    #\n## # #\n######"
+      },
+      {
+        "layout_id": "023b2ceb4687052f815d",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#   $#\n#  #@#\n#    #\n#   .#\n######"
+      },
+      {
+        "layout_id": "3c73223ce2384730b41f",
+        "difficulty": "tiny_1box",
+        "outcome": "solved",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#  @*#\n#   ##\n#    #\n#    #\n######"
+      },
+      {
+        "layout_id": "bd69716474635bc84f78",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n## $ #\n#  @ #\n#    #\n# .  #\n######"
+      },
+      {
+        "layout_id": "10a8da24d67ab0063657",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#   $#\n#   @#\n#   .#\n# #  #\n######"
+      },
+      {
+        "layout_id": "a25b14a16458f82e799f",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#    #\n#  @$#\n#.#  #\n#    #\n######"
+      },
+      {
+        "layout_id": "ccdeacfa98fa7ff25594",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n# .@$#\n#    #\n##   #\n#    #\n######"
+      },
+      {
+        "layout_id": "5c7e519594ce70ecef48",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#    #\n#  . #\n#  @$#\n#    #\n######"
+      },
+      {
+        "layout_id": "d286c0a032e87454815b",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 6,
+        "revisits": 3,
+        "first_action_optimal": true,
+        "final_board": "######\n# #$##\n#. @ #\n#    #\n#   *#\n######"
+      },
+      {
+        "layout_id": "5b490114f50fad0b726a",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n# $  #\n##@ $#\n#  ..#\n#    #\n######"
+      },
+      {
+        "layout_id": "4848ede8d899263db46d",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#.   #\n#$   #\n# .@$#\n#    #\n######"
+      },
+      {
+        "layout_id": "8890427cc0f424b6d791",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#  $.#\n#   .#\n## #@#\n#   $#\n######"
+      },
+      {
+        "layout_id": "1bdba0d3032486720be4",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 4,
+        "revisits": 2,
+        "first_action_optimal": false,
+        "final_board": "######\n# $  #\n# @# #\n#..$ #\n##   #\n######"
+      },
+      {
+        "layout_id": "f591c5e0c2c1cdaab439",
+        "difficulty": "tiny_2box",
+        "outcome": "solved",
+        "pushes": 6,
+        "revisits": 2,
+        "first_action_optimal": false,
+        "final_board": "######\n#  * #\n# *  #\n##@  #\n#    #\n######"
+      },
+      {
+        "layout_id": "6966a368741a0d13ff1c",
+        "difficulty": "tiny_2box",
+        "outcome": "no_action",
+        "pushes": 6,
+        "revisits": 1,
+        "first_action_optimal": false,
+        "final_board": "######\n# $* #\n# @  #\n#    #\n# . ##\n######"
+      },
+      {
+        "layout_id": "c81e3ddea37ce3c1ee4d",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 7,
+        "revisits": 2,
+        "first_action_optimal": true,
+        "final_board": "######\n#$@ .#\n# *# #\n#    #\n#    #\n######"
+      },
+      {
+        "layout_id": "4cc3080fcd0d8c30a9ee",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 4,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#     #\n#   . #\n#    .#\n#  @$ #\n#  $# #\n#######"
+      },
+      {
+        "layout_id": "d3a51c8d0286949d63ff",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n# .  ##\n#     #\n##  @$#\n#     #\n#*#   #\n#######"
+      },
+      {
+        "layout_id": "7fe3d1434c8259185e2d",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 4,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#$    #\n#@ $  #\n#  .  #\n#.#   #\n#     #\n#######"
+      },
+      {
+        "layout_id": "cea25616a1aad129bb3d",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 8,
+        "revisits": 1,
+        "first_action_optimal": null,
+        "final_board": "#######\n#     #\n#     #\n# # $ #\n#     #\n# . +$#\n#######"
+      },
+      {
+        "layout_id": "227ea6b05124c1e651b0",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 4,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n##    #\n#    ##\n#  $ .#\n#$@.  #\n#     #\n#######"
+      },
+      {
+        "layout_id": "437f5dacd8337efe0e18",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#     #\n#   $ #\n#  . ##\n#+    #\n#$    #\n#######"
+      },
+      {
+        "layout_id": "9bb652e16bb5baf82782",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n# . $##\n#   @ #\n#    .#\n## $  #\n#     #\n#######"
+      },
+      {
+        "layout_id": "d1806ad7d8d5f4260077",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#  . ##\n#$@ . #\n# $  ##\n#     #\n#     #\n#######"
+      },
+      {
+        "layout_id": "97213449a9451ccf0da5",
+        "difficulty": "medium_3box",
+        "outcome": "no_action",
+        "pushes": 13,
+        "revisits": 2,
+        "first_action_optimal": null,
+        "final_board": "########\n#*$@  .#\n#$     #\n#      #\n#     ##\n#.     #\n#      #\n########"
+      },
+      {
+        "layout_id": "d55c1faaa2a014badf8f",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#  #.  #\n#  *   #\n# $    #\n#  #   #\n# # +  #\n#   $  #\n########"
+      },
+      {
+        "layout_id": "27a346192b760ca9aade",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 5,
+        "revisits": 1,
+        "first_action_optimal": null,
+        "final_board": "########\n# .  $ #\n#  #  .#\n#$@    #\n#    # #\n# #   $#\n#     .#\n########"
+      },
+      {
+        "layout_id": "2d740d65556e122dd331",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 16,
+        "revisits": 2,
+        "first_action_optimal": null,
+        "final_board": "########\n#  $   #\n#. @  ##\n#   $. #\n#   $  #\n#      #\n#    . #\n########"
+      },
+      {
+        "layout_id": "9e77c4fce1e7d5c4f6e6",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#.$    #\n#.     #\n#  $ . #\n#      #\n#  @   #\n#  $   #\n########"
+      },
+      {
+        "layout_id": "7f8b2b67bfd6eccdc1b5",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 9,
+        "revisits": 4,
+        "first_action_optimal": null,
+        "final_board": "########\n#    $ #\n#.   @ #\n# $$   #\n# #    #\n#   .  #\n# .    #\n########"
+      },
+      {
+        "layout_id": "5ae6db36edbfc9cf4a66",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n# ## +$#\n#   $  #\n#      #\n#     .#\n#    * #\n#  #   #\n########"
+      },
+      {
+        "layout_id": "b4b2b2c870f73702b9d8",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#  #   #\n#      #\n#      #\n#    $.#\n# *   +#\n#     $#\n########"
+      }
+    ],
+    "trial-laya_pretrained-structured-43.json": [
+      {
+        "layout_id": "33417f2d7bb4ec704dcd",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#$@. #\n#    #\n#    #\n## # #\n######"
+      },
+      {
+        "layout_id": "023b2ceb4687052f815d",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#    #\n#  # #\n#$@  #\n#   .#\n######"
+      },
+      {
+        "layout_id": "3c73223ce2384730b41f",
+        "difficulty": "tiny_1box",
+        "outcome": "solved",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#  @*#\n#   ##\n#    #\n#    #\n######"
+      },
+      {
+        "layout_id": "bd69716474635bc84f78",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n## $ #\n#  @ #\n#    #\n# .  #\n######"
+      },
+      {
+        "layout_id": "10a8da24d67ab0063657",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#    #\n#$@  #\n#   .#\n# #  #\n######"
+      },
+      {
+        "layout_id": "a25b14a16458f82e799f",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#$   #\n#@   #\n#.#  #\n#    #\n######"
+      },
+      {
+        "layout_id": "ccdeacfa98fa7ff25594",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n# .  #\n#$@  #\n##   #\n#    #\n######"
+      },
+      {
+        "layout_id": "5c7e519594ce70ecef48",
+        "difficulty": "tiny_1box",
+        "outcome": "static_deadlock",
+        "pushes": 4,
+        "revisits": 2,
+        "first_action_optimal": true,
+        "final_board": "######\n#    #\n#  . #\n#  @$#\n#    #\n######"
+      },
+      {
+        "layout_id": "d286c0a032e87454815b",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 6,
+        "revisits": 3,
+        "first_action_optimal": true,
+        "final_board": "######\n# # ##\n#. @$#\n#    #\n#   *#\n######"
+      },
+      {
+        "layout_id": "5b490114f50fad0b726a",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n# $  #\n##@  #\n#  .*#\n#    #\n######"
+      },
+      {
+        "layout_id": "4848ede8d899263db46d",
+        "difficulty": "tiny_2box",
+        "outcome": "no_action",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#.$$ #\n#  @ #\n# .  #\n#    #\n######"
+      },
+      {
+        "layout_id": "8890427cc0f424b6d791",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#  $.#\n#   .#\n## #@#\n#   $#\n######"
+      },
+      {
+        "layout_id": "1bdba0d3032486720be4",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 4,
+        "revisits": 2,
+        "first_action_optimal": false,
+        "final_board": "######\n# $  #\n# @# #\n#..$ #\n##   #\n######"
+      },
+      {
+        "layout_id": "f591c5e0c2c1cdaab439",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#  . #\n# .$ #\n## @$#\n#    #\n######"
+      },
+      {
+        "layout_id": "6966a368741a0d13ff1c",
+        "difficulty": "tiny_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": false,
+        "final_board": "######\n#  . #\n#  @$#\n#  $ #\n# . ##\n######"
+      },
+      {
+        "layout_id": "c81e3ddea37ce3c1ee4d",
+        "difficulty": "tiny_2box",
+        "outcome": "no_action",
+        "pushes": 6,
+        "revisits": 0,
+        "first_action_optimal": true,
+        "final_board": "######\n#   *#\n# .#$#\n#   @#\n#    #\n######"
+      },
+      {
+        "layout_id": "4cc3080fcd0d8c30a9ee",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#     #\n#   * #\n#$@  .#\n#     #\n#   # #\n#######"
+      },
+      {
+        "layout_id": "d3a51c8d0286949d63ff",
+        "difficulty": "easy_2box",
+        "outcome": "solved",
+        "pushes": 4,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n# *@ ##\n#     #\n##    #\n#     #\n#*#   #\n#######"
+      },
+      {
+        "layout_id": "7fe3d1434c8259185e2d",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#$    #\n#@  $ #\n#  .  #\n#.#   #\n#     #\n#######"
+      },
+      {
+        "layout_id": "cea25616a1aad129bb3d",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 5,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#  $  #\n#  @$ #\n# #   #\n#     #\n# . . #\n#######"
+      },
+      {
+        "layout_id": "227ea6b05124c1e651b0",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n##    #\n#    ##\n# $  .#\n#  .@ #\n#   $ #\n#######"
+      },
+      {
+        "layout_id": "437f5dacd8337efe0e18",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n#   $ #\n#$  @ #\n#  . ##\n#.    #\n#     #\n#######"
+      },
+      {
+        "layout_id": "9bb652e16bb5baf82782",
+        "difficulty": "easy_2box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n# .  ##\n#   $ #\n#    .#\n## @  #\n#  $  #\n#######"
+      },
+      {
+        "layout_id": "d1806ad7d8d5f4260077",
+        "difficulty": "easy_2box",
+        "outcome": "no_action",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "#######\n# $* ##\n#  @. #\n#    ##\n#     #\n#     #\n#######"
+      },
+      {
+        "layout_id": "97213449a9451ccf0da5",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 2,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#.$   .#\n#      #\n# $  @$#\n#     ##\n#.     #\n#      #\n########"
+      },
+      {
+        "layout_id": "d55c1faaa2a014badf8f",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#  #.  #\n#$@.   #\n# $ $  #\n#  #   #\n# # .  #\n#      #\n########"
+      },
+      {
+        "layout_id": "27a346192b760ca9aade",
+        "difficulty": "medium_3box",
+        "outcome": "push_budget",
+        "pushes": 16,
+        "revisits": 4,
+        "first_action_optimal": null,
+        "final_board": "########\n# .$   #\n#  #$ .#\n#   @  #\n#    # #\n# #    #\n#     *#\n########"
+      },
+      {
+        "layout_id": "2d740d65556e122dd331",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 4,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#    $ #\n#.   @##\n#   $. #\n# $    #\n#      #\n#    . #\n########"
+      },
+      {
+        "layout_id": "9e77c4fce1e7d5c4f6e6",
+        "difficulty": "medium_3box",
+        "outcome": "no_action",
+        "pushes": 10,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#* $$  #\n#. @   #\n#    . #\n#      #\n#      #\n#      #\n########"
+      },
+      {
+        "layout_id": "7f8b2b67bfd6eccdc1b5",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 3,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#      #\n#.   @$#\n#  $   #\n# #$   #\n#   .  #\n# .    #\n########"
+      },
+      {
+        "layout_id": "5ae6db36edbfc9cf4a66",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 1,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n# ## +$#\n#   $  #\n#      #\n#     .#\n#    * #\n#  #   #\n########"
+      },
+      {
+        "layout_id": "b4b2b2c870f73702b9d8",
+        "difficulty": "medium_3box",
+        "outcome": "static_deadlock",
+        "pushes": 5,
+        "revisits": 0,
+        "first_action_optimal": null,
+        "final_board": "########\n#  #   #\n#      #\n#     $#\n#$@   .#\n# .  $.#\n#      #\n########"
+      }
+    ]
+  },
+  "raw_sha256": {
+    "levels.json": "b1f16294006faf112d2f2c1336dc52caa841447687d6d9585774d306317adc6f",
+    "manifest.json": "d08b84b9c93b0e5a290cdc533ac3c5f24ce118a233c9ed35639c078f02fb0969",
+    "protocol.json": "f5a113139087e416025875ba3f1b6c12c3b45d47237a9cbb4a6d81e1bdc2cdb4",
+    "runtime.json": "f46e89042582576930cdc37daf8f275f1cc44eaa90d84335758c9f3f6d0aae40",
+    "summary.json": "b9715658e9d4f0d5c17dafa6ee630b738cfc2157ba761edf28b2795272161e43",
+    "trial-laya_pretrained-ascii-17.json": "97d23773a794e481bbf8261ae5e5df4e7a73a4db022fbb131937f3e4085892d0",
+    "trial-laya_pretrained-ascii-29.json": "a4bb75e690fcd1f01017e1a77dd74880a1ee894dc8c6a74db2eed45d840dc06b",
+    "trial-laya_pretrained-ascii-43.json": "32e488a81003433ba0fe8ba15905f8660d08b407e29486be661046c3fac8edef",
+    "trial-laya_pretrained-structured-17.json": "a616a8af7c9b9e6d295c764b5ed4665b9bc80a800bedb1248b99b29829af3472",
+    "trial-laya_pretrained-structured-29.json": "ab51a7b371ab585740c6b1c582dfb9187c756d1031ff6004155a2e2f7ba62cd6",
+    "trial-laya_pretrained-structured-43.json": "5838c39ed3c97791bd4876c4e69e661db04830467907f2bf65a40e434a6f955b",
+    "trial-random-ascii-17.json": "7c3849322c23e6393f81cec4cd2ba62776f9e5afa8f0667e31ce4fbd7d5e01f7",
+    "trial-random-ascii-29.json": "3464c3805b6068609aeeffdf641e390802a94a79bc0088b70ae4c0650e8be665",
+    "trial-random-ascii-43.json": "3cda32f44231dd34320f0a1314ce9a4e302a8cd70901c0fe3d519bd8e2896fa2",
+    "trial-random-structured-17.json": "ed14d23d522d4940c3f1669b2d87a2e4d245c2ec083261e3008256f86eada298",
+    "trial-random-structured-29.json": "52ebad980a46a727670d68dc6ced2a5d998274dd7b2b149260114f7c3ac93202",
+    "trial-random-structured-43.json": "9e4792e2fa1c3af60f19ed5452384521186cadba0afa9e4f5c36dc55a6dafc5b"
+  }
+}

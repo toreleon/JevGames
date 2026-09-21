@@ -5,6 +5,8 @@ This study tests an inference architecture inspired by the browser-use
 recent actions and indexed executable options, then directly selects an action.
 The user selected **Laya first**; this is not a test of TypeSafe's hosted Jev.
 
+Completed results: [LAYA_CHOICE_INFERENCE_RESULTS.md](LAYA_CHOICE_INFERENCE_RESULTS.md).
+
 ## Frozen protocol
 
 - Published `convaiinnovations/laya` revision
