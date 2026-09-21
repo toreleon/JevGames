@@ -4,11 +4,14 @@ Jev Games is a pluggable framework for applying calibrated, typed decision
 models to interactive tasks. It trains probability distributions for typed
 questions rather than generating action text.
 
-The primary training strategy is RLCD: Reinforcement Learning for Calibrated
-Decisions. A task supplies observed decision outcomes, a model reports a
-probability distribution over the available options, and a strictly proper
-scoring rule supplies the reward. Group-relative REINFORCE updates make honest
-probabilities optimal in expectation.
+The framework compares an experimental RLCD strategy (Reinforcement Learning
+for Calibrated Decisions) with direct proper-score optimization. A task supplies
+observed decision outcomes, a model reports probabilities, and a strictly proper
+scoring rule evaluates them. The current RLCD implementation standardizes
+advantages per example; a controlled diagnostic shows that this normalization
+can destroy the reward's calibration incentive. It must not be treated as a
+guarantee of honest probabilities. See the [diagnostic](docs/ADVANTAGE_NORMALIZATION_DIAGNOSTIC.md)
+and [paired experiment results](docs/OBJECTIVE_ABLATION_RESULTS.md).
 
 Sokoban is the first task integration and Laya is the first model integration.
 Neither is embedded in the framework core.
@@ -80,7 +83,7 @@ uv run jev-games plugins
   "collectors": ["episodic_outcomes"],
   "evidence": ["sokoban_solver"],
   "models": ["laya", "qwen_decision"],
-  "strategies": ["rlcd"],
+  "strategies": ["direct_proper_score", "rlcd"],
   "tasks": ["sokoban_push"]
 }
 ```

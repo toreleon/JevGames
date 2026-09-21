@@ -25,6 +25,8 @@ Sokoban are built-in integrations rather than core assumptions.
 
 - [Sokoban](SOKOBAN.md)
 - [RLCD objective comparison](OBJECTIVE_ABLATION.md) — registered paired study.
+- [Objective comparison results](OBJECTIVE_ABLATION_RESULTS.md) — all six runs.
+- [Advantage normalization diagnostic](ADVANTAGE_NORMALIZATION_DIAGNOSTIC.md).
 
 The public contracts in `jevgames/contracts.py`, `config.py`, `registry.py`,
 and `engine.py` are the source of truth.

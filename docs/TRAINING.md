@@ -106,6 +106,16 @@ Items whose sampled rewards are identical receive zero advantage. Normalizing
 per evidence item avoids comparing raw proper scores from unrelated option
 sets.
 
+**Known limitation:** division by the within-example reward standard deviation
+also changes the relative weight of different observed labels. The update is
+not guaranteed to preserve the proper reward's optimum. In a constant-input
+experiment with 30% true outcomes, the current normalized update predicts
+approximately 0.008% true, while direct optimization predicts 30%. See the
+[reproducible normalization diagnostic](ADVANTAGE_NORMALIZATION_DIAGNOSTIC.md).
+The `direct_proper_score` strategy uses the same optimizer infrastructure and
+directly differentiates the composite score. The existing `rlcd` strategy is
+retained unchanged so the comparison remains reproducible.
+
 ## REINFORCE update
 
 The Gaussian policy is centered on the live model logits. The sampled logits
