@@ -1,0 +1,19 @@
+[study]
+output_dir = "runs/laya-choice-inference-20260922"
+presentations = ["ascii", "structured"]
+ordering_seeds = [17, 29, 43]
+max_pushes = 16
+
+[dataset]
+seed = 2026092201
+levels_per_stratum = 8
+exclude_manifests = [
+  "data/pilot100/manifest.json",
+  "data/pilot/manifest.json",
+  "runs/sokoban-objective-ablation-20260921/data/manifest.json",
+]
+
+[model]
+source = "convaiinnovations/laya"
+revision = "1c5edc17a7acd8701df6fc341c0d179f1c62c982"
+device = "cuda"
