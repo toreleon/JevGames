@@ -183,7 +183,7 @@ uv run jev-games run configs/sokoban_qwen_lora_pilot_v2.toml
 ```
 
 That profile keeps the Qwen3-0.6B base in BF16, retains the complete aligned
-Sokoban outcome prompt within a 512-token budget, trains rank-8 PEFT adapters
+Sokoban outcome prompt within a measured 256-token budget, trains rank-8 PEFT adapters
 and the FP32 decision head at separate learning rates, enables activation
 checkpointing, and uses gradient accumulation for a bounded physical batch.
 It trains the same per-action `noul` primitive used for environment control:

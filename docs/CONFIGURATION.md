@@ -46,7 +46,9 @@ Built-in `qwen_decision` fields:
 
 The Qwen adapter scores each candidate from the final token of a sequence that
 contains the complete state, question, and option set. This preserves causal
-visibility but repeats backbone work for every candidate.
+visibility but repeats backbone work for every dynamic `choice` candidate.
+`noul` uses one sequence plus a dedicated binary head that emits false/true
+logits together, matching the primitive used by per-action environment control.
 
 When `lora_rank > 0`, Jev Games uses PEFT adapters even though
 `freeze_backbone` defaults to `true`: the immutable base stays frozen, LoRA
