@@ -36,6 +36,17 @@ def run_experiment(config: ExperimentConfig) -> dict:
     }]
     stats.extend(strategy.train(adapter, train_items, output, config.seed))
 
+    if config.calibration_dataset:
+        calibration_evidence = evidence_provider.load(config.calibration_dataset, task)
+        calibration_items = encode_calibration_items(adapter, calibration_evidence)
+        calibration_stat = dict(adapter.fit_calibration(calibration_items, config.benchmark.batch_size))
+        calibration_stat.update({
+            "phase": "post_training_calibration",
+            "evidence": len(calibration_items),
+        })
+        stats.append(calibration_stat)
+        print(json.dumps(calibration_stat, sort_keys=True), flush=True)
+
     checkpoint_dir = output / "checkpoint"
     adapter.save(adapter.model, checkpoint_dir, {
         "experiment": config.name,
@@ -66,7 +77,7 @@ def run_experiment(config: ExperimentConfig) -> dict:
         }
 
     report = {
-        "schema_version": 2,
+        "schema_version": 3,
         "name": config.name,
         "config": asdict(config),
         "plugins": {

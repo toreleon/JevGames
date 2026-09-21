@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Hashable, Mapping
 
-from jevgames.contracts import DecisionOption, DecisionTask, TaskTransition
+from jevgames.contracts import DecisionKind, DecisionOption, DecisionQuestion, DecisionTask, TaskTransition
 from jevgames.registry import register_task
 from sokoban_laya.core import Board
 from sokoban_laya.laya_policy import BOARD_LEGEND
@@ -43,8 +43,9 @@ class SokobanPushTask(DecisionTask):
     def observation(self, state: Board) -> Mapping[str, Any]:
         return {"board": state.render(), "legend": BOARD_LEGEND}
 
-    def options(self, state: Board) -> tuple[DecisionOption, ...]:
-        return tuple(DecisionOption(macro.label, macro.description) for macro in legal_push_macros(state))
+    def question(self, state: Board) -> DecisionQuestion:
+        options = tuple(DecisionOption(macro.label, macro.description) for macro in legal_push_macros(state))
+        return DecisionQuestion("push", DecisionKind.CHOICE, self.instruction, options)
 
     def transition(self, state: Board, option_key: str) -> TaskTransition:
         macros = {macro.label: macro for macro in legal_push_macros(state)}

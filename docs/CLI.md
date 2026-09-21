@@ -14,16 +14,16 @@ This prints registered model, task, evidence, and strategy names.
 uv run jev-games run configs/sokoban_smoke.toml
 ```
 
-The command blocks until RLCD training, checkpoint export, calibration
-evaluation, environment evaluation, and report generation complete. The final
-line is a compact JSON summary; the full result is `report.json`.
+The command blocks until RLCD training, post-training calibration fitting,
+checkpoint export, held-out evaluation, and report generation complete. The
+final line is a compact JSON summary; the full result is `report.json`.
 
 ## Generate Sokoban evidence
 
 ```bash
 uv run python scripts/generate_curriculum.py \
   --output data/pilot \
-  --train 2000 --validation 200 --test 200 \
+  --train 2000 --calibration 200 --validation 200 --test 200 \
   --seed 20260921
 ```
 

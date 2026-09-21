@@ -5,7 +5,7 @@
 ```text
 runs/<experiment>/
 ├── checkpoint/             # model-native files
-└── report.json             # framework report, schema version 2
+└── report.json             # framework report, schema version 3
 ```
 
 The Laya checkpoint contains `model.safetensors`, `rl_agent_config.json`, an
@@ -17,11 +17,11 @@ Top-level fields:
 
 | Field | Meaning |
 |---|---|
-| `schema_version` | currently `2` |
+| `schema_version` | currently `3` |
 | `name` | experiment identity |
 | `config` | fully parsed experiment config |
 | `plugins` | selected model, task, evidence, and strategy plugins |
-| `stats` | setup and RLCD epoch records |
+| `stats` | setup, RLCD epoch, and post-training calibration records |
 | `benchmarks` | validation/test calibration and environment results |
 | `checkpoint` | exported model path |
 | `elapsed_seconds` | complete experiment duration |
@@ -52,7 +52,7 @@ Numbers above illustrate shape only.
 
 ## Evidence schema
 
-The public Sokoban JSONL stores primitive solver decisions. The task adapter
+The public Sokoban JSONL stores primitive solver decisions. The evidence plugin
 compresses those records into in-memory `CalibrationDecision` rows. A future
 general evidence format should preserve target distributions, provenance,
 sampling budget, unresolved outcomes, option identity, and environment hash.
@@ -60,11 +60,12 @@ sampling budget, unresolved outcomes, option identity, and environment hash.
 ## Manifests
 
 Dataset manifests should record generator version, seed, split counts, layout
-hashes, difficulty, and evidence provenance. Never infer held-out status from a
+hashes, difficulty, and evidence provenance. Calibration layouts must also be
+disjoint from train, validation, and test. Never infer held-out status from a
 filename alone.
 
 ## Compatibility
 
-Schema version 1 reports contain `supervised_warmup` and `online_grpo` stats and
-flat environment benchmarks. Consumers must branch on `schema_version`; those
-fields are not translated into RLCD metrics.
+Schema version 1 reports contain `supervised_warmup` and `online_grpo` stats.
+Schema version 2 introduced RLCD but had choice-only contracts and no dedicated
+post-training calibration stage. Consumers must branch on `schema_version`.

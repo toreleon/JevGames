@@ -25,6 +25,9 @@ Built-in `laya` fields:
 | `freeze_backbone` | `true` | Train decision layers while detaching encoder output |
 | `gradient_checkpointing` | `true` | Enable when the backbone is trainable |
 
+When `data.calibration` is present, the Laya adapter fits and persists scalar
+temperatures per decision type and option-count bucket.
+
 ## `[task]`
 
 `type` is required and selects a registered task. The built-in value is
@@ -61,12 +64,15 @@ The removed `[warmup]` and `[online]` sections raise a configuration error.
 |---|---|---|
 | `type` | yes | Registered evidence provider; built-in `sokoban_solver` |
 | `train` | yes | Training evidence source |
+| `calibration` | no | Disjoint evidence used for post-training calibration fitting |
 | `validation` | no | Held-out selection and diagnosis split |
 | `test` | no | Held-out final reporting split |
 | `manifest` | no | Dataset provenance and split-hash manifest |
 
 The evidence plugin interprets these files. For `sokoban_solver` they are
-solver trajectory JSONL files compressed into push decisions.
+solver trajectory JSONL files compressed into push decisions. Laya needs at
+least ten examples in a decision-type or option-count group before fitting a
+temperature for that group.
 
 ## `[benchmark]`
 

@@ -54,8 +54,9 @@ Group size and sigma change the estimator, not just throughput.
 ## Monitoring
 
 Monitor RLCD proper score, loss, sigma, epoch time, held-out NLL/Brier/ECE,
-environment solve rate, GPU utilization, memory, temperature, and disk. A
-training proper-score increase is insufficient without held-out calibration.
+fitted temperatures, selective accuracy, environment solve rate, GPU
+utilization, memory, temperature, and disk. A training proper-score increase is
+insufficient without held-out calibration.
 
 ## Interruption
 

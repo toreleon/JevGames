@@ -9,7 +9,7 @@ them without importing a particular game or model into its core.
 ```text
 ExperimentConfig
 ├── model.type ──────> DecisionModelAdapter
-│                     encode, logits, masks, proper score, checkpoint
+│                     encode, logits, masks, calibration, checkpoint
 ├── task.type ───────> DecisionTask
 │                     observations, options, transitions
 ├── data.type ───────> EvidenceProvider
@@ -26,11 +26,14 @@ algorithm can be selected independently in TOML.
 
 The adapter converts generic `DecisionOption` values into the model's native
 input representation. It exposes option logits, the valid-option mask, target
-distributions, a strictly proper calibration score, and native checkpoint
-serialization.
+distributions, ordinal-row identity, optional calibration fitting, and native
+checkpoint serialization. The proper-scoring formula is framework-owned.
 
 The framework does not assume token generation. Laya, for example, is a
 bidirectional encoder that scores option markers in one forward pass.
+
+`DecisionQuestion` defines `choice`, ordered `score`, and false/true `noul`
+semantics. This contract is shared by every model adapter.
 
 ### Task adapter
 
@@ -65,14 +68,15 @@ load TOML
   → load calibration evidence through the data plugin
   → encode decisions with the model adapter
   → optimize with RLCD
+  → fit native calibration parameters on data.calibration
   → save a native model checkpoint
   → evaluate held-out calibration evidence
   → run greedy held-out environment play
   → write schema-versioned report.json
 ```
 
-Validation and test datasets are never passed to the strategy. Both are read
-only after the checkpoint has been trained.
+Validation and test datasets are never passed to the strategy or temperature
+fitter. Both are read only after training and calibration.
 
 ## Evidence and environment are different interfaces
 

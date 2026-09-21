@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import math
 from statistics import fmean
 from typing import Any, Mapping, Sequence
 
 from .config import BenchmarkConfig
 from .contracts import CalibrationDecision, DecisionModelAdapter, DecisionOption, DecisionTask
+from .scoring import composite_proper_score
 
 
 def _to_device(batch: Mapping[str, Any], device: Any) -> dict[str, Any]:
@@ -25,12 +27,11 @@ def encode_calibration_items(
 ) -> list[dict[str, Any]]:
     items = []
     for decision in evidence:
-        if len(decision.options) < 2:
+        if len(decision.question.options) < 2:
             continue
         items.append(adapter.encode(
             decision.observation,
-            decision.instruction,
-            decision.options,
+            decision.question,
             decision.target_probabilities,
         ))
     if not items:
@@ -72,6 +73,25 @@ def _reliability_bins(
     return weighted_gap, rows
 
 
+def _selective_accuracy(
+    confidences: Sequence[float],
+    correctness: Sequence[float],
+    coverages: Sequence[float] = (1.0, 0.8, 0.5),
+) -> list[dict[str, Any]]:
+    ranked = sorted(range(len(confidences)), key=confidences.__getitem__, reverse=True)
+    rows = []
+    for coverage in coverages:
+        selected_count = max(1, math.ceil(len(ranked) * coverage))
+        selected = ranked[:selected_count]
+        rows.append({
+            "coverage": round(selected_count / max(1, len(ranked)), 6),
+            "instances": selected_count,
+            "accuracy": round(fmean(correctness[index] for index in selected), 6),
+            "minimum_confidence": round(min(confidences[index] for index in selected), 6),
+        })
+    return rows
+
+
 def evaluate_calibration(
     adapter: DecisionModelAdapter,
     items: Sequence[dict[str, Any]],
@@ -84,12 +104,14 @@ def evaluate_calibration(
     selected = list(items[: config.max_instances] if config.max_instances else items)
     if not selected:
         raise ValueError("calibration benchmark has no evidence")
-    confidences: list[float] = []
+    top_probabilities: list[float] = []
+    entropy_confidences: list[float] = []
     correctness: list[float] = []
     soft_correctness: list[float] = []
     negative_log_likelihoods: list[float] = []
     brier_scores: list[float] = []
     proper_scores: list[float] = []
+    ordinal_errors: list[float] = []
     adapter.model.eval()
     for offset in range(0, len(selected), config.batch_size):
         batch = _to_device(adapter.collate(selected[offset : offset + config.batch_size]), adapter.device)
@@ -98,20 +120,31 @@ def evaluate_calibration(
             mask = adapter.action_mask(batch).bool()
             probabilities = torch.softmax(logits.masked_fill(~mask, -1e4), dim=-1)
             targets = adapter.target_probabilities(batch)
-            rewards = adapter.calibration_reward(probabilities, batch)
+            ordinal = adapter.ordinal_mask(batch).bool()
+            rewards = composite_proper_score(
+                probabilities,
+                targets,
+                mask,
+                ordinal,
+            )
         for row in range(int(probabilities.shape[0])):
             valid = int(mask[row].sum().item())
             predicted = int(probabilities[row, :valid].argmax().item())
             expected = int(targets[row, :valid].argmax().item())
             probability = probabilities[row, :valid].float()
             target = targets[row, :valid].float()
-            confidences.append(float(probability[predicted].item()))
+            top_probabilities.append(float(probability[predicted].item()))
+            entropy = float(-(probability * probability.clamp_min(1e-12).log()).sum().item())
+            entropy_confidences.append(1.0 - entropy / math.log(valid))
             correctness.append(float(predicted == expected))
             soft_correctness.append(float(target[predicted].item()))
             negative_log_likelihoods.append(float(-(target * probability.clamp_min(1e-12).log()).sum().item()))
             brier_scores.append(float(((probability - target) ** 2).sum().item()))
             proper_scores.append(float(rewards[row].item()))
-    ece, reliability = _reliability_bins(confidences, correctness, config.calibration_bins)
+            if bool(ordinal[row].item()):
+                levels = torch.arange(valid, device=probability.device, dtype=probability.dtype)
+                ordinal_errors.append(float(abs((probability * levels).sum() - (target * levels).sum()).item()))
+    ece, reliability = _reliability_bins(top_probabilities, correctness, config.calibration_bins)
     return {
         "instances": len(selected),
         "accuracy": round(fmean(correctness), 6),
@@ -119,8 +152,11 @@ def evaluate_calibration(
         "negative_log_likelihood": round(fmean(negative_log_likelihoods), 6),
         "brier_score": round(fmean(brier_scores), 6),
         "expected_calibration_error": round(ece, 6),
-        "mean_confidence": round(fmean(confidences), 6),
+        "mean_top_probability": round(fmean(top_probabilities), 6),
+        "mean_entropy_confidence": round(fmean(entropy_confidences), 6),
         "mean_proper_score": round(fmean(proper_scores), 6),
+        "score_mean_absolute_error": round(fmean(ordinal_errors), 6) if ordinal_errors else None,
+        "selective_accuracy": _selective_accuracy(entropy_confidences, correctness),
         "reliability_bins": reliability,
     }
 
@@ -163,7 +199,8 @@ def evaluate_environment(
                 episode.reason = "repeat"
                 continue
             episode.seen.add(key)
-            options = task.options(episode.state)
+            question = task.question(episode.state)
+            options = question.options
             if not options:
                 episode.reason = "no_action"
             elif len(options) == 1:
@@ -172,7 +209,7 @@ def evaluate_environment(
                 requests.append((
                     index,
                     options,
-                    adapter.encode(task.observation(episode.state), task.instruction, options),
+                    adapter.encode(task.observation(episode.state), question),
                 ))
         for offset in range(0, len(requests), config.batch_size):
             chunk = requests[offset : offset + config.batch_size]

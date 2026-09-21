@@ -29,8 +29,7 @@ class SokobanSolverEvidence(EvidenceProvider):
             decisions.append(CalibrationDecision.one_hot(
                 serialized_state=example.board,
                 observation=task.observation(board),
-                instruction=task.instruction,
-                options=task.options(board),
+                question=task.question(board),
                 target_key=example.expert_label,
                 evidence_id=example.episode,
                 step=example.push_step,

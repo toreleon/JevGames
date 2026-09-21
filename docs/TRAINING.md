@@ -6,15 +6,19 @@ and does not claim to reproduce TypeSafe's unpublished Jev algorithm.
 
 ## Evidence
 
-The task returns `CalibrationDecision` values containing an observation,
-instruction, dynamic option set, and target distribution:
+The evidence provider returns `CalibrationDecision` values containing an
+observation, typed question, dynamic option set, and target distribution:
 
 ```python
 CalibrationDecision(
     serialized_state="...",
     observation={"field": "value"},
-    instruction="Choose the best action",
-    options=(DecisionOption("a", "first"), DecisionOption("b", "second")),
+    question=DecisionQuestion(
+        key="route",
+        kind=DecisionKind.CHOICE,
+        instruction="Choose the best action",
+        options=(DecisionOption("a", "first"), DecisionOption("b", "second")),
+    ),
     target_probabilities=(0.75, 0.25),
     evidence_id="episode-42",
     step=3,
@@ -29,6 +33,20 @@ One-hot targets represent individual observed outcomes. Soft targets can
 represent repeated outcomes or a teacher distribution. They are first-class
 inputs rather than a model-specific extension.
 
+## Typed questions
+
+The core supports the three Laya/System-1 primitives without depending on the
+Laya implementation:
+
+- `choice`: unordered categorical options;
+- `score`: ordered rubric levels, which receive ranked probability score;
+- `noul`: options fixed as `false, true`, reporting `P(true)` directly.
+
+Evidence providers can emit several question keys for one serialized state.
+Adapters may collate those questions into one hardware batch. `evidence_id` and
+`step` preserve trajectory grouping for future TD(λ) strategies; the current
+RLCD strategy treats each labeled decision independently.
+
 ## Reported distribution
 
 For evidence item `i`, the model produces masked logits `z_i` over only the
@@ -39,6 +57,9 @@ p_i = softmax(mask(z_i))
 ```
 
 Invalid padding never receives probability mass.
+
+RLCD consumes `training_logits`, which are raw with respect to post-training
+temperature transforms. Held-out inference consumes calibrated `logits`.
 
 ## Exploration
 
@@ -55,12 +76,13 @@ noise prevents a meaningless common logit shift from consuming exploration.
 
 ## Proper scoring reward
 
-The model adapter scores each reported distribution against the target. Laya
-uses a sum of log and spherical scores, with ranked probability score support
-for ordinal questions:
+The framework core scores each reported distribution with log and spherical
+scores, plus ranked probability score for ordinal `score` questions:
 
 ```text
-R(q, y) = log_score(q, y) + 0.5 × spherical_score(q, y)
+R(q, y) = log_score(q, y)
+        + 0.5 × spherical_score(q, y)
+        - 1.0 × ordinal_rps(q, y)
 ```
 
 A strictly proper scoring rule has its best expected reward when the reported
@@ -93,6 +115,17 @@ L_RLCD = -mean(A × log π_z(z_sample))
 Accelerate owns device placement, mixed precision, accumulation, synchronized
 backward, and gradient clipping. AdamW performs the update.
 
+## Post-training calibration
+
+Training changes the logits, so temperatures fitted for the base checkpoint
+are stale. When `data.calibration` is configured, the lifecycle asks the model
+adapter to fit native calibration parameters on that dedicated split before it
+saves the checkpoint. Laya fits scalar temperatures by decision type and
+option-count bucket with held-out negative log-likelihood.
+
+Validation and test remain untouched by both weight training and temperature
+fitting. A calibration split is part of model construction, not a benchmark.
+
 ## What the probability means
 
 Calibration is only meaningful relative to the target event. In the current
@@ -124,3 +157,8 @@ SFT can be a separate initialization strategy and episode-reward GRPO can be an
 ablation, but neither is part of the default RLCD lifecycle. The old
 implementations remain under `sokoban_laya` so comparisons can be reproduced
 without changing what `training.type = "rlcd"` means.
+
+The current strategy intentionally keeps the decision loss pure RLCD. The
+latest public Laya fine-tuning notebook also includes a cross-entropy guidance
+term, while the accompanying article describes pure policy gradient. Jev Games
+keeps any hybrid objective explicit rather than silently folding it into RLCD.

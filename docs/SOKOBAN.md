@@ -74,6 +74,7 @@ quality against the evidence event. Neither metric substitutes for the other.
 - static deadlock detection is conservative;
 - reverse-generated levels differ from handcrafted distributions;
 - one solver path does not identify all acceptable actions;
-- the current adapter supports choice decisions only for Sokoban;
+- the Sokoban task currently emits only `choice` questions, while the generic
+  model contract also supports `score` and `noul`;
 - hard handcrafted Sokoban may require explicit planning or policy-guided
   search even with a strong calibrated local decision model.

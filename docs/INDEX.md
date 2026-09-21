@@ -18,6 +18,7 @@ Sokoban are built-in integrations rather than core assumptions.
 - [Operations and scaling](OPERATIONS.md)
 - [CLI](CLI.md)
 - [Framework selection](FRAMEWORKS.md)
+- [Design sources](DESIGN_SOURCES.md)
 - [Development](DEVELOPMENT.md)
 
 ## Case study

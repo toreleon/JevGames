@@ -5,12 +5,12 @@ are calibrated and whether the composed policy solves complete environments.
 
 ## Split discipline
 
-Train, validation, and test must be disjoint by underlying environment layout,
-not merely by serialized state. Sokoban manifests record layout and level
-hashes so trajectories from one layout cannot cross splits.
+Train, calibration, validation, and test must be disjoint by underlying
+environment layout, not merely by serialized state. Sokoban manifests record
+layout and level hashes so trajectories from one layout cannot cross splits.
 
-Training reads only `data.train`. Validation and test are loaded after the
-checkpoint is trained.
+Weight training reads only `data.train`; temperature fitting reads only
+`data.calibration`. Validation and test are used for reporting after both.
 
 ## Calibration benchmark
 
@@ -26,8 +26,11 @@ The report includes:
 | `negative_log_likelihood` | cross-entropy against the target distribution |
 | `brier_score` | sum of squared multiclass probability errors |
 | `expected_calibration_error` | weighted confidence/accuracy gap across bins |
-| `mean_confidence` | mean maximum reported probability |
-| `mean_proper_score` | adapter-defined strictly proper score |
+| `mean_top_probability` | mean probability of the argmax option |
+| `mean_entropy_confidence` | mean `1 - H(p)/log(K)` confidence |
+| `mean_proper_score` | framework composite proper score |
+| `score_mean_absolute_error` | expected-level error for ordinal questions |
+| `selective_accuracy` | accuracy when acting on the most confident 100/80/50% |
 | `reliability_bins` | count, confidence, accuracy, and gap per occupied bin |
 
 ECE depends on binning and sample count. Always inspect reliability bins and

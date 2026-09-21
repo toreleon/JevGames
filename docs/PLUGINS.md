@@ -13,8 +13,8 @@ from jevgames.registry import register_model
 
 class MyModel(DecisionModelAdapter):
     name = "my_model"
-    # encode, collate, logits, action_mask, target_probabilities,
-    # calibration_reward, freeze_backbone, save
+    # encode, collate, logits, training_logits, action_mask, target_probabilities,
+    # ordinal_mask, freeze_backbone, fit_calibration, save
 
 @register_model("my_model")
 def create_my_model(config):
@@ -23,23 +23,26 @@ def create_my_model(config):
 
 The key methods are:
 
-- `encode`: convert an observation, instruction, dynamic options, and optional
-  target distribution into one native item;
+- `encode`: convert an observation, `DecisionQuestion`, and optional target
+  distribution into one native item;
 - `collate`: pad native items into a batch;
 - `logits`: return one logit per padded option;
+- `training_logits`: optionally bypass fitted inference calibration transforms;
 - `action_mask`: mark real options and exclude padding;
 - `target_probabilities`: expose the batch targets;
-- `calibration_reward`: score reported distributions with a strictly proper
-  rule and return one reward per distribution and evidence item;
+- `ordinal_mask`: identify `score` rows for ranked probability scoring;
+- `fit_calibration`: optionally fit model-native post-training calibration
+  parameters from a dedicated split;
 - `save`: preserve the model's native checkpoint format.
 
-`calibration_reward` must support probabilities shaped `[group, batch, option]`
-during RLCD and `[batch, option]` during evaluation.
+The composite proper-scoring rule belongs to `jevgames.scoring`, so a new model
+cannot accidentally change what the `rlcd` strategy optimizes.
 
 ## Task adapters
 
 Implement `DecisionTask` and register a factory. The task exposes environment
-state, legal options, transitions, and terminal checks for model-only evaluation.
+state, a typed `DecisionQuestion`, transitions, and terminal checks for
+model-only evaluation.
 
 ## Evidence providers
 
@@ -96,6 +99,7 @@ lookup.
 ## Contract invariants
 
 - option keys are unique within a decision;
+- questions declare `choice`, ordered `score`, or false/true `noul` semantics;
 - target length equals option count and sums to one;
 - padding is always false in the action mask;
 - forced decisions are excluded from training;

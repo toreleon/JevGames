@@ -60,7 +60,7 @@ the plugin factory.
 
 ## Adding report fields
 
-Additive fields may remain under schema version 2. Breaking changes require:
+Additive fields may remain under schema version 3. Breaking changes require:
 
 - incrementing `schema_version`;
 - documenting old and new meanings;

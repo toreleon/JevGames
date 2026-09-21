@@ -15,6 +15,7 @@ type = "sokoban_push"
 [data]
 type = "sokoban_solver"
 train = "data/smoke_train.jsonl"
+calibration = "data/pilot100/calibration.jsonl"
 validation = "data/pilot100/validation.jsonl"
 test = "data/pilot100/test.jsonl"
 manifest = "data/pilot100/manifest.json"

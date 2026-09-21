@@ -40,7 +40,7 @@ uv run python -m unittest discover -s tests -v
 ```bash
 uv run python scripts/generate_curriculum.py \
   --output data/pilot100 \
-  --train 100 --validation 20 --test 20 \
+  --train 100 --calibration 20 --validation 20 --test 20 \
   --seed 20260921
 ```
 
@@ -53,8 +53,9 @@ uv run jev-games run configs/sokoban_smoke.toml
 ```
 
 The config downloads the public Laya checkpoint if needed. Its evidence plugin
-converts solver trajectories into push decisions, trains one RLCD epoch, saves a native
-checkpoint, and runs calibration plus environment benchmarks.
+converts solver trajectories into push decisions, trains one RLCD epoch, fits
+Laya temperature parameters, saves a native checkpoint, and runs held-out
+calibration plus environment benchmarks.
 
 The smoke run verifies mechanics. Its tiny training file cannot establish
 generalization.
@@ -64,7 +65,7 @@ generalization.
 ```bash
 uv run python scripts/generate_curriculum.py \
   --output data/pilot \
-  --train 2000 --validation 200 --test 200 \
+  --train 2000 --calibration 200 --validation 200 --test 200 \
   --seed 20260921
 ```
 
@@ -73,6 +74,6 @@ starting the longer run.
 
 ## Read the report
 
-`report.json` records schema version 2, full parsed config, plugin identities,
+`report.json` records schema version 3, full parsed config, plugin identities,
 RLCD epoch statistics, checkpoint path, and separate calibration/environment
 metrics for validation and test.

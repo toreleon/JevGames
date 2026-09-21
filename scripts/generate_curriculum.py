@@ -1,4 +1,4 @@
-"""Generate leak-free train/validation/test Sokoban curricula."""
+"""Generate leak-free train/calibration/validation/test Sokoban curricula."""
 
 from __future__ import annotations
 
@@ -17,6 +17,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", default="data/pilot")
     parser.add_argument("--train", type=int, default=2000)
+    parser.add_argument("--calibration", type=int, default=200)
     parser.add_argument("--validation", type=int, default=200)
     parser.add_argument("--test", type=int, default=200)
     parser.add_argument("--seed", type=int, default=20260921)
@@ -30,7 +31,12 @@ def main() -> None:
     started = time.perf_counter()
     seed_cursor = args.seed
 
-    for split, count in (("train", args.train), ("validation", args.validation), ("test", args.test)):
+    for split, count in (
+        ("train", args.train),
+        ("calibration", args.calibration),
+        ("validation", args.validation),
+        ("test", args.test),
+    ):
         examples = []
         records = []
         for difficulty in difficulty_schedule(count):

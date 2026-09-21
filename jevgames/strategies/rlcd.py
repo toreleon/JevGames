@@ -11,6 +11,7 @@ from typing import Any, Mapping, Sequence
 
 from jevgames.contracts import DecisionModelAdapter, TrainingStrategy
 from jevgames.registry import register_strategy
+from jevgames.scoring import composite_proper_score
 
 
 @dataclass(frozen=True, slots=True)
@@ -148,7 +149,7 @@ class RLCDStrategy(TrainingStrategy):
             for batch in data:
                 batch = _to_device(batch, accelerator.device)
                 with accelerator.accumulate(adapter.model):
-                    logits = adapter.logits(adapter.model, batch)
+                    logits = adapter.training_logits(adapter.model, batch)
                     mask = adapter.action_mask(batch).bool()
                     option_count = mask.sum(-1, keepdim=True).clamp(min=1).to(logits.dtype)
                     noise = torch.randn(
@@ -166,7 +167,12 @@ class RLCDStrategy(TrainingStrategy):
                         dim=-1,
                     )
                     with torch.no_grad():
-                        reward = adapter.calibration_reward(probabilities, batch)
+                        reward = composite_proper_score(
+                            probabilities,
+                            adapter.target_probabilities(batch),
+                            mask,
+                            adapter.ordinal_mask(batch),
+                        )
                         centered = reward - reward.mean(dim=0, keepdim=True)
                         deviation = reward.std(dim=0, correction=0, keepdim=True)
                         advantage = torch.where(

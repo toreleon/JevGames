@@ -23,6 +23,7 @@ class JevGamesFrameworkTests(unittest.TestCase):
         self.assertEqual(config.training_type, "rlcd")
         self.assertEqual(config.evidence_type, "sokoban_solver")
         self.assertEqual(config.train_dataset, "data/smoke_train.jsonl")
+        self.assertEqual(config.calibration_dataset, "data/pilot100/calibration.jsonl")
         self.assertEqual(config.training["learning_rate"], 3e-4)
         self.assertEqual(config.training["gradient_accumulation"], 2)
         self.assertEqual(config.training["group_size"], 4)
@@ -30,7 +31,7 @@ class JevGamesFrameworkTests(unittest.TestCase):
     def test_sokoban_task_is_accessed_only_through_contract(self) -> None:
         task = create_task("sokoban_push", {})
         board = Board.from_ascii("#######\n#  .  #\n#  $  #\n# @   #\n#######")
-        options = task.options(board)
+        options = task.question(board).options
         self.assertGreaterEqual(len(options), 1)
         outcome = task.transition(board, options[0].key)
         self.assertGreaterEqual(outcome.primitive_steps, 1)

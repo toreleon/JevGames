@@ -36,6 +36,7 @@ class ExperimentConfig:
     evidence_type: str
     evidence: dict[str, Any]
     train_dataset: str
+    calibration_dataset: str | None = None
     validation_dataset: str | None = None
     test_dataset: str | None = None
     manifest: str | None = None
@@ -77,9 +78,10 @@ def load_experiment_config(path: str | Path) -> ExperimentConfig:
         evidence={
             key: value
             for key, value in data.items()
-            if key not in {"type", "train", "validation", "test", "manifest"}
+            if key not in {"type", "train", "calibration", "validation", "test", "manifest"}
         },
         train_dataset=str(data["train"]),
+        calibration_dataset=data.get("calibration"),
         validation_dataset=data.get("validation"),
         test_dataset=data.get("test"),
         manifest=data.get("manifest"),

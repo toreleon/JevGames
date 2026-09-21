@@ -8,6 +8,7 @@ keeping RLCD's decision-specific sampling explicit.
 | Tensor/model runtime | PyTorch |
 | Device placement, mixed precision, accumulation, distributed preparation | Hugging Face Accelerate |
 | Laya tokenizer and encoder implementation | Hugging Face Transformers through Laya |
+| Typed decisions and composite proper scores | Jev Games core |
 | RLCD sampling and score-function objective | Jev Games strategy plugin |
 | Task state and transition semantics | Task plugin |
 | Dataset parsing and target provenance | Evidence plugin |
@@ -19,6 +20,10 @@ RLCD needs a custom forward path: grouped perturbations are applied to option
 logits, rewards come from a proper scoring rule, and the score-function loss is
 evaluated under the live logit mean. Accelerate handles standard mechanics
 without assuming token generation or a supervised scalar loss.
+
+The generic contract carries `choice`, `score`, and `noul` semantics. The core
+applies ranked probability score to ordered questions, while model adapters
+remain responsible for native encoding and temperature persistence.
 
 ## Why not Transformers Trainer
 

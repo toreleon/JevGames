@@ -1,8 +1,8 @@
 # Jev Games
 
 Jev Games is a pluggable framework for applying calibrated, typed decision
-models to interactive tasks. It trains distributions over state-dependent
-choices rather than generating action text.
+models to interactive tasks. It trains probability distributions for typed
+questions rather than generating action text.
 
 The primary training strategy is RLCD: Reinforcement Learning for Calibrated
 Decisions. A task supplies observed decision outcomes, a model reports a
@@ -36,13 +36,18 @@ Neither is embedded in the framework core.
 
 The four plugin contracts are independent:
 
-- a model adapter encodes typed options, produces logits, defines its proper
-  scoring rule, and preserves its native checkpoint format;
+- a model adapter encodes typed questions, produces logits and masks, fits its
+  native calibration parameters, and preserves its checkpoint format;
 - a task adapter exposes typed environment state and transitions;
 - an evidence provider converts a dataset into one-hot or soft calibration
   targets for a compatible task;
 - a training strategy owns sampling, optimization, device orchestration, and
   training statistics.
+
+The core represents three decision primitives independently of any model:
+`choice` for categorical routing, `score` for ordered rubrics, and `noul` for a
+calibrated false/true probability. The composite proper-scoring reward also
+lives in the framework core rather than the Laya adapter.
 
 Environment rewards do not enter the built-in RLCD objective. An evidence
 provider may use a solver or repeated environment outcomes to construct
@@ -81,12 +86,14 @@ Generate the small held-out curriculum and run the bounded experiment:
 
 ```bash
 uv run python scripts/generate_curriculum.py \
-  --output data/pilot100 --train 100 --validation 20 --test 20 --seed 20260921
+  --output data/pilot100 --train 100 --calibration 20 \
+  --validation 20 --test 20 --seed 20260921
 uv run jev-games run configs/sokoban_smoke.toml
 ```
 
-The run performs RLCD optimization, exports a native Laya checkpoint, measures
-held-out calibration, plays the held-out environments greedily, and writes:
+The run performs RLCD optimization, fits post-training temperature parameters
+on a dedicated calibration split, exports a native Laya checkpoint, measures
+held-out validation/test calibration, and plays those environments greedily.
 
 ```text
 runs/laya-sokoban-smoke/
@@ -98,7 +105,8 @@ Generate and train the 2,000-level pilot:
 
 ```bash
 uv run python scripts/generate_curriculum.py \
-  --output data/pilot --train 2000 --validation 200 --test 200 --seed 20260921
+  --output data/pilot --train 2000 --calibration 200 \
+  --validation 200 --test 200 --seed 20260921
 uv run jev-games run configs/sokoban_pilot.toml
 ```
 
@@ -133,6 +141,7 @@ mixed_precision = "no"
 [data]
 type = "sokoban_solver"
 train = "data/pilot/train.jsonl"
+calibration = "data/pilot/calibration.jsonl"
 validation = "data/pilot/validation.jsonl"
 test = "data/pilot/test.jsonl"
 manifest = "data/pilot/manifest.json"
@@ -151,9 +160,9 @@ architecture.
 
 Every held-out split reports two independent views:
 
-- calibration: accuracy, soft accuracy, negative log-likelihood, multiclass
-  Brier score, expected calibration error, mean confidence, mean proper score,
-  and reliability bins;
+- calibration: accuracy, soft accuracy, negative log-likelihood, Brier score,
+  ECE, top probability, normalized-entropy confidence, ordinal MAE, selective
+  accuracy, proper score, and reliability bins;
 - environment: solve rate, terminal outcomes, push decisions, and primitive
   movement cost.
 
@@ -169,12 +178,17 @@ implements the open Laya formulation:
 
 1. add zero-mean Gaussian exploration to option logits;
 2. convert sampled logits to typed probability distributions;
-3. reward each distribution with a strictly proper scoring rule;
+3. reward each distribution with the core composite strictly proper score;
 4. normalize rewards within the sample group;
 5. update the distribution mean with REINFORCE.
 
 This is an open implementation inspired by the stated objective; it is not a
 claim of reproducing TypeSafe's proprietary Jev training stack.
+
+The typed primitives, composite scoring rule, Gaussian policy-gradient update,
+normalized-entropy confidence, and post-training temperature fitting are
+grounded in the creator's [Laya engineering write-up](https://dev.to/nandakishor_m_6cc0adfde9f/i-built-non-autoregressive-decision-models-a-year-ago-then-a-frontier-lab-called-it-a-18me)
+and [open repository](https://github.com/NandhaKishorM/laya).
 
 ## Repository layout
 
@@ -184,6 +198,7 @@ jevgames/
   registry.py              Explicit plugin registry
   experiment.py            End-to-end orchestration
   engine.py                Evidence encoding and evaluation
+  scoring.py               Model-independent proper scoring rules
   evidence/                Dataset/evidence provider plugins
   models/laya.py           Laya adapter
   tasks/sokoban.py         Sokoban environment adapter
@@ -211,6 +226,7 @@ They are not part of the default Jev Games experiment lifecycle.
 - [Operations and scaling](docs/OPERATIONS.md)
 - [Sokoban case study](docs/SOKOBAN.md)
 - [Framework selection](docs/FRAMEWORKS.md)
+- [Design sources and interpretation](docs/DESIGN_SOURCES.md)
 - [Development](docs/DEVELOPMENT.md)
 
 ## Verification
