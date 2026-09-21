@@ -182,7 +182,8 @@ For memory-efficient backbone adaptation on a CUDA GPU, use the LoRA pilot:
 uv run jev-games run configs/sokoban_qwen_lora_pilot.toml
 ```
 
-That profile keeps the Qwen3-0.6B base in BF16, trains rank-8 PEFT adapters
+That profile keeps the Qwen3-0.6B base in BF16, retains the complete Sokoban
+decision prompt with a measured 768-token budget, trains rank-8 PEFT adapters
 and the FP32 decision head at separate learning rates, enables activation
 checkpointing, and uses gradient accumulation for a bounded physical batch.
 

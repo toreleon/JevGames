@@ -160,7 +160,7 @@ class QwenDecisionAdapter(DecisionModelAdapter):
         self.tokenizer.truncation_side = "left"
         try:
             for option in question.options:
-                text = prefix + f"Candidate to score: {option.key}: {option.description}\nDecision score:"
+                text = prefix + f"Candidate to score: {option.key}\nDecision score:"
                 candidate_ids.append(self.tokenizer(
                     text,
                     add_special_tokens=True,
