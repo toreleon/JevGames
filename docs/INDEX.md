@@ -24,6 +24,7 @@ Sokoban are built-in integrations rather than core assumptions.
 ## Case study
 
 - [Sokoban](SOKOBAN.md)
+- [RLCD objective comparison](OBJECTIVE_ABLATION.md) — registered paired study.
 
 The public contracts in `jevgames/contracts.py`, `config.py`, `registry.py`,
 and `engine.py` are the source of truth.

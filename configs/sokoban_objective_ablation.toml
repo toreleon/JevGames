@@ -1,0 +1,45 @@
+# Registered fixed-budget study. Do not tune on its held-out results.
+[study]
+output_dir = "runs/sokoban-objective-ablation-20260921"
+seeds = [17, 29, 43]
+objectives = ["rlcd", "direct_proper_score"]
+
+[dataset]
+seed = 947103
+train_levels = 64
+validation_levels = 16
+test_levels = 32
+states_per_level = 3
+train_evidence = 512
+horizon = 8
+max_graph_states = 2500
+exclude_manifests = ["data/pilot100/manifest.json", "data/pilot/manifest.json"]
+
+[model]
+source = "Qwen/Qwen3-0.6B-Base"
+device = "cuda"
+dtype = "bfloat16"
+max_length = 256
+lora_rank = 8
+lora_alpha = 16
+lora_dropout = 0.05
+lora_target_modules = "all-linear"
+backbone_learning_rate = 0.00001
+gradient_checkpointing = true
+
+[training]
+epochs = 4
+update_epochs = 0
+batch_size = 16
+gradient_accumulation = 1
+group_size = 16
+sigma_start = 0.6
+sigma_end = 0.15
+learning_rate = 0.00003
+weight_decay = 0.01
+max_grad_norm = 1.0
+mixed_precision = "bf16"
+logging_steps = 32
+
+[evaluation]
+batch_size = 32

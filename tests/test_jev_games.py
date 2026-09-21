@@ -13,7 +13,7 @@ class JevGamesFrameworkTests(unittest.TestCase):
             "collectors": ["episodic_outcomes"],
             "evidence": ["sokoban_counterfactual_solver", "sokoban_solver"],
             "models": ["laya", "qwen_decision"],
-            "strategies": ["rlcd"],
+            "strategies": ["direct_proper_score", "rlcd"],
             "tasks": ["sokoban_push"],
         })
 

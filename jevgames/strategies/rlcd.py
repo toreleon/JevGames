@@ -89,6 +89,32 @@ class RLCDStrategy(TrainingStrategy):
     def __init__(self, config: dict[str, Any]) -> None:
         self.config = RLCDConfig(**config)
 
+    def objective(self, logits, targets, mask, ordinal, sigma, generator):
+        """Sample reports with a separate RNG, leaving model dropout RNG unchanged."""
+        import torch
+
+        option_count = mask.sum(-1, keepdim=True).clamp(min=1).to(logits.dtype)
+        noise = torch.randn(
+            (self.config.group_size,) + tuple(logits.shape),
+            device=generator.device, dtype=logits.dtype, generator=generator,
+        ).to(logits.device) * sigma
+        expanded_mask = mask.unsqueeze(0)
+        noise = noise * expanded_mask
+        noise = (noise - noise.sum(-1, keepdim=True) / option_count.unsqueeze(0)) * expanded_mask
+        sampled_logits = logits.detach().unsqueeze(0) + noise
+        probabilities = torch.softmax(sampled_logits.masked_fill(~expanded_mask, -1e4), dim=-1)
+        with torch.no_grad():
+            reward = composite_proper_score(probabilities, targets, mask, ordinal)
+            centered = reward - reward.mean(dim=0, keepdim=True)
+            deviation = reward.std(dim=0, correction=0, keepdim=True)
+            advantage = torch.where(
+                deviation > 1e-6, centered / (deviation + 1e-6), torch.zeros_like(centered),
+            )
+        log_probability = -(
+            ((sampled_logits - logits.unsqueeze(0)) ** 2) * expanded_mask
+        ).sum(-1) / (2.0 * sigma**2)
+        return -(advantage * log_probability).mean(), reward.detach(), advantage.abs().mean()
+
     def train(
         self,
         adapter: DecisionModelAdapter,
@@ -137,9 +163,14 @@ class RLCDStrategy(TrainingStrategy):
         )
         adapter.model, optimizer, data = accelerator.prepare(adapter.model, optimizer, data)
         adapter.device = accelerator.device
+        # Exploration must not alter the dropout stream in paired objective experiments.
+        rng_device = accelerator.device if accelerator.device.type == "cuda" else "cpu"
+        exploration_generator = torch.Generator(device=rng_device)
+        exploration_generator.manual_seed(seed + 1_000_003)
         parameters = [parameter for parameter in adapter.model.parameters() if parameter.requires_grad]
         stats: list[dict[str, Any]] = []
         global_step = 0
+        optimizer_steps = 0
 
         for epoch in range(epoch_count):
             epoch_started = time.perf_counter()
@@ -160,42 +191,14 @@ class RLCDStrategy(TrainingStrategy):
                 with accelerator.accumulate(adapter.model):
                     logits = adapter.training_logits(adapter.model, batch)
                     mask = adapter.action_mask(batch).bool()
-                    option_count = mask.sum(-1, keepdim=True).clamp(min=1).to(logits.dtype)
-                    noise = torch.randn(
-                        (self.config.group_size,) + tuple(logits.shape),
-                        device=logits.device,
-                        dtype=logits.dtype,
-                    ) * sigma
-                    expanded_mask = mask.unsqueeze(0)
-                    noise = noise * expanded_mask
-                    noise = noise - noise.sum(-1, keepdim=True) / option_count.unsqueeze(0)
-                    noise = noise * expanded_mask
-                    sampled_logits = logits.detach().unsqueeze(0) + noise
-                    probabilities = torch.softmax(
-                        sampled_logits.masked_fill(~expanded_mask, -1e4),
-                        dim=-1,
+                    loss, reward, mean_advantage = self.objective(
+                        logits, adapter.target_probabilities(batch), mask,
+                        adapter.ordinal_mask(batch), sigma, exploration_generator,
                     )
-                    with torch.no_grad():
-                        reward = composite_proper_score(
-                            probabilities,
-                            adapter.target_probabilities(batch),
-                            mask,
-                            adapter.ordinal_mask(batch),
-                        )
-                        centered = reward - reward.mean(dim=0, keepdim=True)
-                        deviation = reward.std(dim=0, correction=0, keepdim=True)
-                        advantage = torch.where(
-                            deviation > 1e-6,
-                            centered / (deviation + 1e-6),
-                            torch.zeros_like(centered),
-                        )
-                    log_probability = -(
-                        ((sampled_logits - logits.unsqueeze(0)) ** 2) * expanded_mask
-                    ).sum(-1) / (2.0 * sigma**2)
-                    loss = -(advantage * log_probability).mean()
                     accelerator.backward(loss)
                     if accelerator.sync_gradients:
                         accelerator.clip_grad_norm_(parameters, self.config.max_grad_norm)
+                        optimizer_steps += 1
                     optimizer.step()
                     optimizer.zero_grad(set_to_none=True)
 
@@ -203,13 +206,13 @@ class RLCDStrategy(TrainingStrategy):
                 example_total += batch_examples
                 loss_total += float(loss.detach()) * batch_examples
                 reward_total += float(reward.mean()) * batch_examples
-                advantage_total += float(advantage.abs().mean()) * batch_examples
+                advantage_total += float(mean_advantage) * batch_examples
                 global_step += 1
                 if accelerator.is_main_process and (
                     global_step == 1 or global_step % self.config.logging_steps == 0
                 ):
                     print(json.dumps({
-                        "phase": "rlcd",
+                        "phase": self.name,
                         "stage": stage,
                         "epoch": epoch + 1,
                         "step": global_step,
@@ -219,13 +222,14 @@ class RLCDStrategy(TrainingStrategy):
                     }, sort_keys=True), flush=True)
 
             stat = {
-                "phase": "rlcd",
+                "phase": self.name,
                 "stage": stage,
                 "framework": "accelerate",
                 "epoch": epoch + 1,
+                "optimizer_steps": optimizer_steps,
                 "examples": example_total,
-                "group_size": self.config.group_size,
-                "sigma": round(sigma, 6),
+                "group_size": self.config.group_size if self.name == "rlcd" else 1,
+                "sigma": round(sigma, 6) if self.name == "rlcd" else None,
                 "mean_loss": round(loss_total / max(1, example_total), 6),
                 "mean_proper_score": round(reward_total / max(1, example_total), 6),
                 "mean_absolute_advantage": round(advantage_total / max(1, example_total), 6),
@@ -249,11 +253,12 @@ class RLCDStrategy(TrainingStrategy):
         adapter.device = accelerator.device
         adapter.model.eval()
         stats.append({
-            "phase": "rlcd_summary",
+            "phase": f"{self.name}_summary",
             "stage": stage,
             "epochs": epoch_count,
+            "optimizer_steps": optimizer_steps,
             "examples": len(items),
-            "sampled_distributions_per_example": self.config.group_size,
+            "sampled_distributions_per_example": self.config.group_size if self.name == "rlcd" else 0,
             "seconds": round(time.perf_counter() - started, 3),
         })
         return stats
@@ -262,3 +267,21 @@ class RLCDStrategy(TrainingStrategy):
 @register_strategy("rlcd")
 def create_rlcd_strategy(config: dict[str, Any]) -> RLCDStrategy:
     return RLCDStrategy(config)
+
+
+class DirectProperScoreStrategy(RLCDStrategy):
+    """Differentiate the same composite score directly, without report sampling."""
+
+    name = "direct_proper_score"
+
+    def objective(self, logits, targets, mask, ordinal, sigma, generator):
+        import torch
+
+        probabilities = torch.softmax(logits.masked_fill(~mask, -1e4), dim=-1)
+        reward = composite_proper_score(probabilities, targets, mask, ordinal)
+        return -reward.mean(), reward.detach(), logits.new_zeros(())
+
+
+@register_strategy("direct_proper_score")
+def create_direct_proper_score_strategy(config: dict[str, Any]) -> DirectProperScoreStrategy:
+    return DirectProperScoreStrategy(config)

@@ -64,7 +64,11 @@ ablation tools; the main RLCD strategy does not read them.
 
 ## `[training]`
 
-`type` is required. The built-in value is `rlcd`.
+`type` is required. Built-in values are `rlcd` and `direct_proper_score`.
+The latter directly differentiates the same composite proper score and shares
+the Accelerate optimizer loop. It does not sample Gaussian reports, so the
+group-size and sigma fields have no effect on its loss. See the registered
+[objective comparison](OBJECTIVE_ABLATION.md) for the fixed-budget study.
 
 | Field | Default | Meaning |
 |---|---:|---|
