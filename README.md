@@ -179,13 +179,18 @@ uv run jev-games run configs/sokoban_qwen_smoke.toml
 For memory-efficient backbone adaptation on a CUDA GPU, use the LoRA pilot:
 
 ```bash
-uv run jev-games run configs/sokoban_qwen_lora_pilot.toml
+uv run jev-games run configs/sokoban_qwen_lora_pilot_v2.toml
 ```
 
-That profile keeps the Qwen3-0.6B base in BF16, retains the complete Sokoban
-decision prompt with a measured 768-token budget, trains rank-8 PEFT adapters
+That profile keeps the Qwen3-0.6B base in BF16, retains the complete aligned
+Sokoban outcome prompt within a 512-token budget, trains rank-8 PEFT adapters
 and the FP32 decision head at separate learning rates, enables activation
 checkpointing, and uses gradient accumulation for a bounded physical batch.
+It trains the same per-action `noul` primitive used for environment control:
+expert successors are positive, proven static deadlocks are negative, and
+failed exploratory prefixes remain unknown unless the final action proves a
+terminal failure. The earlier `sokoban_qwen_lora_pilot.toml` remains available
+as the one-hot `choice` ablation.
 
 The adapter scores every candidate from the final token of a sequence that has
 already seen the complete state and option set. It does not interpret ordinary

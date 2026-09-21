@@ -129,7 +129,10 @@ class EpisodicOutcomeCollector(EvidenceCollector):
                     episode.reason = "repeat"
                     continue
                 episode.seen.add(state_key)
-                queries = task.outcome_queries(episode.state)
+                queries = tuple(
+                    query for query in task.outcome_queries(episode.state)
+                    if not task.is_known_terminal_failure(episode.state, query.action_key)
+                )
                 if not queries:
                     episode.reason = "no_action"
                     continue
@@ -179,10 +182,22 @@ class EpisodicOutcomeCollector(EvidenceCollector):
                 episode.reason = "decision_limit"
 
         decisions = []
+        positive_decisions = 0
+        negative_decisions = 0
+        unknown_decisions = 0
         for episode_index, episode in enumerate(live):
             solved = task.is_solved(episode.state)
-            target = (0.0, 1.0) if solved else (1.0, 0.0)
-            for pending in episode.decisions:
+            labeled: list[tuple[_PendingDecision, tuple[float, float]]] = []
+            if solved:
+                labeled.extend((pending, (0.0, 1.0)) for pending in episode.decisions)
+                positive_decisions += len(episode.decisions)
+            elif episode.reason in {"static_deadlock", "no_action"} and episode.decisions:
+                labeled.append((episode.decisions[-1], (1.0, 0.0)))
+                negative_decisions += 1
+                unknown_decisions += len(episode.decisions) - 1
+            else:
+                unknown_decisions += len(episode.decisions)
+            for pending, target in labeled:
                 decisions.append(CalibrationDecision(
                     serialized_state=pending.serialized_state,
                     observation=pending.observation,
@@ -205,6 +220,9 @@ class EpisodicOutcomeCollector(EvidenceCollector):
             "episodes": len(live),
             "solved": sum(task.is_solved(episode.state) for episode in live),
             "decisions": len(decisions),
+            "positive_decisions": positive_decisions,
+            "negative_decisions": negative_decisions,
+            "unknown_decisions": unknown_decisions,
             "mean_environment_steps": round(fmean(episode.environment_steps for episode in live), 6),
             "sampling_temperature": self.config.sampling_temperature,
             "epsilon": self.config.epsilon,

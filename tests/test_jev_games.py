@@ -3,7 +3,7 @@ from __future__ import annotations
 import unittest
 
 from jevgames.config import load_experiment_config
-from jevgames.registry import available_plugins, create_task
+from jevgames.registry import available_plugins, create_evidence, create_task
 from sokoban_laya.core import Board
 
 
@@ -11,7 +11,7 @@ class JevGamesFrameworkTests(unittest.TestCase):
     def test_builtin_plugins_are_discoverable(self) -> None:
         self.assertEqual(available_plugins(), {
             "collectors": ["episodic_outcomes"],
-            "evidence": ["sokoban_solver"],
+            "evidence": ["sokoban_counterfactual_solver", "sokoban_solver"],
             "models": ["laya", "qwen_decision"],
             "strategies": ["rlcd"],
             "tasks": ["sokoban_push"],
@@ -40,6 +40,17 @@ class JevGamesFrameworkTests(unittest.TestCase):
         self.assertTrue(all(query.question.kind.value == "noul" for query in outcome_queries))
         outcome = task.transition(board, options[0].key)
         self.assertGreaterEqual(outcome.primitive_steps, 1)
+
+    def test_counterfactual_evidence_has_proved_positive_and_negative_targets(self) -> None:
+        task = create_task("sokoban_push", {})
+        evidence = create_evidence("sokoban_counterfactual_solver", {}).load(
+            "data/smoke_train.jsonl",
+            task,
+        )
+        provenances = {row.provenance for row in evidence}
+        self.assertIn("solver_successor_positive", provenances)
+        self.assertIn("proved_terminal_failure", provenances)
+        self.assertTrue(all(row.question.kind.value == "noul" for row in evidence))
 
 
 if __name__ == "__main__":

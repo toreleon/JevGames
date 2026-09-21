@@ -105,7 +105,7 @@ def evaluate_calibration(
 
     import torch
 
-    selected = list(items[: config.max_instances] if config.max_instances else items)
+    selected = list(items[: config.max_evidence] if config.max_evidence else items)
     if not selected:
         raise ValueError("calibration benchmark has no evidence")
     top_probabilities: list[float] = []
@@ -116,6 +116,9 @@ def evaluate_calibration(
     brier_scores: list[float] = []
     proper_scores: list[float] = []
     ordinal_errors: list[float] = []
+    random_accuracies: list[float] = []
+    target_classes: list[int] = []
+    predicted_classes: list[int] = []
     adapter.model.eval()
     for offset in range(0, len(selected), config.batch_size):
         batch = _to_device(adapter.collate(selected[offset : offset + config.batch_size]), adapter.device)
@@ -135,6 +138,9 @@ def evaluate_calibration(
             valid = int(mask[row].sum().item())
             predicted = int(probabilities[row, :valid].argmax().item())
             expected = int(targets[row, :valid].argmax().item())
+            predicted_classes.append(predicted)
+            target_classes.append(expected)
+            random_accuracies.append(1.0 / valid)
             probability = probabilities[row, :valid].float()
             target = targets[row, :valid].float()
             top_probabilities.append(float(probability[predicted].item()))
@@ -149,9 +155,22 @@ def evaluate_calibration(
                 levels = torch.arange(valid, device=probability.device, dtype=probability.dtype)
                 ordinal_errors.append(float(abs((probability * levels).sum() - (target * levels).sum()).item()))
     ece, reliability = _reliability_bins(top_probabilities, soft_correctness, config.calibration_bins)
+    target_class_counts = {
+        str(index): target_classes.count(index)
+        for index in sorted(set(target_classes))
+    }
+    class_recalls = []
+    for target_class in sorted(set(target_classes)):
+        indices = [index for index, value in enumerate(target_classes) if value == target_class]
+        class_recalls.append(fmean(
+            float(predicted_classes[index] == target_class) for index in indices
+        ))
     return {
         "instances": len(selected),
         "accuracy": round(fmean(correctness), 6),
+        "balanced_accuracy": round(fmean(class_recalls), 6) if len(class_recalls) > 1 else None,
+        "mean_random_accuracy": round(fmean(random_accuracies), 6),
+        "target_class_counts": target_class_counts,
         "soft_accuracy": round(fmean(soft_correctness), 6),
         "negative_log_likelihood": round(fmean(negative_log_likelihoods), 6),
         "brier_score": round(fmean(brier_scores), 6),
@@ -204,7 +223,14 @@ def evaluate_environment(
                 episode.reason = "repeat"
                 continue
             episode.seen.add(key)
-            outcome_queries = task.outcome_queries(episode.state)
+            all_outcome_queries = task.outcome_queries(episode.state)
+            outcome_queries = tuple(
+                query for query in all_outcome_queries
+                if not task.is_known_terminal_failure(episode.state, query.action_key)
+            )
+            if all_outcome_queries and not outcome_queries:
+                episode.reason = "known_terminal_failure"
+                continue
             if outcome_queries:
                 if len(outcome_queries) == 1:
                     selected = outcome_queries[0]

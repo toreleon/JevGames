@@ -95,6 +95,9 @@ class SokobanPushTask(DecisionTask):
             return TaskTransition(board, reward, True, False, "static_deadlock", len(primitives))
         return TaskTransition(board, reward, False, False, None, len(primitives))
 
+    def is_known_terminal_failure(self, state: Board, action_key: str) -> bool:
+        return self.transition(state, action_key).reason == "static_deadlock"
+
     def serialize_state(self, state: Board) -> str:
         return state.render()
 

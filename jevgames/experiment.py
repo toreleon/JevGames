@@ -38,6 +38,32 @@ def run_experiment(config: ExperimentConfig) -> dict:
         "trainable_decisions": len(train_items),
         "provenance": dict(sorted(Counter(row.provenance for row in evidence).items())),
     }]
+    baseline_benchmarks = {}
+    if config.benchmark.before_training:
+        for split, dataset_path in (
+            ("validation", config.validation_dataset),
+            ("test", config.test_dataset),
+        ):
+            if not dataset_path:
+                continue
+            split_evidence = evidence_provider.load(dataset_path, task)
+            baseline_benchmarks[split] = {
+                "calibration": evaluate_calibration(
+                    adapter,
+                    encode_calibration_items(adapter, split_evidence),
+                    config.benchmark,
+                ),
+                "environment": evaluate_environment(
+                    adapter,
+                    task,
+                    task.initial_states(dataset_path, config.benchmark.max_instances),
+                    config.benchmark,
+                ),
+            }
+        print(json.dumps({
+            "phase": "baseline_benchmark",
+            "benchmarks": baseline_benchmarks,
+        }, sort_keys=True), flush=True)
     stats.extend(strategy.train(adapter, train_items, output, config.seed, stage="initial"))
 
     if collector is not None:
@@ -146,6 +172,7 @@ def run_experiment(config: ExperimentConfig) -> dict:
             "task": config.task_type,
         },
         "stats": stats,
+        "baseline_benchmarks": baseline_benchmarks,
         "benchmarks": benchmarks,
         "checkpoint": str(checkpoint_dir),
         "elapsed_seconds": round(time.perf_counter() - started, 3),

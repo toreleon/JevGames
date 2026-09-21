@@ -116,9 +116,13 @@ probability reports for already observed questions; they do not discover states.
 | `manifest` | no | Dataset provenance and split-hash manifest |
 
 The evidence plugin interprets these files. For `sokoban_solver` they are
-solver trajectory JSONL files compressed into push decisions. Laya needs at
-least ten examples in a decision-type or option-count group before fitting a
-temperature for that group.
+solver trajectory JSONL files compressed into one-hot push decisions. The
+recommended `sokoban_counterfactual_solver` plugin instead emits per-action
+`noul` evidence aligned with environment control: expert successors are
+positive, provable static-deadlock successors are negative, and unresolved
+alternatives are not mislabeled. Laya needs at least ten examples in a
+decision-type or option-count group before fitting a temperature for that
+group.
 
 ## `[benchmark]`
 
@@ -126,8 +130,14 @@ temperature for that group.
 |---|---:|---|
 | `max_decisions` | `32` | Greedy environment decision limit |
 | `batch_size` | `32` | Inference batch size for both benchmark views |
-| `max_instances` | all | Optional cap applied to evidence and environments |
+| `max_instances` | all | Optional cap applied to environment levels |
+| `max_evidence` | all | Optional separate cap for calibration decision rows |
 | `calibration_bins` | `15` | Reliability bins used for expected calibration error |
+| `before_training` | `false` | Record validation/test baselines before any update |
+
+Level and decision caps are separate because one Sokoban level produces many
+push decisions. Leaving `max_evidence` unset evaluates every held-out evidence
+row even when `max_instances` bounds environment runtime.
 
 ## Validation behavior
 

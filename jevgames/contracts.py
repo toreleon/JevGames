@@ -131,6 +131,16 @@ class DecisionTask(ABC):
 
         return ()
 
+    def is_known_terminal_failure(self, state: Any, action_key: str) -> bool:
+        """Return whether executing an action is provably terminal and unsuccessful.
+
+        Tasks may use this as an execution safety constraint while retaining the
+        action as negative representative evidence. Unknown or merely risky
+        actions must return ``False`` so exploration is not silently removed.
+        """
+
+        return False
+
     @abstractmethod
     def transition(self, state: Any, option_key: str) -> TaskTransition: ...
 

@@ -13,13 +13,17 @@ class BenchmarkConfig:
     max_decisions: int = 32
     batch_size: int = 32
     max_instances: int | None = None
+    max_evidence: int | None = None
     calibration_bins: int = 15
+    before_training: bool = False
 
     def __post_init__(self) -> None:
         if self.max_decisions < 1 or self.batch_size < 1 or self.calibration_bins < 1:
             raise ValueError("benchmark decision, batch, and bin counts must be positive")
         if self.max_instances is not None and self.max_instances < 1:
             raise ValueError("benchmark.max_instances must be positive when set")
+        if self.max_evidence is not None and self.max_evidence < 1:
+            raise ValueError("benchmark.max_evidence must be positive when set")
 
 
 @dataclass(frozen=True, slots=True)
