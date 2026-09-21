@@ -176,6 +176,16 @@ uv sync --extra qwen --extra train --python 3.12
 uv run jev-games run configs/sokoban_qwen_smoke.toml
 ```
 
+For memory-efficient backbone adaptation on a CUDA GPU, use the LoRA pilot:
+
+```bash
+uv run jev-games run configs/sokoban_qwen_lora_pilot.toml
+```
+
+That profile keeps the Qwen3-0.6B base in BF16, trains rank-8 PEFT adapters
+and the FP32 decision head at separate learning rates, enables activation
+checkpointing, and uses gradient accumulation for a bounded physical batch.
+
 The adapter scores every candidate from the final token of a sequence that has
 already seen the complete state and option set. It does not interpret ordinary
 next-token generation probabilities as action probabilities.

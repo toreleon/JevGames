@@ -33,6 +33,7 @@ train = [
     "torchrl>=0.12.0",
 ]
 qwen = [
+    "peft>=0.21.0",
     "torch>=2.14.0",
     "transformers>=4.51.0",
     "safetensors>=0.4.0",

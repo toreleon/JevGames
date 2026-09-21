@@ -205,6 +205,11 @@ class DecisionModelAdapter(ABC):
     def trainable_parameters(self) -> list[Any]:
         return [parameter for parameter in self.model.parameters() if parameter.requires_grad]
 
+    def optimizer_parameter_groups(self, learning_rate: float) -> list[dict[str, Any]]:
+        """Return optimizer groups, allowing adapters to use per-component rates."""
+
+        return [{"params": self.trainable_parameters(), "lr": learning_rate}]
+
     def fit_calibration(
         self,
         items: Sequence[dict[str, Any]],

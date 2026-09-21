@@ -40,6 +40,7 @@ class QwenDecisionModel:
                 final_position = attention_mask.sum(-1).clamp(min=1) - 1
                 row = torch.arange(hidden.shape[0], device=hidden.device)
                 pooled = hidden[row, final_position]
+                pooled = pooled.to(self.scorer[0].weight.dtype)
                 return self.scorer(pooled).squeeze(-1).float()
 
         return _Model(backbone)
@@ -50,36 +51,82 @@ class QwenDecisionAdapter(DecisionModelAdapter):
 
     def __init__(self, config: dict[str, Any]) -> None:
         import torch
+        from peft import LoraConfig, PeftModel, get_peft_model
         from safetensors.torch import load_file
         from transformers import AutoModel, AutoTokenizer
 
         self.source = str(config.get("source", "Qwen/Qwen3-0.6B-Base"))
+        self.base_model_source = self.source
         torch.manual_seed(int(config.get("seed", 42)))
         self.device = resolve_torch_device(str(config.get("device", "auto")))
         self.max_length = int(config.get("max_length", 512))
         self._freeze_backbone = bool(config.get("freeze_backbone", True))
+        self.backbone_learning_rate = float(config.get("backbone_learning_rate", 5e-5))
+        dtype_name = str(config.get("dtype", "auto"))
+        if dtype_name == "auto":
+            dtype_name = "bfloat16" if self.device.type == "cuda" and torch.cuda.is_bf16_supported() else "float32"
+        dtype_by_name = {
+            "float32": torch.float32,
+            "float16": torch.float16,
+            "bfloat16": torch.bfloat16,
+        }
+        if dtype_name not in dtype_by_name:
+            raise ValueError("qwen dtype must be one of: auto, float32, float16, bfloat16")
+        self.backbone_dtype = dtype_name
+        backbone_dtype = dtype_by_name[dtype_name]
+        self._using_lora = False
         source_path = Path(self.source)
         native_config = source_path / "qwen_decision_config.json"
         if native_config.exists():
             saved = json.loads(native_config.read_text(encoding="utf-8"))
+            self.base_model_source = str(saved.get("base_model", self.source))
             self.max_length = int(saved.get("max_length", self.max_length))
+            self.backbone_learning_rate = float(
+                saved.get("backbone_learning_rate", self.backbone_learning_rate)
+            )
+            self.backbone_dtype = str(saved.get("backbone_dtype", self.backbone_dtype))
+            backbone_dtype = dtype_by_name[self.backbone_dtype]
             self.temperatures = list(saved.get("temperatures", [saved.get("temperature", 1.0)] * 3))
             self.tokenizer = AutoTokenizer.from_pretrained(source_path / "tokenizer")
-            backbone = AutoModel.from_pretrained(source_path / "backbone", dtype=torch.float32)
+            if saved.get("backbone_format") == "peft_lora":
+                backbone = AutoModel.from_pretrained(self.base_model_source, dtype=backbone_dtype)
+                backbone = PeftModel.from_pretrained(
+                    backbone,
+                    source_path / "backbone",
+                    is_trainable=True,
+                    autocast_adapter_dtype=True,
+                )
+                self._using_lora = True
+            else:
+                backbone = AutoModel.from_pretrained(source_path / "backbone", dtype=backbone_dtype)
             self.model = QwenDecisionModel.build(backbone)
             head_state = load_file(source_path / "decision_head.safetensors")
             self.model.scorer.load_state_dict(head_state, strict=True)
         else:
             self.temperatures = list(config.get("temperatures", [float(config.get("temperature", 1.0))] * 3))
             self.tokenizer = AutoTokenizer.from_pretrained(self.source)
-            backbone = AutoModel.from_pretrained(self.source, dtype=torch.float32)
+            backbone = AutoModel.from_pretrained(self.source, dtype=backbone_dtype)
+            lora_rank = int(config.get("lora_rank", 0))
+            if lora_rank > 0:
+                lora_targets = config.get("lora_target_modules", "all-linear")
+                if isinstance(lora_targets, str) and lora_targets != "all-linear":
+                    lora_targets = [value.strip() for value in lora_targets.split(",") if value.strip()]
+                backbone = get_peft_model(backbone, LoraConfig(
+                    r=lora_rank,
+                    lora_alpha=int(config.get("lora_alpha", lora_rank * 2)),
+                    lora_dropout=float(config.get("lora_dropout", 0.05)),
+                    bias="none",
+                    target_modules=lora_targets,
+                    task_type="FEATURE_EXTRACTION",
+                ))
+                self._using_lora = True
             self.model = QwenDecisionModel.build(backbone)
         while len(self.temperatures) < len(DecisionKind):
             self.temperatures.append(1.0)
         if self.tokenizer.pad_token_id is None:
             self.tokenizer.pad_token = self.tokenizer.eos_token
         self.model.to(self.device).eval()
-        if self._freeze_backbone:
+        if self._freeze_backbone and not self._using_lora:
             self.freeze_backbone()
         elif bool(config.get("gradient_checkpointing", True)):
             self.model.backbone.gradient_checkpointing_enable(
@@ -203,6 +250,20 @@ class QwenDecisionAdapter(DecisionModelAdapter):
         for parameter in self.model.backbone.parameters():
             parameter.requires_grad_(False)
 
+    def optimizer_parameter_groups(self, learning_rate: float) -> list[dict[str, Any]]:
+        backbone_parameters = [
+            parameter for parameter in self.model.backbone.parameters() if parameter.requires_grad
+        ]
+        head_parameters = [
+            parameter for parameter in self.model.scorer.parameters() if parameter.requires_grad
+        ]
+        groups = []
+        if backbone_parameters:
+            groups.append({"params": backbone_parameters, "lr": self.backbone_learning_rate})
+        if head_parameters:
+            groups.append({"params": head_parameters, "lr": learning_rate})
+        return groups
+
     def fit_calibration(
         self,
         items: Sequence[dict[str, Any]],
@@ -264,7 +325,10 @@ class QwenDecisionAdapter(DecisionModelAdapter):
             output / "decision_head.safetensors",
         )
         (output / "qwen_decision_config.json").write_text(json.dumps({
-            "base_model": self.source,
+            "base_model": self.base_model_source,
+            "backbone_format": "peft_lora" if self._using_lora else "full",
+            "backbone_dtype": self.backbone_dtype,
+            "backbone_learning_rate": self.backbone_learning_rate,
             "max_length": self.max_length,
             "temperatures": self.temperatures,
             "training_metadata": dict(metadata),

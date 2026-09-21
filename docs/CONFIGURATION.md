@@ -37,10 +37,22 @@ Built-in `qwen_decision` fields:
 | `max_length` | `512` | Tokens retained per candidate-scoring sequence |
 | `freeze_backbone` | `true` | Train only the decision head |
 | `gradient_checkpointing` | `true` | Enable when the backbone is trainable |
+| `dtype` | `auto` | Backbone storage dtype: CUDA BF16 when supported, otherwise FP32 |
+| `lora_rank` | `0` | Positive rank enables PEFT LoRA and freezes the base weights |
+| `lora_alpha` | `2 * lora_rank` | LoRA update scale |
+| `lora_dropout` | `0.05` | Dropout inside LoRA branches |
+| `lora_target_modules` | `all-linear` | PEFT target name or comma-separated module names |
+| `backbone_learning_rate` | `0.00005` | Learning rate for LoRA/backbone parameters; the decision head uses `training.learning_rate` |
 
 The Qwen adapter scores each candidate from the final token of a sequence that
 contains the complete state, question, and option set. This preserves causal
 visibility but repeats backbone work for every candidate.
+
+When `lora_rank > 0`, Jev Games uses PEFT adapters even though
+`freeze_backbone` defaults to `true`: the immutable base stays frozen, LoRA
+weights remain trainable, and the decision head is trained separately. A native
+checkpoint stores only the LoRA adapter plus the decision head and reloads the
+base model named by `source`.
 
 ## `[task]`
 
@@ -68,8 +80,9 @@ ablation tools; the main RLCD strategy does not read them.
 | `logging_steps` | `25` | RLCD microbatch log interval |
 
 `group_size` must be at least two and both sigma values must be positive.
-Apple MPS should start with `mixed_precision = "no"`. CUDA may use `fp16`
-after a smoke comparison confirms stable scores.
+Apple MPS should start with `mixed_precision = "no"`. CUDA with BF16 support
+should prefer `bf16`; otherwise use `fp16` only after a smoke comparison
+confirms stable scores.
 
 The removed `[warmup]` and `[online]` sections raise a configuration error.
 

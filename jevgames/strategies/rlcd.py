@@ -110,6 +110,8 @@ class RLCDStrategy(TrainingStrategy):
         started = time.perf_counter()
         random.seed(seed)
         torch.manual_seed(seed)
+        if torch.cuda.is_available():
+            torch.cuda.reset_peak_memory_stats()
         generator = torch.Generator()
         generator.manual_seed(seed)
         data = DataLoader(
@@ -125,7 +127,7 @@ class RLCDStrategy(TrainingStrategy):
         if not parameters:
             raise ValueError("model adapter exposed no trainable parameters")
         optimizer = torch.optim.AdamW(
-            parameters,
+            adapter.optimizer_parameter_groups(self.config.learning_rate),
             lr=self.config.learning_rate,
             weight_decay=self.config.weight_decay,
         )
@@ -229,6 +231,16 @@ class RLCDStrategy(TrainingStrategy):
                 "mean_absolute_advantage": round(advantage_total / max(1, example_total), 6),
                 "seconds": round(time.perf_counter() - epoch_started, 3),
             }
+            stat["examples_per_second"] = round(
+                example_total / max(time.perf_counter() - epoch_started, 1e-9), 3
+            )
+            if torch.cuda.is_available():
+                stat["peak_cuda_allocated_gib"] = round(
+                    torch.cuda.max_memory_allocated() / 1024**3, 3
+                )
+                stat["peak_cuda_reserved_gib"] = round(
+                    torch.cuda.max_memory_reserved() / 1024**3, 3
+                )
             stats.append(stat)
             if accelerator.is_main_process:
                 print(json.dumps(stat, sort_keys=True), flush=True)

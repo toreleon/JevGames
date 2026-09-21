@@ -1,0 +1,59 @@
+[experiment]
+name = "qwen3-0.6b-sokoban-rlcd-lora-pilot100"
+output_dir = "runs/qwen3-0.6b-sokoban-rlcd-lora-pilot100"
+seed = 20260921
+
+[model]
+type = "qwen_decision"
+source = "Qwen/Qwen3-0.6B-Base"
+device = "auto"
+dtype = "bfloat16"
+max_length = 256
+lora_rank = 8
+lora_alpha = 16
+lora_dropout = 0.05
+lora_target_modules = "all-linear"
+backbone_learning_rate = 0.00005
+gradient_checkpointing = true
+
+[task]
+type = "sokoban_push"
+
+[data]
+type = "sokoban_solver"
+train = "data/pilot100/train.jsonl"
+calibration = "data/pilot100/calibration.jsonl"
+validation = "data/pilot100/validation.jsonl"
+test = "data/pilot100/test.jsonl"
+manifest = "data/pilot100/manifest.json"
+
+[training]
+type = "rlcd"
+epochs = 1
+update_epochs = 1
+batch_size = 2
+gradient_accumulation = 8
+group_size = 4
+sigma_start = 0.5
+sigma_end = 0.25
+learning_rate = 0.0003
+weight_decay = 0.01
+max_grad_norm = 1.0
+mixed_precision = "bf16"
+logging_steps = 100
+
+[collection]
+type = "episodic_outcomes"
+iterations = 1
+episodes_per_instance = 2
+max_instances = 25
+max_decisions = 24
+inference_batch_size = 16
+sampling_temperature = 1.0
+epsilon = 0.15
+
+[benchmark]
+max_decisions = 32
+batch_size = 8
+max_instances = 20
+calibration_bins = 10
