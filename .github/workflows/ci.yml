@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          enable-cache: true
+
+      - name: Install project
+        run: uv sync --locked --python ${{ matrix.python-version }}
+
+      - name: Run unit tests
+        run: uv run --python ${{ matrix.python-version }} python -m unittest discover -s tests -v
+
+      - name: Compile source
+        run: >-
+          uv run --python ${{ matrix.python-version }} python -m py_compile
+          jevgames/*.py jevgames/models/*.py jevgames/tasks/*.py
+          sokoban_laya/*.py scripts/*.py
+
+      - name: Verify lockfile
+        run: uv lock --check

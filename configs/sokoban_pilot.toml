@@ -1,0 +1,42 @@
+[experiment]
+name = "laya-sokoban-pilot-2000"
+output_dir = "runs/laya-sokoban-pilot-2000"
+seed = 20260921
+
+[model]
+type = "laya"
+source = "models/laya-sokoban-smoke"
+device = "mps"
+freeze_backbone = true
+
+[task]
+type = "sokoban_push"
+solve_reward = 50.0
+goal_reward = 4.0
+off_goal_penalty = 4.0
+deadlock_penalty = 15.0
+
+[data]
+train = "data/pilot/train.jsonl"
+validation = "data/pilot/validation.jsonl"
+test = "data/pilot/test.jsonl"
+manifest = "data/pilot/manifest.json"
+
+[warmup]
+epochs = 6
+batch_size = 16
+gradient_accumulation = 2
+learning_rate = 0.0003
+
+[online]
+iterations = 2
+group_size = 4
+max_decisions = 32
+max_instances = 2000
+batch_size = 16
+rollout_instance_batch_size = 16
+rollout_inference_batch_size = 32
+
+[benchmark]
+max_decisions = 32
+batch_size = 32

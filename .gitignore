@@ -1,0 +1,95 @@
+# Jev Games repository ignore policy
+# Based on the standard Python, macOS, editor, and ML-artifact templates,
+# customized to retain reproducible source fixtures while excluding generated
+# datasets and multi-hundred-megabyte checkpoints.
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+.tox/
+.nox/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+
+# Packaging outputs
+build/
+dist/
+*.egg-info/
+*.egg
+wheels/
+
+# Virtual environments and local Python tooling
+.venv/
+venv/
+env/
+.env/
+.direnv/
+
+# Secrets and machine-local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+configs/*.local.toml
+
+# Editors and notebooks
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.ipynb_checkpoints/
+
+# macOS and filesystem metadata
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+Thumbs.db
+
+# Logs and profiler output
+*.log
+/logs/
+/profile/
+*.prof
+*.trace
+
+# Model checkpoints and framework caches
+/models/
+/runs/
+/checkpoints/
+.cache/
+/wandb/
+/mlruns/
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.gguf
+
+# Generated curriculum datasets. Small original smoke fixtures remain tracked.
+data/pilot/
+data/pilot100/
+data/generated/
+
+# Locally retained third-party benchmark fixtures with unverified
+# redistribution terms. Obtain licensed copies separately.
+data/microban3_train.jsonl
+levels/microban_3.xsb
+levels/xsokoban_round_1.xsb
+
+# Temporary and backup output
+tmp/
+temp/
+*.tmp
+*.bak

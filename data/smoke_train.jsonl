@@ -1,0 +1,20 @@
+{"board": "#####\n#@$.#\n#####", "legal_actions": ["push_right"], "expert_action": "push_right", "episode": "right_one", "step": 0}
+{"board": "########\n#@ $ . #\n########", "legal_actions": ["move_right"], "expert_action": "move_right", "episode": "right_two", "step": 0}
+{"board": "########\n# @$ . #\n########", "legal_actions": ["push_right", "move_left"], "expert_action": "push_right", "episode": "right_two", "step": 1}
+{"board": "########\n#  @$. #\n########", "legal_actions": ["push_right", "move_left"], "expert_action": "push_right", "episode": "right_two", "step": 2}
+{"board": "########\n# . $ @#\n########", "legal_actions": ["move_left"], "expert_action": "move_left", "episode": "left_two", "step": 0}
+{"board": "########\n# . $@ #\n########", "legal_actions": ["push_left", "move_right"], "expert_action": "push_left", "episode": "left_two", "step": 1}
+{"board": "########\n# .$@  #\n########", "legal_actions": ["push_left", "move_right"], "expert_action": "push_left", "episode": "left_two", "step": 2}
+{"board": "#######\n#  .  #\n#  $  #\n#  @  #\n#######", "legal_actions": ["push_up", "move_left", "move_right"], "expert_action": "push_up", "episode": "up", "step": 0}
+{"board": "#######\n#  @  #\n#  $  #\n#  .  #\n#######", "legal_actions": ["push_down", "move_left", "move_right"], "expert_action": "push_down", "episode": "down", "step": 0}
+{"board": "#######\n#  .  #\n#  $  #\n# @   #\n#######", "legal_actions": ["move_up", "move_left", "move_right"], "expert_action": "move_right", "episode": "walk_right_then_push", "step": 0}
+{"board": "#######\n#  .  #\n#  $  #\n#  @  #\n#######", "legal_actions": ["push_up", "move_left", "move_right"], "expert_action": "push_up", "episode": "walk_right_then_push", "step": 1}
+{"board": "#######\n#  .  #\n#  $  #\n#   @ #\n#######", "legal_actions": ["move_up", "move_left", "move_right"], "expert_action": "move_left", "episode": "walk_left_then_push", "step": 0}
+{"board": "#######\n#  .  #\n#  $  #\n#  @  #\n#######", "legal_actions": ["push_up", "move_left", "move_right"], "expert_action": "push_up", "episode": "walk_left_then_push", "step": 1}
+{"board": "#########\n# .   . #\n# $   $ #\n# @     #\n#########", "legal_actions": ["push_up", "move_left", "move_right"], "expert_action": "push_up", "episode": "two_boxes", "step": 0}
+{"board": "#########\n# *   . #\n# @   $ #\n#       #\n#########", "legal_actions": ["move_down", "move_left", "move_right"], "expert_action": "move_down", "episode": "two_boxes", "step": 1}
+{"board": "#########\n# *   . #\n#     $ #\n# @     #\n#########", "legal_actions": ["move_up", "move_left", "move_right"], "expert_action": "move_right", "episode": "two_boxes", "step": 2}
+{"board": "#########\n# *   . #\n#     $ #\n#  @    #\n#########", "legal_actions": ["move_up", "move_left", "move_right"], "expert_action": "move_right", "episode": "two_boxes", "step": 3}
+{"board": "#########\n# *   . #\n#     $ #\n#   @   #\n#########", "legal_actions": ["move_up", "move_left", "move_right"], "expert_action": "move_right", "episode": "two_boxes", "step": 4}
+{"board": "#########\n# *   . #\n#     $ #\n#    @  #\n#########", "legal_actions": ["move_up", "move_left", "move_right"], "expert_action": "move_right", "episode": "two_boxes", "step": 5}
+{"board": "#########\n# *   . #\n#     $ #\n#     @ #\n#########", "legal_actions": ["push_up", "move_left", "move_right"], "expert_action": "push_up", "episode": "two_boxes", "step": 6}

@@ -1,0 +1,42 @@
+[experiment]
+name = "laya-sokoban-smoke"
+output_dir = "runs/laya-sokoban-smoke"
+seed = 11
+
+[model]
+type = "laya"
+source = "models/laya-sokoban-smoke"
+device = "mps"
+freeze_backbone = true
+
+[task]
+type = "sokoban_push"
+solve_reward = 50.0
+goal_reward = 4.0
+deadlock_penalty = 15.0
+
+[data]
+train = "data/smoke_train.jsonl"
+validation = "data/pilot100/validation.jsonl"
+test = "data/pilot100/test.jsonl"
+manifest = "data/pilot100/manifest.json"
+
+[warmup]
+epochs = 1
+batch_size = 8
+gradient_accumulation = 2
+learning_rate = 0.0003
+
+[online]
+iterations = 1
+group_size = 2
+max_decisions = 12
+max_instances = 4
+batch_size = 8
+rollout_instance_batch_size = 4
+rollout_inference_batch_size = 8
+
+[benchmark]
+max_decisions = 32
+batch_size = 32
+max_instances = 20
