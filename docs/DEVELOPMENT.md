@@ -16,7 +16,8 @@ Run before handing off changes:
 ```bash
 uv run --extra laya --extra train python -m unittest discover -s tests -v
 uv run --extra laya --extra train python -m py_compile \
-  jevgames/*.py jevgames/models/*.py jevgames/tasks/*.py \
+  jevgames/*.py jevgames/evidence/*.py jevgames/models/*.py \
+  jevgames/tasks/*.py jevgames/strategies/*.py \
   sokoban_laya/*.py scripts/*.py
 uv lock --check
 ```
@@ -33,14 +34,16 @@ Compilation and unit tests do not exercise MPS model forward/backward behavior.
 
 - generic orchestration belongs in `jevgames`;
 - model-specific code belongs in `jevgames/models` or an external adapter;
-- task/dataset semantics belong in `jevgames/tasks` or an external adapter;
+- optimization algorithms belong in `jevgames/strategies` or an external adapter;
+- environment semantics belong in `jevgames/tasks` or an external adapter;
+- dataset formats and labeling provenance belong in `jevgames/evidence`;
 - Sokoban engine and generation code belong in `sokoban_laya`;
 - reproducible experiment parameters belong in `configs`;
 - one-off analysis should become a script only when it is reproducible and
   documented.
 
 Avoid adding model or task conditionals to `jevgames.engine`. A conditional on
-`model_type` or `task_type` is normally evidence that the adapter contract is
+`model_type`, `task_type`, or `evidence_type` is normally evidence that the adapter contract is
 missing a capability.
 
 ## Adding configuration fields
@@ -57,7 +60,7 @@ the plugin factory.
 
 ## Adding report fields
 
-Additive fields may remain under schema version 1. Breaking changes require:
+Additive fields may remain under schema version 2. Breaking changes require:
 
 - incrementing `schema_version`;
 - documenting old and new meanings;
@@ -68,8 +71,8 @@ Additive fields may remain under schema version 1. Breaking changes require:
 
 Use layers:
 
-- pure unit tests for environment rules, rewards, registries, and config;
-- adapter tests for encoding, masks, loss, save/reload;
+- pure unit tests for environment rules, calibration math, registries, and config;
+- adapter tests for encoding, masks, proper scores, and save/reload;
 - framework tests with lightweight fake model/task plugins;
 - smoke integration with the real built-in model and task;
 - held-out benchmark for behavior.

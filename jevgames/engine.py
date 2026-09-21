@@ -1,24 +1,13 @@
-"""Generic offline warm-up, online GRPO, and evaluation engine."""
+"""Framework-owned evidence encoding and evaluation."""
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
-import json
-from pathlib import Path
-import random
-from statistics import fmean, pstdev
-import time
+from dataclasses import dataclass
+from statistics import fmean
 from typing import Any, Mapping, Sequence
 
-from .config import BenchmarkConfig, OnlineConfig, WarmupConfig
-from .contracts import (
-    DecisionModelAdapter,
-    DecisionOption,
-    DecisionTask,
-    EpisodeResult,
-    ExpertDecision,
-    PolicyDecisionRecord,
-)
+from .config import BenchmarkConfig
+from .contracts import CalibrationDecision, DecisionModelAdapter, DecisionOption, DecisionTask
 
 
 def _to_device(batch: Mapping[str, Any], device: Any) -> dict[str, Any]:
@@ -30,93 +19,109 @@ def _to_device(batch: Mapping[str, Any], device: Any) -> dict[str, Any]:
     }
 
 
-def _expert_items(adapter: DecisionModelAdapter, examples: Sequence[ExpertDecision]) -> list[dict[str, Any]]:
+def encode_calibration_items(
+    adapter: DecisionModelAdapter,
+    evidence: Sequence[CalibrationDecision],
+) -> list[dict[str, Any]]:
     items = []
-    for example in examples:
-        if len(example.options) < 2:
+    for decision in evidence:
+        if len(decision.options) < 2:
             continue
-        keys = tuple(option.key for option in example.options)
-        if example.target_key not in keys:
-            raise ValueError(f"expert target {example.target_key!r} is absent from options")
-        items.append(
-            adapter.encode(
-                example.observation,
-                example.instruction,
-                example.options,
-                keys.index(example.target_key),
-            )
-        )
+        items.append(adapter.encode(
+            decision.observation,
+            decision.instruction,
+            decision.options,
+            decision.target_probabilities,
+        ))
     if not items:
-        raise ValueError("dataset has no expert decisions with at least two options")
+        raise ValueError("dataset has no calibration decisions with at least two options")
     return items
 
 
-class _Dataset:
-    def __init__(self, items: Sequence[dict[str, Any]]) -> None:
-        self.items = list(items)
+def _reliability_bins(
+    confidences: Sequence[float],
+    correctness: Sequence[float],
+    count: int,
+) -> tuple[float, list[dict[str, Any]]]:
+    if count < 1:
+        raise ValueError("calibration bin count must be positive")
+    rows = []
+    weighted_gap = 0.0
+    total = max(1, len(confidences))
+    for index in range(count):
+        lower = index / count
+        upper = (index + 1) / count
+        selected = [
+            row for row, confidence in enumerate(confidences)
+            if lower <= confidence < upper or (index == count - 1 and confidence == 1.0)
+        ]
+        if not selected:
+            continue
+        mean_confidence = fmean(confidences[row] for row in selected)
+        accuracy = fmean(correctness[row] for row in selected)
+        gap = abs(mean_confidence - accuracy)
+        weighted_gap += len(selected) / total * gap
+        rows.append({
+            "lower": round(lower, 6),
+            "upper": round(upper, 6),
+            "count": len(selected),
+            "mean_confidence": round(mean_confidence, 6),
+            "accuracy": round(accuracy, 6),
+            "gap": round(gap, 6),
+        })
+    return weighted_gap, rows
 
-    def __len__(self) -> int:
-        return len(self.items)
 
-    def __getitem__(self, index: int):
-        return self.items[index]
-
-
-def supervised_warmup(
+def evaluate_calibration(
     adapter: DecisionModelAdapter,
     items: Sequence[dict[str, Any]],
-    config: WarmupConfig,
-    output_dir: str | Path,
-    seed: int,
+    config: BenchmarkConfig,
 ) -> dict[str, Any]:
-    from transformers import Trainer, TrainingArguments
+    """Measure decision quality and probability calibration on held-out evidence."""
 
-    class AdapterTrainer(Trainer):
-        def compute_loss(self, model, inputs, return_outputs=False, num_items_in_batch=None):
-            loss = adapter.supervised_loss(model, inputs)
-            outputs = {"loss": loss, "logits": adapter.logits(model, inputs)}
-            return (loss, outputs) if return_outputs else loss
+    import torch
 
-    arguments = TrainingArguments(
-        output_dir=str(Path(output_dir) / "warmup"),
-        per_device_train_batch_size=config.batch_size,
-        num_train_epochs=float(config.epochs),
-        learning_rate=config.learning_rate,
-        lr_scheduler_type="constant",
-        weight_decay=config.weight_decay,
-        gradient_accumulation_steps=config.gradient_accumulation,
-        max_grad_norm=config.max_grad_norm,
-        optim="adamw_torch",
-        fp16=False,
-        bf16=False,
-        logging_strategy="steps",
-        logging_steps=config.logging_steps,
-        logging_first_step=True,
-        report_to="none",
-        save_strategy="no",
-        eval_strategy="no",
-        remove_unused_columns=False,
-        dataloader_pin_memory=False,
-        seed=seed,
-        data_seed=seed,
-        disable_tqdm=True,
-    )
-    trainer = AdapterTrainer(
-        model=adapter.model,
-        args=arguments,
-        train_dataset=_Dataset(items),
-        data_collator=adapter.collate,
-    )
-    result = trainer.train()
+    selected = list(items[: config.max_instances] if config.max_instances else items)
+    if not selected:
+        raise ValueError("calibration benchmark has no evidence")
+    confidences: list[float] = []
+    correctness: list[float] = []
+    soft_correctness: list[float] = []
+    negative_log_likelihoods: list[float] = []
+    brier_scores: list[float] = []
+    proper_scores: list[float] = []
     adapter.model.eval()
+    for offset in range(0, len(selected), config.batch_size):
+        batch = _to_device(adapter.collate(selected[offset : offset + config.batch_size]), adapter.device)
+        with torch.no_grad():
+            logits = adapter.logits(adapter.model, batch)
+            mask = adapter.action_mask(batch).bool()
+            probabilities = torch.softmax(logits.masked_fill(~mask, -1e4), dim=-1)
+            targets = adapter.target_probabilities(batch)
+            rewards = adapter.calibration_reward(probabilities, batch)
+        for row in range(int(probabilities.shape[0])):
+            valid = int(mask[row].sum().item())
+            predicted = int(probabilities[row, :valid].argmax().item())
+            expected = int(targets[row, :valid].argmax().item())
+            probability = probabilities[row, :valid].float()
+            target = targets[row, :valid].float()
+            confidences.append(float(probability[predicted].item()))
+            correctness.append(float(predicted == expected))
+            soft_correctness.append(float(target[predicted].item()))
+            negative_log_likelihoods.append(float(-(target * probability.clamp_min(1e-12).log()).sum().item()))
+            brier_scores.append(float(((probability - target) ** 2).sum().item()))
+            proper_scores.append(float(rewards[row].item()))
+    ece, reliability = _reliability_bins(confidences, correctness, config.calibration_bins)
     return {
-        "phase": "supervised_warmup",
-        "framework": "transformers.Trainer",
-        "examples": len(items),
-        "epochs": config.epochs,
-        "train_loss": round(float(result.training_loss), 6),
-        "seconds": round(float(result.metrics.get("train_runtime", 0.0)), 3),
-        "samples_per_second": round(float(result.metrics.get("train_samples_per_second", 0.0)), 3),
+        "instances": len(selected),
+        "accuracy": round(fmean(correctness), 6),
+        "soft_accuracy": round(fmean(soft_correctness), 6),
+        "negative_log_likelihood": round(fmean(negative_log_likelihoods), 6),
+        "brier_score": round(fmean(brier_scores), 6),
+        "expected_calibration_error": round(ece, 6),
+        "mean_confidence": round(fmean(confidences), 6),
+        "mean_proper_score": round(fmean(proper_scores), 6),
+        "reliability_bins": reliability,
     }
 
 
@@ -124,241 +129,28 @@ def supervised_warmup(
 class _LiveEpisode:
     state: Any
     seen: set[Any]
-    reward: float = 0.0
     environment_steps: int = 0
     primitive_steps: int = 0
     reason: str | None = None
-    records: list[PolicyDecisionRecord] | None = None
-
-    def __post_init__(self) -> None:
-        if self.records is None:
-            self.records = []
 
 
-def _rollout_groups(
-    adapter: DecisionModelAdapter,
-    task: DecisionTask,
-    states: Sequence[Any],
-    config: OnlineConfig,
-) -> list[list[EpisodeResult]]:
-    import torch
-    from torchrl.modules import MaskedCategorical
-
-    live = [_LiveEpisode(state, set()) for state in states for _ in range(config.group_size)]
-    model = adapter.model
-    model.eval()
-    for _decision_round in range(config.max_decisions):
-        selections: dict[int, DecisionOption] = {}
-        requests: list[tuple[int, tuple[DecisionOption, ...], dict[str, Any]]] = []
-        for index, episode in enumerate(live):
-            if episode.reason is not None:
-                continue
-            if task.is_solved(episode.state):
-                episode.reason = "solved"
-                continue
-            key = task.state_key(episode.state)
-            if key in episode.seen:
-                episode.reward += task.repeated_state_reward()
-                episode.reason = "repeat"
-                continue
-            episode.seen.add(key)
-            options = task.options(episode.state)
-            if not options:
-                episode.reward += task.no_action_reward()
-                episode.reason = "no_action"
-            elif len(options) == 1:
-                selections[index] = options[0]
-            else:
-                requests.append((
-                    index,
-                    options,
-                    adapter.encode(task.observation(episode.state), task.instruction, options),
-                ))
-
-        for offset in range(0, len(requests), config.rollout_inference_batch_size):
-            chunk = requests[offset : offset + config.rollout_inference_batch_size]
-            batch = _to_device(adapter.collate([request[2] for request in chunk]), adapter.device)
-            with torch.no_grad():
-                logits = adapter.logits(model, batch)
-                mask = adapter.action_mask(batch)
-                distribution = MaskedCategorical(logits=logits, mask=mask)
-                actions = distribution.sample()
-                log_probabilities = distribution.log_prob(actions)
-            for row, (episode_index, options, _item) in enumerate(chunk):
-                action_index = int(actions[row].cpu())
-                selections[episode_index] = options[action_index]
-                assert live[episode_index].records is not None
-                live[episode_index].records.append(
-                    PolicyDecisionRecord(
-                        task.serialize_state(live[episode_index].state),
-                        task.instruction,
-                        options,
-                        action_index,
-                        float(log_probabilities[row].cpu()),
-                    )
-                )
-
-        if not selections:
-            break
-        for index, option in selections.items():
-            episode = live[index]
-            outcome = task.transition(episode.state, option.key)
-            episode.state = outcome.state
-            episode.reward += outcome.reward
-            episode.environment_steps += 1
-            episode.primitive_steps += outcome.primitive_steps
-            if outcome.terminated:
-                episode.reason = outcome.reason or ("solved" if outcome.solved else "terminated")
-
-    results = []
-    for episode in live:
-        if episode.reason is None:
-            episode.reward += task.limit_reward()
-            episode.reason = "decision_limit"
-        results.append(
-            EpisodeResult(
-                reward=round(episode.reward, 6),
-                solved=task.is_solved(episode.state),
-                decisions=len(episode.records or ()),
-                environment_steps=episode.environment_steps,
-                primitive_steps=episode.primitive_steps,
-                reason=episode.reason,
-                policy_records=tuple(episode.records or ()),
-            )
-        )
-    return [results[index : index + config.group_size] for index in range(0, len(results), config.group_size)]
-
-
-def _advantaged_records(group: Sequence[EpisodeResult]):
-    rewards = [episode.reward for episode in group]
-    deviation = pstdev(rewards)
-    if deviation < 1e-6:
-        return []
-    mean = fmean(rewards)
-    rows = []
-    for episode in group:
-        advantage = (episode.reward - mean) / (deviation + 1e-6)
-        rows.extend((record, advantage) for record in episode.policy_records)
-    return rows
-
-
-def online_grpo(
-    adapter: DecisionModelAdapter,
-    task: DecisionTask,
-    expert_items: Sequence[dict[str, Any]],
-    initial_states: Sequence[Any],
-    config: OnlineConfig,
-    seed: int,
-) -> list[dict[str, Any]]:
-    import torch
-    from accelerate import Accelerator
-    from torchrl.modules import MaskedCategorical
-
-    rng = random.Random(seed)
-    torch.manual_seed(seed)
-    parameters = adapter.trainable_parameters()
-    optimizer = torch.optim.AdamW(
-        parameters,
-        lr=config.learning_rate,
-        weight_decay=config.weight_decay,
-    )
-    accelerator = Accelerator(
-        mixed_precision="no",
-        gradient_accumulation_steps=config.gradient_accumulation,
-    )
-    adapter.model, optimizer = accelerator.prepare(adapter.model, optimizer)
-    adapter.device = accelerator.device
-    parameters = [parameter for parameter in adapter.model.parameters() if parameter.requires_grad]
-    stats = []
-
-    for iteration in range(config.iterations):
-        started = time.perf_counter()
-        episodes = []
-        rows = []
-        for offset in range(0, len(initial_states), config.rollout_instance_batch_size):
-            groups = _rollout_groups(
-                adapter,
-                task,
-                initial_states[offset : offset + config.rollout_instance_batch_size],
-                config,
-            )
-            for group in groups:
-                episodes.extend(group)
-                rows.extend(_advantaged_records(group))
-        rng.shuffle(rows)
-        adapter.model.train()
-        optimizer.zero_grad(set_to_none=True)
-        for offset in range(0, len(rows), config.batch_size):
-            sample = rows[offset : offset + config.batch_size]
-            items = []
-            for record, _advantage in sample:
-                state = task.deserialize_state(record.serialized_state)
-                items.append(adapter.encode(
-                    task.observation(state),
-                    record.instruction,
-                    record.options,
-                    record.action_index,
-                ))
-            with accelerator.accumulate(adapter.model):
-                batch = _to_device(adapter.collate(items), accelerator.device)
-                logits = adapter.logits(adapter.model, batch)
-                distribution = MaskedCategorical(logits=logits, mask=adapter.action_mask(batch))
-                chosen = distribution.log_prob(adapter.labels(batch))
-                old_logp = torch.tensor([record.old_log_probability for record, _ in sample], device=accelerator.device)
-                advantage = torch.tensor([value for _, value in sample], device=accelerator.device)
-                ratio = torch.exp(chosen - old_logp)
-                policy_loss = -torch.minimum(
-                    ratio * advantage,
-                    ratio.clamp(1.0 - config.clip_ratio, 1.0 + config.clip_ratio) * advantage,
-                ).mean()
-                entropy = distribution.entropy().mean()
-                replay = [expert_items[rng.randrange(len(expert_items))] for _ in sample]
-                expert_batch = _to_device(adapter.collate(replay), accelerator.device)
-                expert_loss = adapter.supervised_loss(adapter.model, expert_batch)
-                loss = policy_loss + config.expert_weight * expert_loss - config.entropy_weight * entropy
-                accelerator.backward(loss)
-                if accelerator.sync_gradients:
-                    accelerator.clip_grad_norm_(parameters, config.max_grad_norm)
-                optimizer.step()
-                optimizer.zero_grad(set_to_none=True)
-        adapter.model.eval()
-        outcomes = {
-            reason: sum(episode.reason == reason for episode in episodes)
-            for reason in sorted({episode.reason for episode in episodes})
-        }
-        stat = {
-            "phase": "online_grpo",
-            "framework": "accelerate+torchrl",
-            "iteration": iteration + 1,
-            "episodes": len(episodes),
-            "solved": sum(episode.solved for episode in episodes),
-            "mean_reward": round(fmean(episode.reward for episode in episodes), 6),
-            "trainable_decisions": len(rows),
-            "outcomes": outcomes,
-            "seconds": round(time.perf_counter() - started, 3),
-        }
-        print(json.dumps(stat, sort_keys=True), flush=True)
-        stats.append(stat)
-
-    adapter.model = accelerator.unwrap_model(adapter.model)
-    adapter.device = accelerator.device
-    return stats
-
-
-def evaluate(
+def evaluate_environment(
     adapter: DecisionModelAdapter,
     task: DecisionTask,
     states: Sequence[Any],
     config: BenchmarkConfig,
 ) -> dict[str, Any]:
+    """Run greedy model-only play; this benchmark never updates the model."""
+
     import torch
-    from torchrl.modules import MaskedCategorical
 
     selected_states = list(states[: config.max_instances] if config.max_instances else states)
+    if not selected_states:
+        raise ValueError("environment benchmark has no initial states")
     live = [_LiveEpisode(state, set()) for state in selected_states]
     adapter.model.eval()
     for _round in range(config.max_decisions):
-        selections = {}
+        selections: dict[int, DecisionOption] = {}
         requests = []
         for index, episode in enumerate(live):
             if episode.reason is not None:
@@ -377,16 +169,18 @@ def evaluate(
             elif len(options) == 1:
                 selections[index] = options[0]
             else:
-                requests.append((index, options, adapter.encode(task.observation(episode.state), task.instruction, options)))
+                requests.append((
+                    index,
+                    options,
+                    adapter.encode(task.observation(episode.state), task.instruction, options),
+                ))
         for offset in range(0, len(requests), config.batch_size):
             chunk = requests[offset : offset + config.batch_size]
             batch = _to_device(adapter.collate([request[2] for request in chunk]), adapter.device)
             with torch.no_grad():
-                distribution = MaskedCategorical(
-                    logits=adapter.logits(adapter.model, batch),
-                    mask=adapter.action_mask(batch),
-                )
-                actions = distribution.mode
+                logits = adapter.logits(adapter.model, batch)
+                mask = adapter.action_mask(batch).bool()
+                actions = logits.masked_fill(~mask, -1e4).argmax(dim=-1)
             for row, (index, options, _item) in enumerate(chunk):
                 selections[index] = options[int(actions[row].cpu())]
         if not selections:
@@ -410,7 +204,7 @@ def evaluate(
     return {
         "instances": len(live),
         "solved": solved,
-        "solve_rate": round(solved / max(1, len(live)), 4),
+        "solve_rate": round(solved / max(1, len(live)), 6),
         "mean_environment_steps": round(fmean(episode.environment_steps for episode in live), 3),
         "mean_primitive_steps": round(fmean(episode.primitive_steps for episode in live), 3),
         "outcomes": outcomes,

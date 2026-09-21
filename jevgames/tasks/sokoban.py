@@ -5,12 +5,10 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Hashable, Mapping
 
-from jevgames.contracts import DecisionOption, DecisionTask, ExpertDecision, TaskTransition
+from jevgames.contracts import DecisionOption, DecisionTask, TaskTransition
 from jevgames.registry import register_task
 from sokoban_laya.core import Board
-from sokoban_laya.grpo_training import initial_boards
 from sokoban_laya.laya_policy import BOARD_LEGEND
-from sokoban_laya.macro_grpo_training import compress_expert_trajectories
 from sokoban_laya.macros import apply_push_macro, legal_push_macros, reachable_walk_paths
 from sokoban_laya.trajectories import read_jsonl
 
@@ -33,27 +31,14 @@ class SokobanPushTask(DecisionTask):
         self._limit_penalty = float(config.get("limit_penalty", 1.0))
 
     def initial_states(self, dataset_path: str | Path, limit: int | None = None) -> list[Board]:
-        return initial_boards(read_jsonl(dataset_path), limit)
-
-    def expert_decisions(self, dataset_path: str | Path) -> list[ExpertDecision]:
-        primitive = read_jsonl(dataset_path)
-        macro_examples = compress_expert_trajectories(primitive)
-        decisions = []
-        for example in macro_examples:
-            board = Board.from_ascii(example.board)
-            options = self.options(board)
-            decisions.append(
-                ExpertDecision(
-                    serialized_state=example.board,
-                    observation=self.observation(board),
-                    instruction=self.instruction,
-                    options=options,
-                    target_key=example.expert_label,
-                    episode_id=example.episode,
-                    step=example.push_step,
-                )
-            )
-        return decisions
+        first = {}
+        for example in read_jsonl(dataset_path):
+            if example.step == 0 and example.episode not in first:
+                first[example.episode] = Board.from_ascii(example.board)
+        states = list(first.values())
+        if not states:
+            raise ValueError("Sokoban evidence has no episode step 0 records")
+        return states[:limit] if limit is not None else states
 
     def observation(self, state: Board) -> Mapping[str, Any]:
         return {"board": state.render(), "legend": BOARD_LEGEND}

@@ -9,8 +9,21 @@ from jevgames.contracts import DecisionModelAdapter, DecisionOption
 from jevgames.registry import register_model
 from sokoban_laya.checkpoint import load_checkpoint, save_checkpoint
 from sokoban_laya.device import resolve_device
-from sokoban_laya.grpo_training import _temperature_scaled
 from sokoban_laya.training import _collate
+
+
+def _temperature_scaled(logits: Any, mask: Any, model_cfg: dict[str, Any]):
+    import torch
+    from laya.common import QTYPES, temp_bucket
+
+    defaults = model_cfg.get("temperature", [1.0, 1.0, 1.0])
+    by_options = model_cfg.get("temperature_by_options", {})
+    scales = []
+    for count in mask.sum(-1).tolist():
+        value = by_options.get(temp_bucket(QTYPES["choice"], int(count)), defaults[QTYPES["choice"]])
+        scales.append(max(1e-3, float(value)))
+    scale = torch.tensor(scales, device=logits.device, dtype=logits.dtype).unsqueeze(-1)
+    return logits / scale
 
 
 class LayaAdapter(DecisionModelAdapter):
@@ -23,13 +36,18 @@ class LayaAdapter(DecisionModelAdapter):
         self._freeze_backbone = bool(config.get("freeze_backbone", True))
         if self._freeze_backbone:
             self.freeze_backbone()
+        elif bool(config.get("gradient_checkpointing", True)):
+            self.model.encoder.gradient_checkpointing_enable(
+                gradient_checkpointing_kwargs={"use_reentrant": False}
+            )
+            self.model.head_checkpointing = True
 
     def encode(
         self,
         observation: Mapping[str, Any],
         instruction: str,
         options: Sequence[DecisionOption],
-        target_index: int = 0,
+        target_probabilities: Sequence[float] | None = None,
     ) -> dict[str, Any]:
         from laya.common import QTYPES, build_sequence
 
@@ -49,8 +67,15 @@ class LayaAdapter(DecisionModelAdapter):
         )
         if len(markers) != len(options):
             raise ValueError("decision options exceeded Laya's head token budget")
-        target = [0.0] * len(options)
-        target[target_index] = 1.0
+        if target_probabilities is None:
+            target = [1.0 / len(options)] * len(options)
+        else:
+            target = [float(value) for value in target_probabilities]
+            if len(target) != len(options):
+                raise ValueError("target probabilities must match the Laya options")
+            if abs(sum(target) - 1.0) > 1e-6:
+                raise ValueError("target probabilities must sum to one")
+        target_index = max(range(len(target)), key=target.__getitem__)
         return {
             "ids": ids,
             "markers": markers,
@@ -73,31 +98,23 @@ class LayaAdapter(DecisionModelAdapter):
             batch["qtype"],
             detach_encoder=self._freeze_backbone,
         )
-        import torch
-
-        return _temperature_scaled(logits.float(), batch["marker_mask"], self.model_cfg, torch)
+        return _temperature_scaled(logits.float(), batch["marker_mask"], self.model_cfg)
 
     def action_mask(self, batch: Mapping[str, Any]):
         return batch["marker_mask"]
 
-    def labels(self, batch: Mapping[str, Any]):
-        return batch["label"]
+    def target_probabilities(self, batch: Mapping[str, Any]):
+        return batch["target"]
 
-    def supervised_loss(self, active_model: Any, batch: Mapping[str, Any]):
-        import torch
+    def calibration_reward(self, probabilities: Any, batch: Mapping[str, Any]):
         from laya.common import proper_reward
 
-        logits = self.logits(active_model, batch)
-        mask = self.action_mask(batch)
-        probabilities = torch.softmax(logits.masked_fill(~mask, -1e4), dim=-1)
-        proper_loss = -proper_reward(
+        return proper_reward(
             probabilities,
             batch["target"],
             batch["qtype"],
-            mask,
-        ).mean()
-        classification_loss = torch.nn.functional.cross_entropy(logits, self.labels(batch))
-        return classification_loss + 0.25 * proper_loss
+            batch["marker_mask"],
+        )
 
     def freeze_backbone(self) -> None:
         for parameter in self.model.encoder.parameters():

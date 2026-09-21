@@ -1,152 +1,106 @@
 # Architecture
 
-## Design goals
+Jev Games separates model semantics, task environments, evidence datasets,
+optimization strategy, and experiment configuration. The framework coordinates
+them without importing a particular game or model into its core.
 
-Jev Games is designed around four constraints:
-
-1. **Model independence.** The engine must not know how a model tokenizes an
-   observation, represents choices, calculates a supervised loss, or stores a
-   checkpoint.
-2. **Task independence.** The engine must not know Sokoban rules, reward
-   shaping, dataset schemas, or what constitutes a terminal state.
-3. **Dynamic decisions.** Available actions may vary at every state and may be
-   described by text rather than fixed numeric IDs.
-4. **Framework ownership.** Standard training mechanics should be delegated to
-   maintained libraries; project code should implement only domain-specific
-   behavior and the group-relative objective.
-
-## Component model
+## Component boundaries
 
 ```text
-┌──────────────────────────────────────────────────────────────┐
-│ ExperimentConfig                                             │
-│ model.type  task.type  data  warmup  online  benchmark       │
-└────────────────────────────┬─────────────────────────────────┘
-                             │
-             ┌───────────────┴───────────────┐
-             │                               │
-┌────────────▼─────────────┐      ┌──────────▼──────────────┐
-│ DecisionModelAdapter    │      │ DecisionTask            │
-│                        │      │                         │
-│ encode / collate       │      │ expert_decisions        │
-│ logits / action_mask   │      │ initial_states          │
-│ supervised_loss        │      │ observation / options   │
-│ freeze_backbone / save │      │ transition / reward     │
-└────────────┬────────────┘      │ state_key / terminal    │
-             │                   └──────────┬──────────────┘
-             └───────────────┬──────────────┘
-                             │
-                    ┌────────▼────────┐
-                    │ Generic engine │
-                    └────────┬────────┘
-         ┌───────────────────┼────────────────────┐
-         │                   │                    │
-┌────────▼─────────┐ ┌───────▼──────────┐ ┌──────▼──────────┐
-│ Supervised phase │ │ Online GRPO      │ │ Evaluation      │
-│ HF Trainer       │ │ Accelerate       │ │ Greedy, no      │
-│                  │ │ TorchRL masking  │ │ fallback        │
-└──────────────────┘ └──────────────────┘ └─────────────────┘
+ExperimentConfig
+├── model.type ──────> DecisionModelAdapter
+│                     encode, logits, masks, proper score, checkpoint
+├── task.type ───────> DecisionTask
+│                     observations, options, transitions
+├── data.type ───────> EvidenceProvider
+│                     dataset to calibration targets
+├── training.type ───> TrainingStrategy
+│                     sampling, optimization, metrics
+└── benchmark ───────> lifecycle and held-out evaluation
 ```
 
-## Dependency boundaries
+The four registries are peers. A new model, task, evidence format, or training
+algorithm can be selected independently in TOML.
 
-The `jevgames` package is the framework boundary.
+### Model adapter
 
-- `jevgames.engine` imports only contracts and training frameworks.
-- `jevgames.models.*` may import model-specific libraries and checkpoint code.
-- `jevgames.tasks.*` may import environment and dataset implementations.
-- model plugins must not import task plugins;
-- task plugins must not import model plugins;
-- the registry is the only construction mechanism used by experiments.
+The adapter converts generic `DecisionOption` values into the model's native
+input representation. It exposes option logits, the valid-option mask, target
+distributions, a strictly proper calibration score, and native checkpoint
+serialization.
 
-The current Laya and Sokoban plugins reuse implementation from
-`sokoban_laya`, which is retained as a compatibility package. New framework
-code should depend on the adapters, not directly on that package.
+The framework does not assume token generation. Laya, for example, is a
+bidirectional encoder that scores option markers in one forward pass.
 
-## Normalized decision representation
+### Task adapter
 
-Every task exposes a tuple of `DecisionOption` values:
+The task owns domain state and transition semantics. It provides:
 
-```python
-DecisionOption(
-    key="box_r2_c6_push_left",
-    description="Push the box at row 3, column 7 one square left",
-)
-```
+- state-dependent typed options;
+- state transitions for model-only environment evaluation;
+- canonical state identity and terminal conditions.
 
-The option key must be unique within the state. The description is intended
-for models that jointly encode option semantics and state context. A numeric
-policy can ignore the description inside its adapter.
+### Evidence provider
 
-Forced states with exactly one option are executed by the environment without
-calling the model. This avoids meaningless gradients and accommodates models
-whose uncertainty features require at least two choices.
+The provider reads a dataset and uses a compatible task to construct
+`CalibrationDecision` rows. Targets may be one-hot observed outcomes or soft
+distributions formed from repeated outcomes. The training strategy does not know how they were
+produced.
+
+### Training strategy
+
+The strategy receives encoded evidence through the model adapter. The built-in
+`rlcd` strategy owns Gaussian exploration, group-relative baselines, REINFORCE,
+gradient accumulation, clipping, and device orchestration through Accelerate.
+
+The strategy never calls the Sokoban environment and does not consume shaped
+game reward. That boundary prevents solve reward from silently replacing the
+calibration objective.
 
 ## Experiment lifecycle
 
-`run_experiment` is the orchestration boundary:
-
 ```text
-load config
-  → construct adapters
-  → load expert decisions
-  → encode trainable examples
-  → supervised warm-up
-  → collect grouped online episodes
-  → clipped group-relative updates + expert replay
-  → save native checkpoint
-  → validation benchmark
-  → test benchmark
-  → report.json
+load TOML
+  → construct model, task, evidence, and training strategy plugins
+  → load calibration evidence through the data plugin
+  → encode decisions with the model adapter
+  → optimize with RLCD
+  → save a native model checkpoint
+  → evaluate held-out calibration evidence
+  → run greedy held-out environment play
+  → write schema-versioned report.json
 ```
 
-Validation and test evaluation are model-only. Search, oracle labels, or safety
-fallbacks must not be inserted into the benchmark path.
+Validation and test datasets are never passed to the strategy. Both are read
+only after the checkpoint has been trained.
 
-## Framework responsibilities
+## Evidence and environment are different interfaces
 
-### Transformers Trainer
+For Sokoban, a solver path provides an observed successful push at a state. It
+becomes a one-hot target distribution. A future evidence builder can instead
+evaluate every legal push across repeated continuations and emit a soft target.
 
-Trainer owns supervised dataloading, shuffling, optimizer construction,
-gradient accumulation, clipping, logging, and epoch scheduling. The model
-adapter supplies the actual loss.
+Environment play asks a different question: can the saved greedy policy solve
+the full level without search fallback? It measures sequential competence, not
+probability calibration.
 
-### Accelerate
+## Dependency direction
 
-Accelerate owns device placement and synchronized online optimization. The
-current MPS path is single-process. CUDA multi-process execution requires
-rollout sharding before it should be considered efficient.
+`jevgames.engine` imports only contracts and evaluation configuration.
+`jevgames.experiment` imports registries and the engine. Built-in adapters may
+import their implementation packages, but the generic engine never imports
+Laya or Sokoban.
 
-### TorchRL
+Legacy task-specific SFT and environment-GRPO experiments remain in
+`sokoban_laya`. They are compatibility and ablation tools, not dependencies of
+the main experiment lifecycle.
 
-`MaskedCategorical` owns legal-action normalization, stochastic sampling,
-log-probability, entropy, and greedy mode selection.
+## Current limits
 
-## Registry lifecycle
-
-Built-ins are loaded lazily the first time the registry is queried. A plugin
-factory receives its untyped TOML table and returns an object satisfying the
-corresponding abstract contract.
-
-Current registry discovery is explicit. Third-party packages must import their
-registration module before creating an experiment. Python entry-point discovery
-is listed as future work.
-
-## Package layout
-
-```text
-jevgames/
-├── cli.py
-├── config.py
-├── contracts.py
-├── engine.py
-├── experiment.py
-├── registry.py
-├── models/
-│   └── laya.py
-└── tasks/
-    └── sokoban.py
-```
-
-Task-specific generators, solvers, and visual controllers do not belong in the
-generic package. They live in the task implementation package.
+- no optimizer resume or automatic best-checkpoint selection;
+- no entry-point discovery for third-party plugin packages;
+- one training strategy is currently registered;
+- distributed optimizer preparation exists, but experiment artifact writing
+  has only been validated with one process;
+- Sokoban's current evidence is solver-derived one-hot data, not repeated
+  empirical success probabilities for every legal action.

@@ -12,7 +12,10 @@ from .registry import available_plugins
 
 
 def main(argv: Sequence[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="jev-games", description="Pluggable decision-policy training and benchmark framework")
+    parser = argparse.ArgumentParser(
+        prog="jev-games",
+        description="Pluggable RLCD training and benchmark framework for typed decision models",
+    )
     commands = parser.add_subparsers(dest="command", required=True)
     run_parser = commands.add_parser("run", help="run a TOML experiment")
     run_parser.add_argument("config")

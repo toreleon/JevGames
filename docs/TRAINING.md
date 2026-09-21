@@ -1,183 +1,126 @@
-# Training semantics
+# RLCD training semantics
 
-Jev Games uses a two-phase training strategy:
+Jev Games trains typed probability distributions with Reinforcement Learning
+for Calibrated Decisions. The implementation follows the open Laya formulation
+and does not claim to reproduce TypeSafe's unpublished Jev algorithm.
 
-1. supervised expert warm-up establishes the action representation and a
-   calibrated initial policy;
-2. online group-relative optimization improves decisions using complete
-   environment outcomes while replaying expert examples.
+## Evidence
 
-Both phases operate through model and task contracts. The engine has no
-model-specific tokenizer logic and no task-specific reward logic.
-
-## Phase 0: expert transformation
-
-The task adapter loads source records and returns `ExpertDecision` objects:
+The task returns `CalibrationDecision` values containing an observation,
+instruction, dynamic option set, and target distribution:
 
 ```python
-ExpertDecision(
+CalibrationDecision(
     serialized_state="...",
     observation={"field": "value"},
     instruction="Choose the best action",
-    options=(
-        DecisionOption("a", "first action"),
-        DecisionOption("b", "second action"),
-    ),
-    target_key="b",
-    episode_id="episode-42",
+    options=(DecisionOption("a", "first"), DecisionOption("b", "second")),
+    target_probabilities=(0.75, 0.25),
+    evidence_id="episode-42",
     step=3,
+    provenance="environment_outcomes",
 )
 ```
 
-The engine removes examples with fewer than two options. Forced decisions do
-not contain policy information and are executed directly during rollout.
+Targets must be non-negative, match the option count, and sum to one. Forced
+single-option decisions are removed because they provide no learning signal.
 
-The model adapter converts each remaining example to its native encoded batch
-representation.
+One-hot targets represent individual observed outcomes. Soft targets can
+represent repeated outcomes or a teacher distribution. They are first-class
+inputs rather than a model-specific extension.
 
-## Phase 1: supervised warm-up
+## Reported distribution
 
-Transformers Trainer controls the standard optimization loop. Jev Games
-subclasses only `compute_loss` and delegates the loss to the model adapter.
-
-For the built-in Laya adapter:
-
-```text
-L_warmup = cross_entropy(target_action)
-         + 0.25 × proper_scoring_loss(target_distribution)
-```
-
-Cross-entropy quickly teaches a new action schema. The proper-scoring term
-discourages an arbitrarily sharp, poorly calibrated probability distribution.
-Another model adapter may implement a different loss without changing Trainer
-or the task.
-
-Trainer owns:
-
-- shuffling and dataloading;
-- optimizer construction;
-- gradient accumulation;
-- gradient clipping;
-- epoch control;
-- training metrics and timing.
-
-Setting `warmup.epochs = 0` skips this phase. Pure online training is supported
-mechanically but generally unsuitable for sparse-reward tasks without an
-already competent policy.
-
-## Phase 2: grouped online collection
-
-For every initial state, the engine creates `group_size` independent episodes.
-At each state:
-
-1. the task provides the currently legal options;
-2. forced single-option transitions execute directly;
-3. multi-option observations are batched through the model adapter;
-4. TorchRL `MaskedCategorical` samples only legal actions;
-5. the task applies the action and returns reward and terminal metadata;
-6. the engine records the old action log-probability for the later update.
-
-The task defines state identity. This is important for environments where
-different raw states are behaviorally equivalent. The Sokoban plugin, for
-example, canonicalizes all player positions in the same reachable region.
-
-Episodes terminate on one of:
-
-- task success;
-- task-defined failure or deadlock;
-- repeated canonical state;
-- no legal action;
-- the configured decision limit.
-
-## Group-relative advantage
-
-For a group of returns `R_1 ... R_G`, Jev Games computes:
+For evidence item `i`, the model produces masked logits `z_i` over only the
+options supplied for that state:
 
 ```text
-A_i = (R_i - mean(R)) / (std(R) + 1e-6)
+p_i = softmax(mask(z_i))
 ```
 
-Every trainable policy decision in episode `i` receives `A_i`. If all group
-returns are equal, the standard deviation is effectively zero and the group is
-discarded. This is deliberate: the group provides no relative preference.
+Invalid padding never receives probability mass.
 
-## Clipped policy objective
+## Exploration
 
-The policy ratio for a sampled action is:
+RLCD draws `G` zero-mean Gaussian perturbations for every evidence item:
 
 ```text
-r_t = exp(log π_new(a_t | s_t) - log π_old(a_t | s_t))
+ε_g ~ N(0, σ²I)
+ε_g ← ε_g - mean_valid_options(ε_g)
+q_g = softmax(mask(stop_gradient(z) + ε_g))
 ```
 
-The online policy term is:
+`sigma_start` and `sigma_end` define a linear epoch schedule. Centering the
+noise prevents a meaningless common logit shift from consuming exploration.
+
+## Proper scoring reward
+
+The model adapter scores each reported distribution against the target. Laya
+uses a sum of log and spherical scores, with ranked probability score support
+for ordinal questions:
 
 ```text
-L_policy = -mean(min(r_t A_t,
-                     clip(r_t, 1-ε, 1+ε) A_t))
+R(q, y) = log_score(q, y) + 0.5 × spherical_score(q, y)
 ```
 
-The complete update is:
+A strictly proper scoring rule has its best expected reward when the reported
+distribution equals the true outcome distribution. This is the defining
+objective; no cross-entropy imitation term or game solve reward is mixed into
+the built-in strategy.
+
+## Group-relative baseline
+
+For each evidence item, sampled rewards are normalized within its own group:
 
 ```text
-L_total = L_policy
-        + expert_weight × L_expert_replay
-        - entropy_weight × H(π)
+A_g = (R_g - mean_g(R)) / (std_g(R) + 1e-6)
 ```
 
-Expert replay reduces catastrophic forgetting and keeps the policy anchored to
-known valid decisions. Entropy encourages exploration. Accelerate controls
-backward, accumulation, clipping, and optimizer synchronization.
+Items whose sampled rewards are identical receive zero advantage. Normalizing
+per evidence item avoids comparing raw proper scores from unrelated option
+sets.
 
-## Dynamic action masking
+## REINFORCE update
 
-The action mask is part of the model adapter contract. Invalid padded options
-must be false in the mask. TorchRL renormalizes the distribution over valid
-options and uses the same mask for sampling, log-probability, entropy, and
-greedy evaluation.
+The Gaussian policy is centered on the live model logits. The sampled logits
+are detached, while their log density is evaluated under the live mean:
 
-Tasks should avoid presenting semantically duplicate actions. Duplicate
-options split probability mass and create ambiguous expert targets.
+```text
+log π_z(z_sample) = -Σ_valid (z_sample - z)² / (2σ²)
+L_RLCD = -mean(A × log π_z(z_sample))
+```
+
+Accelerate owns device placement, mixed precision, accumulation, synchronized
+backward, and gradient clipping. AdamW performs the update.
+
+## What the probability means
+
+Calibration is only meaningful relative to the target event. In the current
+Sokoban integration, the model reports a distribution over which legal push
+matches an observed successful solver trajectory. That is not automatically a
+probability that a push will solve the entire level.
+
+To train the latter quantity, the evidence builder must evaluate each legal
+push with repeated controlled continuations and define the target distribution
+from those outcomes. Solver timeout must remain unknown evidence rather than be
+recorded as failure.
+
+## Backbone adaptation
+
+`model.freeze_backbone = true` trains only the Laya decision layers. This is the
+safe MPS baseline and uses substantially less memory. Set it to `false` to
+adapt the encoder; the Laya adapter enables gradient checkpointing by default.
+Full-backbone runs need a lower learning rate and hardware-specific validation.
 
 ## Reproducibility
 
-The experiment seed is passed to Trainer and PyTorch sampling. Dataset
-generators should expose and record their own seeds. Determinism is bounded by
-the selected PyTorch backend; MPS and CUDA kernels may not be bit-identical
-across versions or devices.
+Retain the TOML, `uv.lock`, data manifest, checkpoint metadata, hardware
+description, and random seed. Compare checkpoints on identical held-out splits
+and report multiple seeds before claiming an algorithmic improvement.
 
-For credible comparisons:
+## Relationship to SFT and environment GRPO
 
-- pin `uv.lock`;
-- retain the full TOML configuration;
-- retain dataset manifests and content hashes;
-- evaluate the same checkpoint on the same held-out split;
-- report hardware, framework versions, and seed;
-- run multiple seeds before claiming an algorithmic improvement.
-
-## Backbone freezing
-
-Freezing a pretrained backbone is recommended for local MPS development:
-
-- substantially lower optimizer memory;
-- faster backward passes;
-- reduced catastrophic forgetting;
-- practical iteration on a 48 GB unified-memory machine.
-
-Unfreezing can improve representation adaptation when the task distribution is
-far from pretraining, but it changes resource requirements and should be
-validated separately.
-
-## Current limitations
-
-The generic engine currently does not provide:
-
-- resumable optimizer/scheduler state;
-- automatic best-checkpoint selection;
-- generalized advantage estimation or a learned value function;
-- rollout replay buffers;
-- asynchronous environment workers;
-- per-process dataset sharding for distributed online collection;
-- KL regularization against a frozen reference policy.
-
-These omissions are explicit. Long production runs should not be described as
-fault-tolerant until resume and best-checkpoint support are implemented.
+SFT can be a separate initialization strategy and episode-reward GRPO can be an
+ablation, but neither is part of the default RLCD lifecycle. The old
+implementations remain under `sokoban_laya` so comparisons can be reproduced
+without changing what `training.type = "rlcd"` means.

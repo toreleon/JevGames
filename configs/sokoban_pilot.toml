@@ -5,38 +5,32 @@ seed = 20260921
 
 [model]
 type = "laya"
-source = "models/laya-sokoban-smoke"
-device = "mps"
+source = "convaiinnovations/laya"
+device = "auto"
 freeze_backbone = true
 
 [task]
 type = "sokoban_push"
-solve_reward = 50.0
-goal_reward = 4.0
-off_goal_penalty = 4.0
-deadlock_penalty = 15.0
 
 [data]
+type = "sokoban_solver"
 train = "data/pilot/train.jsonl"
 validation = "data/pilot/validation.jsonl"
 test = "data/pilot/test.jsonl"
 manifest = "data/pilot/manifest.json"
 
-[warmup]
-epochs = 6
+[training]
+type = "rlcd"
+epochs = 4
 batch_size = 16
 gradient_accumulation = 2
-learning_rate = 0.0003
-
-[online]
-iterations = 2
 group_size = 4
-max_decisions = 32
-max_instances = 2000
-batch_size = 16
-rollout_instance_batch_size = 16
-rollout_inference_batch_size = 32
+sigma_start = 0.5
+sigma_end = 0.2
+learning_rate = 0.0003
+mixed_precision = "no"
 
 [benchmark]
 max_decisions = 32
 batch_size = 32
+calibration_bins = 15

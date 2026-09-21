@@ -1,9 +1,10 @@
-"""Stable contracts between the generic engine, model adapters, and tasks."""
+"""Stable contracts between training strategies, model adapters, and tasks."""
 
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from math import isfinite
 from pathlib import Path
 from typing import Any, Hashable, Mapping, Sequence
 
@@ -15,14 +16,63 @@ class DecisionOption:
 
 
 @dataclass(frozen=True, slots=True)
-class ExpertDecision:
+class CalibrationDecision:
+    """One typed decision and its observed target distribution.
+
+    A one-hot distribution represents one observed outcome. Soft targets are
+    also supported, allowing a task to aggregate repeated solver or
+    environment outcomes without changing the training strategy.
+    """
+
     serialized_state: str
     observation: Mapping[str, Any]
     instruction: str
     options: tuple[DecisionOption, ...]
-    target_key: str
-    episode_id: str
+    target_probabilities: tuple[float, ...]
+    evidence_id: str
     step: int
+    provenance: str = "unknown"
+
+    def __post_init__(self) -> None:
+        if len(self.options) != len(self.target_probabilities):
+            raise ValueError("target_probabilities must match the decision options")
+        if not self.options:
+            raise ValueError("a calibration decision requires at least one option")
+        keys = [option.key for option in self.options]
+        if len(set(keys)) != len(keys):
+            raise ValueError("decision option keys must be unique")
+        if any(not isfinite(value) or value < 0.0 for value in self.target_probabilities):
+            raise ValueError("target probabilities must be finite and non-negative")
+        if abs(sum(self.target_probabilities) - 1.0) > 1e-6:
+            raise ValueError("target probabilities must sum to one")
+
+    @classmethod
+    def one_hot(
+        cls,
+        *,
+        serialized_state: str,
+        observation: Mapping[str, Any],
+        instruction: str,
+        options: tuple[DecisionOption, ...],
+        target_key: str,
+        evidence_id: str,
+        step: int,
+        provenance: str,
+    ) -> "CalibrationDecision":
+        keys = tuple(option.key for option in options)
+        if target_key not in keys:
+            raise ValueError(f"target {target_key!r} is absent from the decision options")
+        target = tuple(1.0 if key == target_key else 0.0 for key in keys)
+        return cls(
+            serialized_state=serialized_state,
+            observation=observation,
+            instruction=instruction,
+            options=options,
+            target_probabilities=target,
+            evidence_id=evidence_id,
+            step=step,
+            provenance=provenance,
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -35,37 +85,14 @@ class TaskTransition:
     primitive_steps: int = 1
 
 
-@dataclass(frozen=True, slots=True)
-class PolicyDecisionRecord:
-    serialized_state: str
-    instruction: str
-    options: tuple[DecisionOption, ...]
-    action_index: int
-    old_log_probability: float
-
-
-@dataclass(frozen=True, slots=True)
-class EpisodeResult:
-    reward: float
-    solved: bool
-    decisions: int
-    environment_steps: int
-    primitive_steps: int
-    reason: str
-    policy_records: tuple[PolicyDecisionRecord, ...]
-
-
 class DecisionTask(ABC):
-    """An environment/dataset plugin; the engine treats state as opaque."""
+    """A task plugin that defines a typed-decision environment."""
 
     name: str
     instruction: str
 
     @abstractmethod
     def initial_states(self, dataset_path: str | Path, limit: int | None = None) -> list[Any]: ...
-
-    @abstractmethod
-    def expert_decisions(self, dataset_path: str | Path) -> list[ExpertDecision]: ...
 
     @abstractmethod
     def observation(self, state: Any) -> Mapping[str, Any]: ...
@@ -88,18 +115,22 @@ class DecisionTask(ABC):
     @abstractmethod
     def is_solved(self, state: Any) -> bool: ...
 
-    def repeated_state_reward(self) -> float:
-        return -4.0
 
-    def no_action_reward(self) -> float:
-        return -15.0
+class EvidenceProvider(ABC):
+    """A dataset adapter that creates calibration evidence for a task."""
 
-    def limit_reward(self) -> float:
-        return -1.0
+    name: str
+
+    @abstractmethod
+    def load(
+        self,
+        dataset_path: str | Path,
+        task: DecisionTask,
+    ) -> list[CalibrationDecision]: ...
 
 
 class DecisionModelAdapter(ABC):
-    """A trainable decision model with a normalized dynamic-choice API."""
+    """A trainable typed-decision model with dynamic option sets."""
 
     name: str
     model: Any
@@ -111,7 +142,7 @@ class DecisionModelAdapter(ABC):
         observation: Mapping[str, Any],
         instruction: str,
         options: Sequence[DecisionOption],
-        target_index: int = 0,
+        target_probabilities: Sequence[float] | None = None,
     ) -> dict[str, Any]: ...
 
     @abstractmethod
@@ -124,10 +155,11 @@ class DecisionModelAdapter(ABC):
     def action_mask(self, batch: Mapping[str, Any]) -> Any: ...
 
     @abstractmethod
-    def labels(self, batch: Mapping[str, Any]) -> Any: ...
+    def target_probabilities(self, batch: Mapping[str, Any]) -> Any: ...
 
     @abstractmethod
-    def supervised_loss(self, active_model: Any, batch: Mapping[str, Any]) -> Any: ...
+    def calibration_reward(self, probabilities: Any, batch: Mapping[str, Any]) -> Any:
+        """Return a strictly proper score for every reported distribution."""
 
     @abstractmethod
     def freeze_backbone(self) -> None: ...
@@ -137,3 +169,18 @@ class DecisionModelAdapter(ABC):
 
     def trainable_parameters(self) -> list[Any]:
         return [parameter for parameter in self.model.parameters() if parameter.requires_grad]
+
+
+class TrainingStrategy(ABC):
+    """A pluggable optimizer over encoded calibration evidence."""
+
+    name: str
+
+    @abstractmethod
+    def train(
+        self,
+        adapter: DecisionModelAdapter,
+        items: Sequence[dict[str, Any]],
+        output_dir: str | Path,
+        seed: int,
+    ) -> list[dict[str, Any]]: ...

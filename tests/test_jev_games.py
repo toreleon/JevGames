@@ -9,16 +9,23 @@ from sokoban_laya.core import Board
 
 class JevGamesFrameworkTests(unittest.TestCase):
     def test_builtin_plugins_are_discoverable(self) -> None:
-        self.assertEqual(available_plugins(), {"models": ["laya"], "tasks": ["sokoban_push"]})
+        self.assertEqual(available_plugins(), {
+            "evidence": ["sokoban_solver"],
+            "models": ["laya"],
+            "strategies": ["rlcd"],
+            "tasks": ["sokoban_push"],
+        })
 
     def test_config_selects_model_and_task_independently(self) -> None:
         config = load_experiment_config("configs/sokoban_smoke.toml")
         self.assertEqual(config.model_type, "laya")
         self.assertEqual(config.task_type, "sokoban_push")
+        self.assertEqual(config.training_type, "rlcd")
+        self.assertEqual(config.evidence_type, "sokoban_solver")
         self.assertEqual(config.train_dataset, "data/smoke_train.jsonl")
-        self.assertEqual(config.online.learning_rate, 3e-4)
-        self.assertEqual(config.online.gradient_accumulation, 2)
-        self.assertEqual(config.warmup.max_grad_norm, 1.0)
+        self.assertEqual(config.training["learning_rate"], 3e-4)
+        self.assertEqual(config.training["gradient_accumulation"], 2)
+        self.assertEqual(config.training["group_size"], 4)
 
     def test_sokoban_task_is_accessed_only_through_contract(self) -> None:
         task = create_task("sokoban_push", {})

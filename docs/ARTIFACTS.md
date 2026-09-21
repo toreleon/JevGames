@@ -2,134 +2,69 @@
 
 ## Experiment directory
 
-Every config-driven run writes to `experiment.output_dir`:
-
 ```text
 runs/<experiment>/
-├── checkpoint/
-│   ├── model-native files
-│   └── training_stats.json
-├── warmup/                  # Trainer working directory, when created
-└── report.json
+├── checkpoint/             # model-native files
+└── report.json             # framework report, schema version 2
 ```
 
-The model adapter owns checkpoint filenames. The built-in Laya adapter writes
-Safetensors weights, encoder config, tokenizer files, and
-`rl_agent_config.json`.
+The Laya checkpoint contains `model.safetensors`, `rl_agent_config.json`, an
+encoder config, tokenizer files, and `training_stats.json`.
 
-## `report.json`
+## Report schema
 
-Top-level schema version is currently `1`:
+Top-level fields:
+
+| Field | Meaning |
+|---|---|
+| `schema_version` | currently `2` |
+| `name` | experiment identity |
+| `config` | fully parsed experiment config |
+| `plugins` | selected model, task, evidence, and strategy plugins |
+| `stats` | setup and RLCD epoch records |
+| `benchmarks` | validation/test calibration and environment results |
+| `checkpoint` | exported model path |
+| `elapsed_seconds` | complete experiment duration |
+
+Each split has this shape:
 
 ```json
 {
-  "schema_version": 1,
-  "name": "laya-sokoban-smoke",
-  "config": {},
-  "plugins": {
-    "model": "laya",
-    "task": "sokoban_push"
-  },
-  "stats": [],
-  "benchmarks": {
-    "validation": {},
-    "test": {}
-  },
-  "checkpoint": "runs/example/checkpoint",
-  "elapsed_seconds": 29.523
-}
-```
-
-The embedded config is the resolved dataclass representation, not the original
-TOML text. Retain the source TOML separately when provenance matters.
-
-## Training statistics
-
-`stats` contains ordered phase records. Current phase values include:
-
-- `setup`;
-- `supervised_warmup`;
-- `online_grpo`.
-
-Online records include episode count, solve count, mean reward, number of
-trainable decisions, outcome counts, and elapsed seconds.
-
-The built-in Laya checkpoint also stores framework metadata in
-`training_stats.json`. Model plugins may use a different native metadata file.
-
-## Generic benchmark schema
-
-```json
-{
-  "instances": 20,
-  "solved": 0,
-  "solve_rate": 0.0,
-  "mean_environment_steps": 4.4,
-  "mean_primitive_steps": 16.8,
-  "outcomes": {
-    "no_action": 4,
-    "repeat": 2,
-    "static_deadlock": 14
+  "validation": {
+    "calibration": {
+      "instances": 100,
+      "accuracy": 0.71,
+      "brier_score": 0.34,
+      "expected_calibration_error": 0.08,
+      "reliability_bins": []
+    },
+    "environment": {
+      "instances": 20,
+      "solved": 4,
+      "solve_rate": 0.2,
+      "outcomes": {"solved": 4, "static_deadlock": 16}
+    }
   }
 }
 ```
 
-Task-specific compatibility benchmarks may add dimensions such as difficulty,
-push count, calibration, or fallback coverage.
+Numbers above illustrate shape only.
 
-## Sokoban expert JSONL
+## Evidence schema
 
-The current Sokoban task consumes primitive solver records:
+The public Sokoban JSONL stores primitive solver decisions. The task adapter
+compresses those records into in-memory `CalibrationDecision` rows. A future
+general evidence format should preserve target distributions, provenance,
+sampling budget, unresolved outcomes, option identity, and environment hash.
 
-```json
-{
-  "board": "#####\n#@$.#\n#####",
-  "legal_actions": ["push_right"],
-  "expert_action": "push_right",
-  "episode": "train_000001_abcd",
-  "step": 0
-}
-```
+## Manifests
 
-The task adapter groups rows by episode and compresses primitive trajectories
-to push-macro expert decisions. This schema belongs to the Sokoban plugin, not
-the generic framework.
+Dataset manifests should record generator version, seed, split counts, layout
+hashes, difficulty, and evidence provenance. Never infer held-out status from a
+filename alone.
 
-## Sokoban dataset manifest
+## Compatibility
 
-`scripts/generate_curriculum.py` writes:
-
-```text
-data/pilot/
-├── train.jsonl
-├── validation.jsonl
-├── test.jsonl
-└── manifest.json
-```
-
-Each manifest record contains episode ID, layout and level hashes, difficulty,
-seed, dimensions, box count, reverse-push count, and expert trajectory length.
-The generator enforces disjoint layout hashes across splits.
-
-## Model size and disk planning
-
-The built-in Laya checkpoint is approximately 804 MB in fp16 Safetensors form.
-Every retained run can therefore consume close to 1 GB after metadata. Dataset
-and report files are comparatively small.
-
-Before long sweeps:
-
-- estimate checkpoint count;
-- choose a retention policy;
-- preserve reports before archiving checkpoints;
-- never delete the only checkpoint supporting a reported result;
-- avoid storing cache downloads inside version control.
-
-## Versioning
-
-Schema fields may expand within version `1`; consumers should ignore unknown
-fields. A breaking semantic or structural change should increment
-`schema_version` and include a migration note.
-
-No dataset or report schema registry exists yet. Plugin authors should document
-their source format and version inside their package.
+Schema version 1 reports contain `supervised_warmup` and `online_grpo` stats and
+flat environment benchmarks. Consumers must branch on `schema_version`; those
+fields are not translated into RLCD metrics.

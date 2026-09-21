@@ -5,7 +5,9 @@
 - Discuss large contract, schema, or training-algorithm changes in an issue.
 - Keep the generic engine independent of individual models and tasks.
 - Put model-specific behavior in a model adapter.
-- Put dataset, environment, reward, and transition behavior in a task adapter.
+- Put environment and transition behavior in a task adapter.
+- Put dataset parsing and target provenance in an evidence provider.
+- Put optimization algorithms in a training strategy.
 - Add optional dependencies to an appropriate project extra.
 
 ## Development setup
@@ -19,7 +21,8 @@ uv sync --extra laya --extra train --python 3.12
 ```bash
 uv run --extra laya --extra train python -m unittest discover -s tests -v
 uv run --extra laya --extra train python -m py_compile \
-  jevgames/*.py jevgames/models/*.py jevgames/tasks/*.py \
+  jevgames/*.py jevgames/evidence/*.py jevgames/models/*.py \
+  jevgames/strategies/*.py jevgames/tasks/*.py \
   sokoban_laya/*.py scripts/*.py
 uv lock --check
 ```

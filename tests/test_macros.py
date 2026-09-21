@@ -3,7 +3,7 @@ from __future__ import annotations
 import unittest
 
 from sokoban_laya.core import Action, Board
-from sokoban_laya.macro_grpo_training import compress_expert_trajectories
+from sokoban_laya.evidence import compress_expert_trajectories
 from sokoban_laya.macros import apply_push_macro, legal_push_macros
 from sokoban_laya.solver import solve
 from sokoban_laya.trajectories import solution_trajectory

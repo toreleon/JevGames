@@ -2,14 +2,15 @@
 
 from __future__ import annotations
 
+from collections import Counter
 from dataclasses import asdict
 import json
 from pathlib import Path
 import time
 
 from .config import ExperimentConfig
-from .engine import _expert_items, evaluate, online_grpo, supervised_warmup
-from .registry import create_model, create_task
+from .engine import encode_calibration_items, evaluate_calibration, evaluate_environment
+from .registry import create_evidence, create_model, create_strategy, create_task
 
 
 def run_experiment(config: ExperimentConfig) -> dict:
@@ -18,51 +19,62 @@ def run_experiment(config: ExperimentConfig) -> dict:
     output.mkdir(parents=True, exist_ok=True)
     adapter = create_model(config.model_type, config.model)
     task = create_task(config.task_type, config.task)
-    experts = task.expert_decisions(config.train_dataset)
-    expert_items = _expert_items(adapter, experts)
+    strategy = create_strategy(config.training_type, config.training)
+    evidence_provider = create_evidence(config.evidence_type, config.evidence)
+
+    evidence = evidence_provider.load(config.train_dataset, task)
+    train_items = encode_calibration_items(adapter, evidence)
     stats = [{
         "phase": "setup",
         "model_plugin": config.model_type,
         "task_plugin": config.task_type,
-        "expert_decisions": len(experts),
-        "trainable_expert_decisions": len(expert_items),
+        "training_strategy": config.training_type,
+        "evidence_plugin": config.evidence_type,
+        "calibration_evidence": len(evidence),
+        "trainable_decisions": len(train_items),
+        "provenance": dict(sorted(Counter(row.provenance for row in evidence).items())),
     }]
-
-    if config.warmup.epochs > 0:
-        warmup = supervised_warmup(adapter, expert_items, config.warmup, output, config.seed)
-        stats.append(warmup)
-        print(json.dumps(warmup, sort_keys=True), flush=True)
-    train_states = task.initial_states(config.train_dataset, config.online.max_instances)
-    if config.online.iterations > 0:
-        stats.extend(online_grpo(adapter, task, expert_items, train_states, config.online, config.seed))
+    stats.extend(strategy.train(adapter, train_items, output, config.seed))
 
     checkpoint_dir = output / "checkpoint"
     adapter.save(adapter.model, checkpoint_dir, {
         "experiment": config.name,
         "model_plugin": config.model_type,
         "task_plugin": config.task_type,
+        "training_strategy": config.training_type,
+        "evidence_plugin": config.evidence_type,
         "stats": stats,
     })
+
     benchmarks = {}
-    if config.validation_dataset:
-        benchmarks["validation"] = evaluate(
-            adapter,
-            task,
-            task.initial_states(config.validation_dataset, config.benchmark.max_instances),
-            config.benchmark,
-        )
-    if config.test_dataset:
-        benchmarks["test"] = evaluate(
-            adapter,
-            task,
-            task.initial_states(config.test_dataset, config.benchmark.max_instances),
-            config.benchmark,
-        )
+    for split, dataset_path in (
+        ("validation", config.validation_dataset),
+        ("test", config.test_dataset),
+    ):
+        if not dataset_path:
+            continue
+        split_evidence = evidence_provider.load(dataset_path, task)
+        split_items = encode_calibration_items(adapter, split_evidence)
+        benchmarks[split] = {
+            "calibration": evaluate_calibration(adapter, split_items, config.benchmark),
+            "environment": evaluate_environment(
+                adapter,
+                task,
+                task.initial_states(dataset_path, config.benchmark.max_instances),
+                config.benchmark,
+            ),
+        }
+
     report = {
-        "schema_version": 1,
+        "schema_version": 2,
         "name": config.name,
         "config": asdict(config),
-        "plugins": {"model": config.model_type, "task": config.task_type},
+        "plugins": {
+            "model": config.model_type,
+            "evidence": config.evidence_type,
+            "strategy": config.training_type,
+            "task": config.task_type,
+        },
         "stats": stats,
         "benchmarks": benchmarks,
         "checkpoint": str(checkpoint_dir),

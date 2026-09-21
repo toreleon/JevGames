@@ -35,7 +35,8 @@ jobs:
       - name: Compile source
         run: >-
           uv run --python ${{ matrix.python-version }} python -m py_compile
-          jevgames/*.py jevgames/models/*.py jevgames/tasks/*.py
+          jevgames/*.py jevgames/evidence/*.py jevgames/models/*.py
+          jevgames/strategies/*.py jevgames/tasks/*.py
           sokoban_laya/*.py scripts/*.py
 
       - name: Verify lockfile
